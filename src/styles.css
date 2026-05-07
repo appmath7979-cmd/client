@@ -1,2 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(86.9% 0.022 252.894);
+  --foreground: oklch(14.5% 0 0);
+  --primary: oklch(64.5% 0.246 16.439);
+  --primary-foreground: oklch(97.1% 0.013 17.38);
+  --secondary: oklch(86.9% 0.005 56.366);
+  --secondary-foreground: oklch(14.7% 0.004 49.3);
+  --accent: oklch(70.5% 0.015 286.067);
+  --accent-foreground: oklch(27.4% 0.006 286.033);
+  --destructive: oklch(57.7% 0.245 27.325);
+  --destructive-foreground: oklch(97.1% 0.013 17.38);
+}
+
+.dark {
+  --background: oklch(12.9% 0.042 264.695);
+  --foreground: oklch(98.5% 0 0);
+  --secondary: oklch(14.7% 0.004 49.3);
+  --secondary-foreground: oklch(86.9% 0.005 56.366);
+  --accent: oklch(27.4% 0.006 286.033);
+  --accent-foreground: oklch(70.5% 0.015 286.067);
+}
+
+@theme inline {
+  --font-sans: "Inter", sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary--foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary--foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent--foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive--foreground: var(--destructive-foreground);
+}
+
+@layer base {
+  html {
+    @apply font-sans scroll-smooth;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  .layout {
+    @apply w-full px-3 md:px-6 lg:px-15;
+  }
+}

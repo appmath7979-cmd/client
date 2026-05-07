@@ -8,7 +8,7 @@ const variantButton = {
     "bg-secondary text-secondary-foreground border-secondary hover:bg-secondary/80",
   ghost:
     "border-transparent bg-transparent text-secondary-foreground hover:bg-accent/80 hover:text-accent-foreground",
-  outline: "border-primary bg-background text-primary hover:bg-secondary/80",
+  outline: "border-primary bg-transparent text-primary hover:bg-accent/80",
 };
 
 const sizeButton = {
