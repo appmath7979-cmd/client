@@ -29,6 +29,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Button } from "#/components/ui/Button";
 
 export const Route = createFileRoute("/(main)/create-customer")({
+  staticData: { title: "Tạo khách hàng", showBack: true },
   component: RouteComponent,
 });
 
@@ -37,10 +38,13 @@ function RouteComponent() {
 
   const handleSelectRegion = useCallback(
     (regionName: string) => {
-      console.log(regionName);
-      if (regionName === "MienBac") setRegionSelect(0);
-      if (regionName === "MienTrung") setRegionSelect(1);
-      if (regionName === "MienNam") setRegionSelect(2);
+      const map: Record<string, number> = {
+        MienBac: 0,
+        MienTrung: 1,
+        MienNam: 2,
+      };
+      const index = map[regionName] ?? 0;
+      setRegionSelect(index as 0 | 1 | 2);
     },
     [setRegionSelect],
   );

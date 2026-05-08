@@ -12,6 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as mainCustomerRouteImport } from './routes/(main)/customer'
 import { Route as mainCreateCustomerRouteImport } from './routes/(main)/create-customer'
+import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
+import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
+import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-password'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,33 +31,79 @@ const mainCreateCustomerRoute = mainCreateCustomerRouteImport.update({
   path: '/create-customer',
   getParentRoute: () => rootRouteImport,
 } as any)
+const authSignUpRoute = authSignUpRouteImport.update({
+  id: '/(auth)/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authSignInRoute = authSignInRouteImport.update({
+  id: '/(auth)/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authResetPasswordRoute = authResetPasswordRouteImport.update({
+  id: '/(auth)/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/reset-password': typeof authResetPasswordRoute
+  '/sign-in': typeof authSignInRoute
+  '/sign-up': typeof authSignUpRoute
   '/create-customer': typeof mainCreateCustomerRoute
   '/customer': typeof mainCustomerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/reset-password': typeof authResetPasswordRoute
+  '/sign-in': typeof authSignInRoute
+  '/sign-up': typeof authSignUpRoute
   '/create-customer': typeof mainCreateCustomerRoute
   '/customer': typeof mainCustomerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/(auth)/reset-password': typeof authResetPasswordRoute
+  '/(auth)/sign-in': typeof authSignInRoute
+  '/(auth)/sign-up': typeof authSignUpRoute
   '/(main)/create-customer': typeof mainCreateCustomerRoute
   '/(main)/customer': typeof mainCustomerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/create-customer' | '/customer'
+  fullPaths:
+    | '/'
+    | '/reset-password'
+    | '/sign-in'
+    | '/sign-up'
+    | '/create-customer'
+    | '/customer'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create-customer' | '/customer'
-  id: '__root__' | '/' | '/(main)/create-customer' | '/(main)/customer'
+  to:
+    | '/'
+    | '/reset-password'
+    | '/sign-in'
+    | '/sign-up'
+    | '/create-customer'
+    | '/customer'
+  id:
+    | '__root__'
+    | '/'
+    | '/(auth)/reset-password'
+    | '/(auth)/sign-in'
+    | '/(auth)/sign-up'
+    | '/(main)/create-customer'
+    | '/(main)/customer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  authResetPasswordRoute: typeof authResetPasswordRoute
+  authSignInRoute: typeof authSignInRoute
+  authSignUpRoute: typeof authSignUpRoute
   mainCreateCustomerRoute: typeof mainCreateCustomerRoute
   mainCustomerRoute: typeof mainCustomerRoute
 }
@@ -82,11 +131,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof mainCreateCustomerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(auth)/sign-up': {
+      id: '/(auth)/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof authSignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/sign-in': {
+      id: '/(auth)/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof authSignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/reset-password': {
+      id: '/(auth)/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof authResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  authResetPasswordRoute: authResetPasswordRoute,
+  authSignInRoute: authSignInRoute,
+  authSignUpRoute: authSignUpRoute,
   mainCreateCustomerRoute: mainCreateCustomerRoute,
   mainCustomerRoute: mainCustomerRoute,
 }

@@ -15,7 +15,7 @@ export function Input({
     <input
       className={cn(
         "border outline ring rounded-md px-2 py-1 transition-all duration-300 ease-in-out focus:border-primary focus:outline-primary focus:ring-primary",
-        danger && "border-destructive outline-deborder-destructive ring-deborder-destructive",
+        danger && "border-destructive outline-destructive ring-destructive",
         className,
       )}
       {...props}

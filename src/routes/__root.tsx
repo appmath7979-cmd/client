@@ -1,9 +1,18 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import {
+  HeadContent,
+  Scripts,
+  createRootRoute,
+  useMatches,
+  useNavigate,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 
 import appCss from "../styles.css?url";
 import { Header } from "#/components/Header";
+import { useEffect } from "react";
+import { useAppStore } from "@lavaz/store";
+import { store } from "#/store/store";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -30,13 +39,26 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const [{ count, isLogin }] = useAppStore(store.guardLink, (s) => s);
+  const navigate = useNavigate();
+
+  const showHeader = useMatches({
+    select: (matches) =>
+      !matches.some((m) => m.staticData?.showHeader === false),
+  });
+
+  useEffect(() => {
+    if (count <= 20 || !isLogin) navigate({ to: ".." });
+    if (count > 20 && !isLogin) navigate({ to: "/sign-in" });
+  }, [count, isLogin]);
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body>
-        <Header />
+        {showHeader && <Header />}
         <main className="layout">{children}</main>
         <TanStackDevtools
           config={{
