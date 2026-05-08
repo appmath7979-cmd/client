@@ -12,9 +12,9 @@ const variantButton = {
 };
 
 const sizeButton = {
-  sm: "h-9 px-3 py-2 [&_svg]:size-4",
+  sm: "h-9 px-3 py-2 text-sm [&_svg]:size-4",
   md: "h-10 px-4 py-2 [&_svg]:size-4",
-  lg: "h-11 px-4 py-2 text-lg [&_svg]:size-5",
+  lg: "h-11 px-4 py-2 [&_svg]:size-5",
   xl: "h-12 px-8 py-2 text-xl [&_svg]:size-5",
   "icon-sm": "size-9 [&_svg]:size-4",
   icon: "size-10 [&_svg]:size-4",
@@ -32,7 +32,7 @@ const dangerButton = {
     "border-destructive bg-background text-destructive hover:bg-secondary/80 hover:border-destructive",
 };
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
   className?: string;
   variant?: keyof typeof variantButton;

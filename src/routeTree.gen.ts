@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as mainCustomerRouteImport } from './routes/(main)/customer'
 import { Route as mainCreateCustomerRouteImport } from './routes/(main)/create-customer'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const mainCustomerRoute = mainCustomerRouteImport.update({
+  id: '/(main)/customer',
+  path: '/customer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const mainCreateCustomerRoute = mainCreateCustomerRouteImport.update({
@@ -26,27 +32,31 @@ const mainCreateCustomerRoute = mainCreateCustomerRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/create-customer': typeof mainCreateCustomerRoute
+  '/customer': typeof mainCustomerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create-customer': typeof mainCreateCustomerRoute
+  '/customer': typeof mainCustomerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/(main)/create-customer': typeof mainCreateCustomerRoute
+  '/(main)/customer': typeof mainCustomerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/create-customer'
+  fullPaths: '/' | '/create-customer' | '/customer'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create-customer'
-  id: '__root__' | '/' | '/(main)/create-customer'
+  to: '/' | '/create-customer' | '/customer'
+  id: '__root__' | '/' | '/(main)/create-customer' | '/(main)/customer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   mainCreateCustomerRoute: typeof mainCreateCustomerRoute
+  mainCustomerRoute: typeof mainCustomerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(main)/customer': {
+      id: '/(main)/customer'
+      path: '/customer'
+      fullPath: '/customer'
+      preLoaderRoute: typeof mainCustomerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(main)/create-customer': {
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   mainCreateCustomerRoute: mainCreateCustomerRoute,
+  mainCustomerRoute: mainCustomerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
