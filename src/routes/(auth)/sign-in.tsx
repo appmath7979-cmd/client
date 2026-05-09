@@ -1,3 +1,4 @@
+import { authApi } from "#/apis/auth.api";
 import { Button } from "#/components/ui/Button";
 import { Input } from "#/components/ui/Input";
 import { Label } from "#/components/ui/Label";
@@ -26,7 +27,10 @@ function RouteComponent() {
     validators: {
       onChange: SignInSchema,
     },
-    onSubmit: async () => {},
+    onSubmit: async ({ value }) => {
+      const res = await authApi.signIn(value);
+      console.log(res);
+    },
   });
   return (
     <div className="h-dvh grid place-items-center">

@@ -1,3 +1,4 @@
+import { authApi } from "#/apis/auth.api";
 import { Button } from "#/components/ui/Button";
 import { Input } from "#/components/ui/Input";
 import { Label } from "#/components/ui/Label";
@@ -28,7 +29,11 @@ function RouteComponent() {
     validators: {
       onChange: SignUpSchema,
     },
-    onSubmit: async () => {},
+    onSubmit: async ({ value }) => {
+      // const { password, phoneNumber, username } = value;
+      // const res = await authApi.signUp({ username, password, phoneNumber });
+      // console.log(res);
+    },
   });
   return (
     <div className="h-dvh grid place-items-center">
