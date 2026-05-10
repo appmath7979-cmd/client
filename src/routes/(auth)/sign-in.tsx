@@ -30,9 +30,17 @@ function RouteComponent() {
       onChange: SignInSchema,
     },
     onSubmit: async ({ value }) => {
-      // const res = await authApi.signIn(value);
-      // console.log(res);
-      toast.error({ message: "Sign in success" });
+      try {
+        const res = await authApi.signIn(value);
+        console.log(res);
+        toast.success({ message: "Đăng nhập thành công" });
+      } catch (error: any) {
+        console.log("Response từ NestJS:", error.response?.data);
+        toast.error({
+          message: error.response?.data.error,
+          description: error.response?.data.message,
+        });
+      }
     },
   });
   return (

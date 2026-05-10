@@ -2,11 +2,12 @@ import { authApi } from "#/apis/auth.api";
 import { Button } from "#/components/ui/Button";
 import { Input } from "#/components/ui/Input";
 import { Label } from "#/components/ui/Label";
+import { useToaster } from "#/hooks/useToaster";
 import { SignUpSchema } from "#/schemas/auth.schema";
 import type { SignUpType } from "#/types/auth.type";
 import { EyeClosedIcon, EyeIcon } from "@phosphor-icons/react";
 import { useForm } from "@tanstack/react-form";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
 export const Route = createFileRoute("/(auth)/sign-up")({
@@ -18,6 +19,8 @@ function RouteComponent() {
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
   const [isShowConfirmPassword, setIsShowConfirmPassword] =
     useState<boolean>(false);
+  const toast = useToaster();
+  const navigate = useNavigate();
 
   const form = useForm({
     defaultValues: {
@@ -30,9 +33,20 @@ function RouteComponent() {
       onChange: SignUpSchema,
     },
     onSubmit: async ({ value }) => {
-      // const { password, phoneNumber, username } = value;
-      // const res = await authApi.signUp({ username, password, phoneNumber });
-      // console.log(res);
+      try {
+        const { password, phoneNumber, username } = value;
+        const res = await authApi.signUp({ password, phoneNumber, username });
+        toast.success({
+          message: res.message ?? "Đăng ký tài khoản thành công",
+        });
+        navigate({ to: "/sign-in" });
+      } catch (error: any) {
+        console.log("Response từ NestJS:", error.response?.data);
+        toast.error({
+          message: error.response?.data.error,
+          description: error.response?.data.message,
+        });
+      }
     },
   });
   return (

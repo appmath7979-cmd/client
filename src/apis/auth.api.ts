@@ -5,15 +5,13 @@ export const authApi = {
   signIn: async (data: SignInType) => {
     try {
       const res = await baseApi.post("/auth/signin", data);
-      console.log(res.status);
       return res.data;
-    } catch (error) {
-      console.log(error);
-      return error;
+    } catch (error: any) {
+      throw error;
     }
   },
   signUp: async (data: Omit<SignUpType, "confirmPassword">) => {
-    const res = await baseApi.post("/auth/signin", data);
+    const res = await baseApi.post("/auth/signup", data);
     return res.data;
   },
   signOut: async () => {
