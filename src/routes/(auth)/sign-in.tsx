@@ -2,6 +2,7 @@ import { authApi } from "#/apis/auth.api";
 import { Button } from "#/components/ui/Button";
 import { Input } from "#/components/ui/Input";
 import { Label } from "#/components/ui/Label";
+import { useToaster } from "#/hooks/useToaster";
 import { cn } from "#/lib/utils";
 import { SignInSchema } from "#/schemas/auth.schema";
 import type { SignInType } from "#/types/auth.type";
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/(auth)/sign-in")({
 
 function RouteComponent() {
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
+  const toast = useToaster();
 
   const form = useForm({
     defaultValues: {
@@ -28,8 +30,9 @@ function RouteComponent() {
       onChange: SignInSchema,
     },
     onSubmit: async ({ value }) => {
-      const res = await authApi.signIn(value);
-      console.log(res);
+      // const res = await authApi.signIn(value);
+      // console.log(res);
+      toast.error({ message: "Sign in success" });
     },
   });
   return (

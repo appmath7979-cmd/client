@@ -13,6 +13,7 @@ import { Header } from "#/components/Header";
 import { useEffect } from "react";
 import { useAppStore } from "@lavaz/store";
 import { store } from "#/store/store";
+import { Toaster } from "../components/ui/Toaster";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -60,6 +61,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         {showHeader && <Header />}
         <main className="layout">{children}</main>
+        <Toaster richColor />
         <TanStackDevtools
           config={{
             position: "bottom-right",
