@@ -4,11 +4,9 @@ import type { RegionPattenType } from "#/types/create-customer.type";
 const regionStateNorthCo: RegionPattenType = {
   CLo2: 0.75,
   CĐĐ2: 0.75,
-  C8Lo2: 0.75,
   CDaT2: 0.75,
   CDX2: 0.75,
   CLo3: 0.65,
-  C7Lo3: 0.65,
   CĐĐ3: 0.65,
   C4: 0.65,
   CDa2: 0.75, // Riêng miền Bắc có thêm Đá
@@ -17,11 +15,9 @@ const regionStateNorthCo: RegionPattenType = {
 const regionStateNorthTrung: RegionPattenType = {
   CLo2: 75,
   CĐĐ2: 75,
-  C8Lo2: 75,
   CDaT2: 700,
   CDX2: 550,
   CLo3: 650,
-  C7Lo3: 650,
   CĐĐ3: 650,
   C4: 5500,
   CDa2: 650,
@@ -31,25 +27,23 @@ const regionStateNorthTrung: RegionPattenType = {
 const regionStateSouthCo: RegionPattenType = {
   CLo2: 0.75,
   CĐĐ2: 0.75,
-  C8Lo2: 0.75,
   CDaT2: 0.75,
   CDX2: 0.75,
   CLo3: 0.65,
-  C7Lo3: 0.65,
   CĐĐ3: 0.65,
   C4: 0.65,
+  CDa2: 0,
 };
 
 const regionStateSouthTrung: RegionPattenType = {
   CLo2: 75,
   CĐĐ2: 75,
-  C8Lo2: 75,
   CDaT2: 700,
   CDX2: 550,
   CLo3: 650,
-  C7Lo3: 650,
   CĐĐ3: 650,
   C4: 5500,
+  CDa2: 0,
 };
 
 // --- 3. CẤU HÌNH MIỀN TRUNG (Đồng bộ giống Miền Nam) ---
@@ -60,11 +54,9 @@ const regionStateCentralTrung: RegionPattenType = { ...regionStateSouthTrung };
 const labelSouthCentral = [
   { key: "CLo2", label: "2C lô" },
   { key: "CĐĐ2", label: "2C ĐĐ" },
-  { key: "C8Lo2", label: "2C 8lô" },
   { key: "CDaT2", label: "2C ĐaT" },
   { key: "CDX2", label: "2C DX" },
   { key: "CLo3", label: "3C lô" },
-  { key: "C7Lo3", label: "3C 7lô" },
   { key: "CĐĐ3", label: "3C ĐĐ" },
   { key: "C4", label: "4C" },
 ];
@@ -77,7 +69,6 @@ const labelNorth = [
   { key: "CDaT2", label: "2C ĐaT" },
   { key: "CDX2", label: "2C DX" },
   { key: "CLo3", label: "3C lô" },
-  { key: "C7Lo3", label: "3C 7lô" },
   { key: "CĐĐ3", label: "3C ĐĐ" },
   { key: "C4", label: "4C" },
 ];

@@ -5,7 +5,9 @@ import { Label } from "#/components/ui/Label";
 import { useToaster } from "#/hooks/useToaster";
 import { cn } from "#/lib/utils";
 import { SignInSchema } from "#/schemas/auth.schema";
+import { store } from "#/store/store";
 import type { SignInType } from "#/types/auth.type";
+import { useAppStore } from "@lavaz/store";
 import { CheckIcon, EyeClosedIcon, EyeIcon } from "@phosphor-icons/react";
 import { useForm } from "@tanstack/react-form";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -18,6 +20,7 @@ export const Route = createFileRoute("/(auth)/sign-in")({
 
 function RouteComponent() {
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
+  const [, { setAuth }] = useAppStore(store.auth);
   const toast = useToaster();
 
   const form = useForm({
@@ -32,7 +35,7 @@ function RouteComponent() {
     onSubmit: async ({ value }) => {
       try {
         const res = await authApi.signIn(value);
-        console.log(res);
+        setAuth(res);
         toast.success({ message: "Đăng nhập thành công" });
       } catch (error: any) {
         console.log("Response từ NestJS:", error.response?.data);

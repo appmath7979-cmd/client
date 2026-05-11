@@ -5,12 +5,13 @@ import { useAppStore } from "@lavaz/store";
 import { store } from "#/store/store";
 
 export const Header = () => {
-  const [, { setCount }] = useAppStore(store.guardLink, (s) => s.count);
+  const [count, { setCount }] = useAppStore(store.guardLink, (s) => s.count);
   const matches = useMatches();
 
   const currentMatch = matches[matches.length - 1];
   const pageTitle = currentMatch?.staticData?.title || "TOANHOC";
   const isShowBackButton = currentMatch?.staticData?.showBack;
+  console.log(count);
 
   return (
     <header className="layout sticky top-0 z-50 shadow-md py-3 bg-primary text-primary-foreground flex justify-between items-center">
