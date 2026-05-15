@@ -16,6 +16,8 @@
   --destructive-foreground: oklch(97.1% 0.013 17.38);
   --box: oklch(97% 0 0);
   --box-foreground: oklch(14.5% 0 0);
+  --table: oklch(98.5% 0 0);
+  --table-foreground: oklch(14.5% 0 0);
 }
 
 .dark {
@@ -27,6 +29,8 @@
   --accent-foreground: oklch(70.5% 0.015 286.067);
   --box: oklch(20.5% 0 0);
   --box-foreground: oklch(97% 0 0);
+  --table: oklch(26.9% 0 0);
+  --table-foreground: oklch(97% 0 0);
 }
 
 @theme inline {
@@ -43,6 +47,8 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-box: var(--box);
   --color-box-foreground: var(--box-foreground);
+  --color-table: var(--table);
+  --color-table-foreground: var(--table-foreground);
 }
 
 @keyframes slide-in-top {
@@ -103,10 +109,22 @@
   .input-type--field {
     @apply flex items-center gap-3 [&_label]:w-40 [&_input]:w-full [&_input]:rounded-none! [&_input]:border-0! [&_input]:outline-0! [&_input]:ring-0! [&_input]:focus:border-b!;
   }
+
+  tbody {
+    @apply text-primary;
+  }
 }
 
 @layer utilities {
   .transition-smooth {
     @apply transition-all duration-300 ease-in-out;
+  }
+
+  .bkm {
+    @apply p-2!;
+  }
+
+  .title {
+    @apply text-lg!;
   }
 }

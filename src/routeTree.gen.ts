@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as mainHomeRouteImport } from './routes/(main)/home'
 import { Route as mainCustomerRouteImport } from './routes/(main)/customer'
 import { Route as mainCreateCustomerRouteImport } from './routes/(main)/create-customer'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
@@ -19,6 +20,11 @@ import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-pas
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const mainHomeRoute = mainHomeRouteImport.update({
+  id: '/(main)/home',
+  path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
 const mainCustomerRoute = mainCustomerRouteImport.update({
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof authSignUpRoute
   '/create-customer': typeof mainCreateCustomerRoute
   '/customer': typeof mainCustomerRoute
+  '/home': typeof mainHomeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/sign-up': typeof authSignUpRoute
   '/create-customer': typeof mainCreateCustomerRoute
   '/customer': typeof mainCustomerRoute
+  '/home': typeof mainHomeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/(auth)/sign-up': typeof authSignUpRoute
   '/(main)/create-customer': typeof mainCreateCustomerRoute
   '/(main)/customer': typeof mainCustomerRoute
+  '/(main)/home': typeof mainHomeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/create-customer'
     | '/customer'
+    | '/home'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/create-customer'
     | '/customer'
+    | '/home'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/(auth)/sign-up'
     | '/(main)/create-customer'
     | '/(main)/customer'
+    | '/(main)/home'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +118,7 @@ export interface RootRouteChildren {
   authSignUpRoute: typeof authSignUpRoute
   mainCreateCustomerRoute: typeof mainCreateCustomerRoute
   mainCustomerRoute: typeof mainCustomerRoute
+  mainHomeRoute: typeof mainHomeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -115,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(main)/home': {
+      id: '/(main)/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof mainHomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(main)/customer': {
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   authSignUpRoute: authSignUpRoute,
   mainCreateCustomerRoute: mainCreateCustomerRoute,
   mainCustomerRoute: mainCustomerRoute,
+  mainHomeRoute: mainHomeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
