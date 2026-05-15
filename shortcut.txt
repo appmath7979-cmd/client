@@ -1,4 +1,10 @@
-TỈnh:
-TG: Tiền giang
-DN: Đồng Nai
-HN: Hà Nội
+export const RegionPatternSchema = z.object({
+  CLo2: z.coerce.number(), // shortcut: b
+  CĐĐ2: z.coerce.number(), // shortcut: cân: dd, lệch: d(x)d(x), dau, duoi: mb: giải db + 8; 
+  CDa2: z.coerce.number().optional(), // shortcut: da
+  CDaT2: z.coerce.number(), // shortcut: dat
+  CDX2: z.coerce.number(), // shortcut: dx
+  CLo3: z.coerce.number(), // shortcut: b
+  CĐĐ3: z.coerce.number(), // shortcut: xc: mb: giải đb + 6, mn: giải  7 + đb; xdau xduoi: giải 7 + db
+  C4: z.coerce.number(), // shortcut: b
+});
