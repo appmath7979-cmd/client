@@ -110,8 +110,8 @@
     @apply flex items-center gap-3 [&_label]:w-40 [&_input]:w-full [&_input]:rounded-none! [&_input]:border-0! [&_input]:outline-0! [&_input]:ring-0! [&_input]:focus:border-b!;
   }
 
-  tbody {
-    @apply text-primary;
+  td {
+    @apply text-center;
   }
 }
 

@@ -1,12 +1,12 @@
-type RegionType = "mien-bac" | "mien-trung" | "mien-nam";
+type AwardRegionType = "mien-bac" | "mien-trung" | "mien-nam";
 
 interface IRegion {
-  name: RegionType;
-  stations: string[];
+  name: AwardRegionType;
+  stations: string;
 }
 
 interface ISchedule {
   regions: IRegion[];
 }
 
-export type { IRegion, ISchedule };
+export type { IRegion, ISchedule, AwardRegionType };

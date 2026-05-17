@@ -5,15 +5,15 @@ const variantButton = {
   primary:
     "bg-primary text-primary-foreground border-primary hover:bg-primary/80",
   secondary:
-    "bg-secondary text-secondary-foreground border-secondary hover:bg-secondary/80",
+    "bg-secondary text-secondary-foreground border-secondary hover:bg-secondary/20",
   ghost:
-    "border-transparent bg-transparent text-secondary-foreground hover:bg-accent/80 hover:text-accent-foreground",
-  outline: "border-primary bg-transparent text-primary hover:bg-accent/80",
+    "border-transparent bg-transparent text-secondary-foreground hover:bg-accent/20 hover:text-accent-foreground",
+  outline: "border-primary bg-transparent text-primary hover:bg-accent/20",
 };
 
 const sizeButton = {
   sm: "h-9 px-3 py-2 text-sm [&_svg]:size-4",
-  md: "h-10 px-4 py-2 [&_svg]:size-4",
+  md: "h-10 px-4 py-2 [&_svg]:size-5",
   lg: "h-11 px-4 py-2 [&_svg]:size-5",
   xl: "h-12 px-8 py-2 text-xl [&_svg]:size-5",
   "icon-sm": "size-9 [&_svg]:size-4",
@@ -25,11 +25,11 @@ const dangerButton = {
   primary:
     "bg-destructive text-destructive-foreground border-destructive hover:bg-destructive/80",
   secondary:
-    "bg-secondary text-destructive border-secondary hover:bg-secondary/80",
+    "bg-secondary text-destructive border-secondary hover:bg-secondary/20",
   ghost:
-    "border-transparent bg-transparent text-destructive hover:bg-secondary/80",
+    "border-transparent bg-transparent text-destructive hover:bg-secondary/20",
   outline:
-    "border-destructive bg-background text-destructive hover:bg-secondary/80 hover:border-destructive",
+    "border-destructive bg-background text-destructive hover:bg-secondary/20 hover:border-destructive",
 };
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

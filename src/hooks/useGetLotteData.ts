@@ -1,4 +1,7 @@
 import { schedule } from "#/constants/schedule.constant";
+import { store } from "#/store/store";
+import type { AwardRegionType } from "#/types/schedule.type";
+import { useAppStore } from "@lavaz/store";
 import { useEffect, useState } from "react";
 
 const loadingScript = (element: HTMLElement, src: string) => {
@@ -13,18 +16,16 @@ const loadingScript = (element: HTMLElement, src: string) => {
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export function useGetLotteData(
-  region: "mien-bac" | "mien-trung" | "mien-nam",
-) {
+export function useGetLotteData(region: AwardRegionType) {
   const [elementRef, setElementRef] = useState<HTMLElement | null>(null);
   const [isPending, setIsPending] = useState<boolean>(false);
-  const [data, setData] = useState<any[]>([]);
+  const [data, { setData }] = useAppStore(store.awardData, (s) => s.data);
 
   const lotteries =
-    ".giaidb, .giai1, .giai2, .giai3, .giai4, .giai5, .giai6, .giai7, .giai8";
+    "td.giaidb, td.giai1, td.giai2, td.giai3, td.giai4, td.giai5, td.giai6, td.giai7, td.giai8";
 
   useEffect(() => {
-    if (typeof window === "undefined" || !elementRef) return;
+    if (typeof window === "undefined" || !elementRef || data.length > 0) return;
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) setIsPending(true);
     });
@@ -43,63 +44,62 @@ export function useGetLotteData(
     w.fsize = "16px";
     w.kqwidth = "100%";
 
-    const fetching = async () => {
-      try {
-        if (!w.$)
-          await loadingScript(
-            document.head,
-            "//www.minhngoc.net/jquery/jquery-1.7.2.js",
-          );
+    const containerId = "box_kqxs_minhngoc";
+    let container = document.getElementById(containerId);
 
-        const day = new Date().getDay();
-        const stations = schedule[day].regions.find(
-          (r) => r.name === region,
-        )?.stations;
+    if (!container) {
+      container = document.createElement("div");
+      container.id = containerId;
+      elementRef.appendChild(container);
+    }
 
-        if (!stations) return;
-
-        const finalResult = await Promise.all(
-          stations.map(async (st) => {
-            await loadingScript(
-              elementRef,
-              `//www.minhngoc.net/getkqxs/${st}.js`,
-            );
-
-            await sleep(500);
-
-            const tds = elementRef.querySelectorAll(lotteries);
-            const results = Array.from(tds).map((td) => {
-              const className = td.className;
-              const value = td.textContent.trim();
-              return {
-                station: st,
-                title: className,
-                value,
-              };
-            });
-
-            const isHasChildren = elementRef.hasChildNodes();
-
-            if (isHasChildren) {
-              const children = elementRef.children;
-              for (let i = 0; i < children.length; i++) {
-                elementRef.removeChild(children[i]);
-              }
-            }
-
-            return results;
-          }),
+    const day = new Date().getDay();
+    const checkRegion = schedule[day].regions.find(
+      (r) => r.name === region,
+    );
+    if (!checkRegion) return;
+    const selectStations = checkRegion.stations;
+    const fetchData = async () => {
+      if (!w.$) {
+        await loadingScript(
+          document.head,
+          "//www.minhngoc.net/jquery/jquery-1.7.2.js",
         );
+      }
+      for (const st of selectStations) {
+        await loadingScript(container, `//www.minhngoc.net/getkqxs/${st}.js`);
 
-        setData(finalResult);
-      } catch (error) {
-        console.log(error);
+        await sleep(300);
+
+        const tds = container.querySelectorAll(lotteries);
+
+        const getResults = Array.from(tds)
+          .map((td) => {
+            const getValues = td.textContent.trim();
+            const type = td.className;
+            const value = getValues.includes("-")
+              ? getValues.split("-")
+              : getValues;
+            return {
+              value,
+              type,
+            };
+          });
+
+        setData({
+          station: st,
+          region,
+          values: getResults,
+        });
+
+        container.innerHTML = "";
       }
     };
 
-    fetching();
+    fetchData();
     setIsPending(false);
+    // container.remove();
   }, [isPending, elementRef]);
 
-  return { data, isPending, setElementRef };
+  return { setElementRef };
 }
