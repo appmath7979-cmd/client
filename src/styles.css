@@ -1,17 +1,44 @@
-
 @import "tailwindcss";
 
-* {
-  box-sizing: border-box;
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: oklch(97% 0 0);
+  --foreground: oklch(14.5% 0 0);
+  --primary: oklch(63.7% 0.237 25.331);
+  --primary-foreground: oklch(97.1% 0.013 17.38);
+  --primary-container: oklch(80.8% 0.114 19.571);
+  --primary-container-foreground: oklch(50.5% 0.213 27.518);
+  --destructive: oklch(48.638% 0.15992 28.654);
+  --destructive-foreground: oklch(99.806% 0.00175 322.561);
+  --destructive-container: oklch(91.409% 0.03592 24.046);
+  --destructive-container-foreground: oklch(39.749% 0.0937 28.214);
 }
 
-html,
-body,
-#app {
-  min-height: 100%;
+.dark {
+  --background: oklch(20.5% 0 0);
+  --foreground: oklch(98.5% 0 0);
 }
 
-body {
-  margin: 0;
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-container: var(--primary-container);
+  --color-primary-container-foreground: var(--primary-container-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-container: var(--destructive-container);
+  --color-destructive-container-foreground: var(--destructive-container-foreground);
 }
 
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  .layout {
+    @apply px-4;
+  }
+}
