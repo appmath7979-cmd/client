@@ -12,7 +12,13 @@ function RouteComponent() {
   const form = useAuthForm().signInForm;
   return (
     <div className="relative h-[calc(100dvh-56px)]">
-      <form className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl rounded-3xl shadow-lg p-6 space-y-8">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          form.handleSubmit();
+        }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl rounded-3xl shadow-lg p-6 space-y-8"
+      >
         <h1 className="font-bold text-xl tracking-wide">
           Đăng nhập vào tài khoản
         </h1>

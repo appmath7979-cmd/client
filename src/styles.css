@@ -13,6 +13,22 @@
   --destructive-foreground: oklch(99.806% 0.00175 322.561);
   --destructive-container: oklch(91.409% 0.03592 24.046);
   --destructive-container-foreground: oklch(39.749% 0.0937 28.214);
+  --success: oklch(96.2% 0.044 156.743);
+  --success-foreground: oklch(52.7% 0.154 150.069);
+  --success-container: oklch(26.6% 0.065 152.934);
+  --success-container-foreground: oklch(72.3% 0.219 149.579);
+  --info: oklch(88.2% 0.059 254.128);
+  --info-foreground: oklch(48.8% 0.243 264.376);
+  --info-container: oklch(28.2% 0.091 267.935);
+  --info-container-foreground: oklch(62.3% 0.214 259.815);
+  --warning: oklch(90.1% 0.076 70.697);
+  --warning-foreground: oklch(55.3% 0.195 38.402);
+  --warning-container: oklch(26.6% 0.079 36.259);
+  --warning-container-foreground: oklch(70.5% 0.213 47.604);
+  --error: oklch(78.721% 0.05668 22.489);
+  --error-foreground: oklch(46.895% 0.17919 29.613);
+  --error-container: oklch(26.317% 0.08998 31.104);
+  --error-container-foreground: oklch(52.86% 0.20655 30.455);
 }
 
 .dark {
@@ -30,7 +46,25 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-destructive-container: var(--destructive-container);
-  --color-destructive-container-foreground: var(--destructive-container-foreground);
+  --color-destructive-container-foreground: var(
+    --destructive-container-foreground
+  );
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-container: var(--success-container);
+  --color-success-container-foreground: var(--success-container-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-container: var(--info-container);
+  --color-info-container-foreground: var(--info-container-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-container: var(--warning-container);
+  --color-warning-container-foreground: var(--warning-container-foreground);
+  --color-error: var(--error);
+  --color-error-foreground: var(--error-foreground);
+  --color-error-container: var(--error-container);
+  --color-error-container-foreground: var(--error-container-foreground);
 }
 
 @layer base {
@@ -40,5 +74,47 @@
 
   .layout {
     @apply px-4;
+  }
+}
+
+@keyframes slide-in-top {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  90% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-in-bottom {
+  0% {
+    /* Bắt đầu ở dưới (ngoài màn hình) */
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  10% {
+    /* Trượt lên vị trí chuẩn */
+    transform: translateY(0);
+    opacity: 1;
+  }
+  90% {
+    /* Giữ nguyên vị trí */
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    /* Trượt ngược xuống lại để biến mất */
+    transform: translateY(100%);
+    opacity: 0;
   }
 }

@@ -25,7 +25,7 @@ export default function TextField({
       </Label>
       <div className="w-full">
         <Input id={id} {...props} className="block w-full" />
-        <em className="text-sm">{errorContent}</em>
+        <em className="font-medium text-sm text-destructive">{errorContent}</em>
       </div>
     </div>
   );

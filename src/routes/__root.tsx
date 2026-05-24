@@ -4,6 +4,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 
 import appCss from "../styles.css?url";
 import { Header } from "#/components/Header";
+import { Toaster } from "#/components/ui/Toaster";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -38,6 +39,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <Header />
         <main className="layout">{children}</main>
+        <Toaster richColor />
         <TanStackDevtools
           config={{
             position: "bottom-right",
