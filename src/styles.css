@@ -132,4 +132,8 @@
   div.layout-container {
     padding: 0 16px;
   }
+
+  .full-height--header {
+    @apply h-[calc(100dvh-60px)];
+  }
 }
