@@ -1,14 +1,17 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { WrenchIcon } from "@phosphor-icons/react";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/')({ component: Home })
+export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
   return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold">Welcome to TanStack Start</h1>
-      <p className="mt-4 text-lg">
-        Edit <code>src/routes/index.tsx</code> to get started.
-      </p>
+    <div className="h-[calc(100dvh-60px)] grid place-items-center gap-y-1">
+      <div className="flex flex-col items-center gap-y-1">
+        <WrenchIcon size={60} className="text-gray-400" />
+        <h2 className="font-bold text-xl tracking-wide text-primary">
+          Đang bảo trì. Vui lòng quay lại sau!
+        </h2>
+      </div>
     </div>
-  )
+  );
 }
