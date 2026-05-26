@@ -19,14 +19,13 @@ export function DefaultNotfoundComponent() {
             URL. Vui lòng kiểm tra lại!
           </p>
         </div>
-        <Link to="/">
-          <Button
-            size="lg"
-            className="w-full sm:w-fit px-6 shadow-sm shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-[0.98]"
-          >
-            Quay lại trang chủ
-          </Button>
-        </Link>
+        <Button
+          asChild
+          size="lg"
+          className="w-full sm:w-fit px-6 shadow-sm shadow-primary/20 hover:scale-[1.02] transition-transform active:scale-[0.98]"
+        >
+          <Link to="/">Quay lại trang chủ</Link>
+        </Button>
       </div>
     </div>
   );
