@@ -16,7 +16,11 @@ export function DialogUpdate({ schedule }: { schedule: IRewardSchedule[] }) {
         ))}
       </TabsList>
       {regions.map((re) => (
-        <TabsContent key={`${re}-tabs-content`} value={re}>
+        <TabsContent
+          key={`${re}-tabs-content`}
+          value={re}
+          className="overflow-y-auto"
+        >
           <UpdateBox
             region={re}
             stations={schedule.find((item) => item.region === re)?.stations}

@@ -4,6 +4,8 @@ import {
   regionConstanst,
   stationConstanst,
 } from "#/constants/station.constanst";
+import { formatReward } from "#/lib/format-reward";
+import type { IRegionApi } from "#/types/reward.type";
 import type { IRewardSchedule } from "#/types/schedule.type";
 import {
   Table,
@@ -17,15 +19,18 @@ import {
 interface LotteryProps {
   day: number;
   item: IRewardSchedule;
+  data: IRegionApi[] | undefined;
 }
 
-export function Lottery({ day, item }: LotteryProps) {
+export function Lottery({ day, item, data }: LotteryProps) {
   const { region, stations } = item;
   const currentDay = dayConstant[day as keyof typeof dayConstant];
   const titleRegion = regionConstanst[region as keyof typeof regionConstanst];
 
   const rewards = stations ? rewardList[1] : rewardList[0];
   const length = rewards.length;
+
+  const parseReward = formatReward(data);
 
   return (
     <div>
@@ -35,13 +40,20 @@ export function Lottery({ day, item }: LotteryProps) {
       <Table>
         <TableHeader>
           <TableRow className="capitalize">
-            <TableHead className="w-35 md:w-40 text-center">{currentDay}</TableHead>
+            <TableHead className="w-35 md:w-40 text-center">
+              {currentDay}
+            </TableHead>
             {stations ? (
               stations.map((st) => {
                 const station =
                   stationConstanst[st as keyof typeof stationConstanst];
                 return (
-                  <TableHead key={`${region}-${st}-col`}>{station}</TableHead>
+                  <TableHead
+                    key={`${region}-${st}-col`}
+                    className="text-center"
+                  >
+                    {station}
+                  </TableHead>
                 );
               })
             ) : (
@@ -51,10 +63,24 @@ export function Lottery({ day, item }: LotteryProps) {
         </TableHeader>
         <TableBody>
           {Array.from({ length }).map((_, index) => (
-            <TableRow key={`${region}-col-${index}`}>
+            <TableRow key={`${region}-row-${index}`}>
               <TableCell className="text-center">
                 {rewardConstant[rewards[index] as keyof typeof rewardConstant]}
               </TableCell>
+              {parseReward ? (
+                parseReward.map((dt) => (
+                  <TableCell
+                    key={`${dt.region}-${dt.station}-row-${index}`}
+                    className="text-center"
+                  >
+                    {Array.isArray(dt.values[index])
+                      ? dt.values[index].map((val) => <p>{val}</p>)
+                      : dt.values[index]}
+                  </TableCell>
+                ))
+              ) : (
+                <></>
+              )}
             </TableRow>
           ))}
         </TableBody>

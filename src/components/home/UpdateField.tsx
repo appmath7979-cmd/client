@@ -1,5 +1,5 @@
 import { stationConstanst } from "#/constants/station.constanst";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import { useAppStore } from "@lavaz/store";
@@ -21,43 +21,46 @@ export function UpdateField({
 
   const debounce = useDebounce(currentValue);
 
-  useEffect(() => {
-    if (debounce) {
-      let results: string = "";
-      if (!station) {
-        const cleanValue = debounce
-          .replace(/[^0-9]/g, " ")
-          .split(/\s+/)
-          .filter(Boolean);
+  const handleValue = () => {
+    let results: string = "";
+    if (!station) {
+      const cleanValue = debounce
+        .replace(/[^0-9]/g, " ")
+        .split(/\s+/)
+        .filter(Boolean);
 
-        const formattedItems = cleanValue.map((item, index) => {
-          if (index === 0 || index === 1) return item;
+      const formattedItems = cleanValue.map((item, index) => {
+        if (index === 0 || index === 1) return item;
 
-          let matchLength = 0;
-          if (index === 2 || index === 3) matchLength = 5;
-          else if (index === 4 || index === 5) matchLength = 4;
-          else if (index === 6) matchLength = 3;
-          else if (index === 7) matchLength = 2;
+        let matchLength = 0;
+        if (index === 2 || index === 3) matchLength = 5;
+        else if (index === 4 || index === 5) matchLength = 4;
+        else if (index === 6) matchLength = 3;
+        else if (index === 7) matchLength = 2;
 
-          if (matchLength > 0) {
-            const regex = new RegExp(`\\d{${matchLength}}`, "g");
-            const matches = item.match(regex);
-            return matches ? matches.join("-") : "";
-          }
-          return item;
-        });
+        if (matchLength > 0) {
+          const regex = new RegExp(`\\d{${matchLength}}`, "g");
+          const matches = item.match(regex);
+          return matches ? matches.join("-") : "";
+        }
+        return item;
+      });
 
-        results = formattedItems.join("-");
-      } else {
-        results = debounce
-          .split(/[\n\s]+/)
-          .filter(Boolean)
-          .join("-");
-      }
-
-      setStationValue({ station: station || "mien-bac", value: results, region });
+      results = formattedItems.join("-");
+    } else {
+      results = debounce
+        .split(/[\n\s]+/)
+        .filter(Boolean)
+        .join("-");
     }
-  }, [debounce, setStationValue]);
+
+    setCurrentValue(results);
+    setStationValue({
+      station: station || "mien-bac",
+      value: results,
+      region,
+    });
+  };
 
   return (
     <div className="space-y-2">
@@ -68,12 +71,14 @@ export function UpdateField({
           </Label>
           <Textarea
             value={currentValue}
+            onBlur={handleValue}
             onChange={(e) => setCurrentValue(e.target.value)}
           />
         </div>
       ) : (
         <Textarea
           value={currentValue}
+          onBlur={handleValue}
           onChange={(e) => setCurrentValue(e.target.value)}
         />
       )}
