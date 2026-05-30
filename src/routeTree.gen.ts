@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as appHomeRouteImport } from './routes/(app)/home'
+import { Route as appCustomerRouteImport } from './routes/(app)/customer'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const appHomeRoute = appHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
+const appCustomerRoute = appCustomerRouteImport.update({
+  id: '/(app)/customer',
+  path: '/customer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/customer': typeof appCustomerRoute
   '/home': typeof appHomeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/customer': typeof appCustomerRoute
   '/home': typeof appHomeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/(app)/customer': typeof appCustomerRoute
   '/(app)/home': typeof appHomeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/home'
+  fullPaths: '/' | '/customer' | '/home'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home'
-  id: '__root__' | '/' | '/(app)/home'
+  to: '/' | '/customer' | '/home'
+  id: '__root__' | '/' | '/(app)/customer' | '/(app)/home'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  appCustomerRoute: typeof appCustomerRoute
   appHomeRoute: typeof appHomeRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appHomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(app)/customer': {
+      id: '/(app)/customer'
+      path: '/customer'
+      fullPath: '/customer'
+      preLoaderRoute: typeof appCustomerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  appCustomerRoute: appCustomerRoute,
   appHomeRoute: appHomeRoute,
 }
 export const routeTree = rootRouteImport

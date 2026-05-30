@@ -1,10 +1,10 @@
-import type { RegionType } from "./reward.type"
+import type { RegionType } from "./reward.type";
 
 interface IRewardSchedule {
-  region: RegionType,
-  stations?: string[],
+	region: RegionType;
+	stations?: string[];
 }
 
-type ScheduleListType = Array<IRewardSchedule[]>
+type ScheduleListType = Array<IRewardSchedule[]>;
 
-export type { ScheduleListType, IRewardSchedule }
+export type { ScheduleListType, IRewardSchedule };
