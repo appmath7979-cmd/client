@@ -10,6 +10,7 @@ import QueryProvider from "#/providers/QueryProvider";
 
 import appCss from "../styles.css?url";
 import { useTheme } from "#/hooks/useTheme";
+import { SideMenu } from "#/components/side-menu/SideMenu";
 
 export const Route = createRootRoute({
 	head: () => ({
@@ -44,6 +45,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				<QueryProvider>
+					<SideMenu />
 					<Header />
 					<main>{children}</main>
 					<Toaster richColors expand={false} closeButton />

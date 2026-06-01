@@ -38,7 +38,7 @@ function RouteComponent() {
 					e.preventDefault();
 					form.handleSubmit();
 				}}
-				className="w-full max-w-md rounded-lg shadow-lg p-6 space-y-8"
+				className="w-full max-w-md rounded-lg shadow-lg p-6 space-y-8 bg-secondary"
 			>
 				<h1 className="font-semibold text-2xl">Đăng nhập vào tài khoản</h1>
 				<div className="space-y-4">
