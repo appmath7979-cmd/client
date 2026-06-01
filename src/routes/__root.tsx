@@ -1,10 +1,13 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
+import { FormDevtoolsPanel } from "@tanstack/react-form-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "sonner";
+
 import { Header } from "#/components/Header";
 import QueryProvider from "#/providers/QueryProvider";
+
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -54,6 +57,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 							{
 								name: "Tanstack Query",
 								render: <ReactQueryDevtoolsPanel />,
+							},
+							{
+								name: "Tanstack Form",
+								render: <FormDevtoolsPanel />,
 							},
 						]}
 					/>
