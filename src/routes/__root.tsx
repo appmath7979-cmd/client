@@ -9,6 +9,7 @@ import { Header } from "#/components/Header";
 import QueryProvider from "#/providers/QueryProvider";
 
 import appCss from "../styles.css?url";
+import { useTheme } from "#/hooks/useTheme";
 
 export const Route = createRootRoute({
 	head: () => ({
@@ -35,6 +36,7 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+	useTheme();
 	return (
 		<html lang="en">
 			<head>

@@ -1,3 +1,4 @@
+import ModeToggle from "#/components/ModeToggle";
 import { WrenchIcon } from "@phosphor-icons/react";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -12,6 +13,7 @@ function Home() {
 					Đang bảo trì. Vui lòng quay lại sau!
 				</h2>
 			</div>
+			<ModeToggle />
 		</div>
 	);
 }
