@@ -10,19 +10,19 @@ export function RootGuard({ children }: { children: React.ReactNode }) {
 
 	const [{ isActive, isLock, isLoggedIn }] = useAppStore(store.lock, (s) => s);
 
-	useEffect(() => {
-		if (currentPath !== "/") {
-			if (isLock || !isActive) navigate({ to: "/" });
-		}
+	// useEffect(() => {
+	// 	if (currentPath !== "/") {
+	// 		if (isLock || !isActive) navigate({ to: "/" });
+	// 	}
 
-		if (isActive && !isLock && !isLoggedIn) {
-			if (
-				currentPath !== "/" &&
-				currentPath !== "/sign-in" &&
-				currentPath !== "/sign-up"
-			)
-				navigate({ to: "/" });
-		}
-	}, [currentPath, isActive, isLock, isLoggedIn, navigate]);
+	// 	if (isActive && !isLock && !isLoggedIn) {
+	// 		if (
+	// 			currentPath !== "/" &&
+	// 			currentPath !== "/sign-in" &&
+	// 			currentPath !== "/sign-up"
+	// 		)
+	// 			navigate({ to: "/" });
+	// 	}
+	// }, [currentPath, isActive, isLock, isLoggedIn, navigate]);
 	return <>{children}</>;
 }

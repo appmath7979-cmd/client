@@ -9,7 +9,6 @@ const authValueDefaultConstant = {
 		username: "",
 		password: "",
 		displayName: "",
-		phoneNumber: "",
 		email: "",
 		confirmPassword: "",
 	} as AuthSignUpType,

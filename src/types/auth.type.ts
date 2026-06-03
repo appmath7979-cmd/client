@@ -7,7 +7,6 @@ type AuthSignUpType = z.infer<typeof AuthSignUpSchema>;
 
 interface IAuthSignUpApi {
 	username: string;
-	phoneNumber: string;
 	email?: string;
 	password: string;
 	role?: UserRoleType;

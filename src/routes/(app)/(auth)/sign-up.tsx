@@ -59,26 +59,6 @@ function RouteComponent() {
 							);
 						}}
 					</form.Field>
-					<form.Field name="phoneNumber">
-						{({ name, state, handleChange }) => {
-							const { meta, value } = state;
-							return (
-								<TextField
-									name={name}
-									label="Số điện thoại"
-									type="tel"
-									placeholder="Số điện thoại..."
-									value={value}
-									onChange={(e) => handleChange(e.target.value)}
-									error={
-										meta.errors.length > 0 && meta.errors[0] && meta.isDirty
-											? meta.errors[0].message
-											: ""
-									}
-								/>
-							);
-						}}
-					</form.Field>
 					<form.Field name="email">
 						{({ name, state, handleChange }) => {
 							const { meta } = state;

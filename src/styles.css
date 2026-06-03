@@ -142,3 +142,17 @@
     @apply transition-all duration-300 ease-in-out;
   }
 }
+
+@layer components {
+  .customer-layout {
+    @apply rounded-lg border shadow-lg bg-secondary/50 p-4 space-y-2;
+  }
+
+  .radio-group--content {
+    @apply flex items-center gap-2;
+  }
+
+  .form-field--box {
+    @apply border rounded-lg shadow-md bg-secondary p-4;
+  }
+}

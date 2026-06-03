@@ -28,10 +28,6 @@ const AuthSignUpSchema = z
 			.trim()
 			.min(2, "Tên hiển thị phải có ít nhất 2 ký tự.")
 			.max(50, "Tên hiển thị quá dài."),
-		phoneNumber: z
-			.string()
-			.trim()
-			.regex(/^[0-9]{10}$/, "Số điện thoại không hợp lệ (10 chữ số)"),
 		email: z
 			.string()
 			.email("Định dạng email không hợp lệ")

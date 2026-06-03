@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as CreateCustomerRouteImport } from './routes/create-customer'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as appHomeRouteImport } from './routes/(app)/home'
 import { Route as appCustomerRouteImport } from './routes/(app)/customer'
 import { Route as appauthSignUpRouteImport } from './routes/(app)/(auth)/sign-up'
 import { Route as appauthSignInRouteImport } from './routes/(app)/(auth)/sign-in'
 
+const CreateCustomerRoute = CreateCustomerRouteImport.update({
+  id: '/create-customer',
+  path: '/create-customer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -43,6 +49,7 @@ const appauthSignInRoute = appauthSignInRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/create-customer': typeof CreateCustomerRoute
   '/customer': typeof appCustomerRoute
   '/home': typeof appHomeRoute
   '/sign-in': typeof appauthSignInRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/create-customer': typeof CreateCustomerRoute
   '/customer': typeof appCustomerRoute
   '/home': typeof appHomeRoute
   '/sign-in': typeof appauthSignInRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/create-customer': typeof CreateCustomerRoute
   '/(app)/customer': typeof appCustomerRoute
   '/(app)/home': typeof appHomeRoute
   '/(app)/(auth)/sign-in': typeof appauthSignInRoute
@@ -65,12 +74,19 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/customer' | '/home' | '/sign-in' | '/sign-up'
+  fullPaths:
+    | '/'
+    | '/create-customer'
+    | '/customer'
+    | '/home'
+    | '/sign-in'
+    | '/sign-up'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/customer' | '/home' | '/sign-in' | '/sign-up'
+  to: '/' | '/create-customer' | '/customer' | '/home' | '/sign-in' | '/sign-up'
   id:
     | '__root__'
     | '/'
+    | '/create-customer'
     | '/(app)/customer'
     | '/(app)/home'
     | '/(app)/(auth)/sign-in'
@@ -79,6 +95,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CreateCustomerRoute: typeof CreateCustomerRoute
   appCustomerRoute: typeof appCustomerRoute
   appHomeRoute: typeof appHomeRoute
   appauthSignInRoute: typeof appauthSignInRoute
@@ -87,6 +104,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/create-customer': {
+      id: '/create-customer'
+      path: '/create-customer'
+      fullPath: '/create-customer'
+      preLoaderRoute: typeof CreateCustomerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -127,6 +151,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CreateCustomerRoute: CreateCustomerRoute,
   appCustomerRoute: appCustomerRoute,
   appHomeRoute: appHomeRoute,
   appauthSignInRoute: appauthSignInRoute,
