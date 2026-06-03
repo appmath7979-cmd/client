@@ -5,6 +5,7 @@ import { store } from "#/store/store";
 import { useClickOutside } from "#/hooks/useClickOutside";
 import { SideMenuFooter } from "./SideMenuFooter";
 import { cn } from "#/lib/utils";
+import { SideMenuBody } from "./SideMenuBody";
 
 export function SideMenu() {
 	const [isOpen, { setIsOpen }] = useAppStore(store.sideMenu, (s) => s);
@@ -21,6 +22,7 @@ export function SideMenu() {
 				)}
 			>
 				<SideMenuHeader onToggle={setIsOpen} />
+				<SideMenuBody />
 				<SideMenuFooter />
 			</aside>
 			<div

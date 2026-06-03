@@ -118,7 +118,7 @@ export function DialogForm({ today, schedule }: DialogFormProps) {
 					{isPending ? (
 						<>
 							<Spinner />
-							"Đang xử lý..."
+							<span>Đang xử lý...</span>
 						</>
 					) : (
 						"Xác nhận"

@@ -11,6 +11,7 @@ import QueryProvider from "#/providers/QueryProvider";
 import appCss from "../styles.css?url";
 import { useTheme } from "#/hooks/useTheme";
 import { SideMenu } from "#/components/side-menu/SideMenu";
+import { RootGuard } from "#/guards/RootGuard";
 
 export const Route = createRootRoute({
 	head: () => ({
@@ -38,6 +39,7 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	useTheme();
+
 	return (
 		<html lang="en">
 			<head>
@@ -47,7 +49,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<QueryProvider>
 					<SideMenu />
 					<Header />
-					<main>{children}</main>
+					<RootGuard>
+						<main>{children}</main>
+					</RootGuard>
 					<Toaster richColors expand={false} closeButton />
 					<TanStackDevtools
 						config={{

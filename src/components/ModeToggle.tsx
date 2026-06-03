@@ -3,14 +3,22 @@ import { Button } from "./ui/button";
 import { store } from "#/store/store";
 import { cn } from "#/lib/utils";
 import { MoonIcon, SunDimIcon } from "@phosphor-icons/react";
+import { useEffect, useState } from "react";
 
 export default function ModeToggle({ className }: { className?: string }) {
 	const [theme, { setTheme }] = useAppStore(store.theme, (s) => s.theme);
+	const [mounted, setMounted] = useState<boolean>(false);
 	const isDark = theme === "dark";
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	if (!mounted) return null;
 
 	return (
 		<Button
-			variant={"secondary"}
+			variant={"ghost"}
 			onClick={() => setTheme(isDark ? "light" : "dark")}
 			className={cn("", className)}
 		>
