@@ -50,11 +50,6 @@ const northRegionConstant: BetPairType[] = [
 		t: 75,
 	},
 	{
-		label: "2C 8Lô",
-		c: 0.75,
-		t: 75,
-	},
-	{
 		label: "2C Đá",
 		c: 0.75,
 		t: 650,
@@ -88,9 +83,9 @@ const customerConstant = {
 	tinhTrungDaT: "ky_ruoi",
 	tinhTrungDaX: "ky_ruoi",
 	settings: {
-		BAC: southRegionConstant,
+		BAC: northRegionConstant,
 		TRUNG: centralRegionConstant,
-		NAM: northRegionConstant,
+		NAM: southRegionConstant,
 	},
 } as CustomerType;
 

@@ -1,6 +1,6 @@
 import type { TextFieldProps } from "#/types/form.type";
-import { Field, FieldLabel } from "../ui/field";
-import { Input } from "../ui/input";
+import { Field, FieldLabel } from "../../ui/field";
+import { Input } from "../../ui/input";
 
 export function InputField({
 	name,

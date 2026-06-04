@@ -1,20 +1,17 @@
 import { useForm } from "@tanstack/react-form-start";
 import { createFileRoute } from "@tanstack/react-router";
-import { customerConstant } from "#/constants/customer.constant";
-import { CustomerSchema } from "#/schema/customer.schema";
-import { InputField } from "#/components/customer/InputField";
-import CustomerTypeToggle from "#/components/customer/CustomerTypeToggle";
-import CustomerSwitch from "#/components/customer/CustomerSwitch";
-import { Label } from "#/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "#/components/ui/radio-group";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
-import { regionConstanst } from "#/constants/station.constanst";
+import CustomerSwitch from "#/components/customer/create/CustomerSwitch";
+import { CustomerToggle } from "#/components/customer/create/CustomerToggle";
+import CustomerTypeToggle from "#/components/customer/create/CustomerTypeToggle";
+import { InputField } from "#/components/customer/create/InputField";
+import { InputSettingField } from "#/components/customer/create/InputSettingField";
 import { Button } from "#/components/ui/button";
-import { Input } from "#/components/ui/input";
-import { InputSettingField } from "#/components/customer/InputSettingField";
-import type { RegionType } from "#/types/reward.type";
-import { CustomerToggle } from "#/components/customer/CustomerToggle";
 import { Spinner } from "#/components/ui/spinner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
+import { customerConstant } from "#/constants/customer.constant";
+import { regionConstanst } from "#/constants/station.constanst";
+import { CustomerSchema } from "#/schema/customer.schema";
+import type { RegionType } from "#/types/reward.type";
 
 export const Route = createFileRoute("/create-customer")({
 	component: RouteComponent,
@@ -136,7 +133,7 @@ function RouteComponent() {
 												<div className="space-y-4">
 													{state.value.map((val, index) => (
 														<form.Field
-															key={val.c}
+															key={`${state.value[index].label}-co`}
 															name={`settings.${regionName}[${index}].c`}
 														>
 															{({ state: stateChild, handleChange }) => (
@@ -152,7 +149,7 @@ function RouteComponent() {
 												<div className="space-y-4">
 													{state.value.map((val, index) => (
 														<form.Field
-															key={val.c}
+															key={`${state.value[index].label}-trung`}
 															name={`settings.${regionName}[${index}].t`}
 														>
 															{({ state: stateChild, handleChange }) => (

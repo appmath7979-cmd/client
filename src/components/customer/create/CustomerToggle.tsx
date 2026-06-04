@@ -1,6 +1,6 @@
 import type { CustomerCalcType } from "#/types/customer.type";
-import { Label } from "../ui/label";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Label } from "../../ui/label";
+import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 
 const toggleSelections = {
 	tinhTrungDaT: "Tính trúng Đá thẳng",
@@ -30,7 +30,7 @@ export function CustomerToggle({
 				defaultValue="ky_ruoi"
 				value={value}
 				onValueChange={(val) => onChange(val as CustomerCalcType)}
-        className="flex items-center gap-8"
+				className="flex items-center gap-8"
 			>
 				{selections.map((select) => (
 					<div key={select + item} className="flex items-center gap-2">
