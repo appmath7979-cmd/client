@@ -10,6 +10,7 @@ import { AuthSignInSchema } from "#/schema/auth.schema";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/(app)/(auth)/sign-in")({
+	staticData: { isShowHeader: false },
 	component: RouteComponent,
 	ssr: "data-only",
 });

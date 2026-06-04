@@ -1,7 +1,10 @@
 import { WrenchIcon } from "@phosphor-icons/react";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/")({ component: Home });
+export const Route = createFileRoute("/")({
+	staticData: { isSidebar: true },
+	component: Home,
+});
 
 function Home() {
 	return (

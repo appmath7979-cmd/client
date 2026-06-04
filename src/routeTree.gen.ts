@@ -13,10 +13,12 @@ import { Route as CreateCustomerRouteImport } from './routes/create-customer'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as appHomeRouteImport } from './routes/(app)/home'
 import { Route as appCustomerIndexRouteImport } from './routes/(app)/customer/index'
-import { Route as appCustomerCustomerRouteImport } from './routes/(app)/customer/customer'
+import { Route as appCustomerLayoutRouteImport } from './routes/(app)/customer/layout'
 import { Route as appCustomerCustomerIdRouteImport } from './routes/(app)/customer/$customerId'
 import { Route as appauthSignUpRouteImport } from './routes/(app)/(auth)/sign-up'
 import { Route as appauthSignInRouteImport } from './routes/(app)/(auth)/sign-in'
+import { Route as appCustomerCustomerIdIndexRouteImport } from './routes/(app)/customer/$customerId/index'
+import { Route as appCustomerCustomerIdAddRouteImport } from './routes/(app)/customer/$customerId/add'
 
 const CreateCustomerRoute = CreateCustomerRouteImport.update({
   id: '/create-customer',
@@ -38,9 +40,9 @@ const appCustomerIndexRoute = appCustomerIndexRouteImport.update({
   path: '/customer/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const appCustomerCustomerRoute = appCustomerCustomerRouteImport.update({
-  id: '/(app)/customer/customer',
-  path: '/customer/customer',
+const appCustomerLayoutRoute = appCustomerLayoutRouteImport.update({
+  id: '/(app)/customer/layout',
+  path: '/customer/layout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const appCustomerCustomerIdRoute = appCustomerCustomerIdRouteImport.update({
@@ -58,6 +60,18 @@ const appauthSignInRoute = appauthSignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
+const appCustomerCustomerIdIndexRoute =
+  appCustomerCustomerIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => appCustomerCustomerIdRoute,
+  } as any)
+const appCustomerCustomerIdAddRoute =
+  appCustomerCustomerIdAddRouteImport.update({
+    id: '/add',
+    path: '/add',
+    getParentRoute: () => appCustomerCustomerIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -65,9 +79,11 @@ export interface FileRoutesByFullPath {
   '/home': typeof appHomeRoute
   '/sign-in': typeof appauthSignInRoute
   '/sign-up': typeof appauthSignUpRoute
-  '/customer/$customerId': typeof appCustomerCustomerIdRoute
-  '/customer/customer': typeof appCustomerCustomerRoute
+  '/customer/$customerId': typeof appCustomerCustomerIdRouteWithChildren
+  '/customer/layout': typeof appCustomerLayoutRoute
   '/customer/': typeof appCustomerIndexRoute
+  '/customer/$customerId/add': typeof appCustomerCustomerIdAddRoute
+  '/customer/$customerId/': typeof appCustomerCustomerIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -75,9 +91,10 @@ export interface FileRoutesByTo {
   '/home': typeof appHomeRoute
   '/sign-in': typeof appauthSignInRoute
   '/sign-up': typeof appauthSignUpRoute
-  '/customer/$customerId': typeof appCustomerCustomerIdRoute
-  '/customer/customer': typeof appCustomerCustomerRoute
+  '/customer/layout': typeof appCustomerLayoutRoute
   '/customer': typeof appCustomerIndexRoute
+  '/customer/$customerId/add': typeof appCustomerCustomerIdAddRoute
+  '/customer/$customerId': typeof appCustomerCustomerIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -86,9 +103,11 @@ export interface FileRoutesById {
   '/(app)/home': typeof appHomeRoute
   '/(app)/(auth)/sign-in': typeof appauthSignInRoute
   '/(app)/(auth)/sign-up': typeof appauthSignUpRoute
-  '/(app)/customer/$customerId': typeof appCustomerCustomerIdRoute
-  '/(app)/customer/customer': typeof appCustomerCustomerRoute
+  '/(app)/customer/$customerId': typeof appCustomerCustomerIdRouteWithChildren
+  '/(app)/customer/layout': typeof appCustomerLayoutRoute
   '/(app)/customer/': typeof appCustomerIndexRoute
+  '/(app)/customer/$customerId/add': typeof appCustomerCustomerIdAddRoute
+  '/(app)/customer/$customerId/': typeof appCustomerCustomerIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -99,8 +118,10 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-up'
     | '/customer/$customerId'
-    | '/customer/customer'
+    | '/customer/layout'
     | '/customer/'
+    | '/customer/$customerId/add'
+    | '/customer/$customerId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -108,9 +129,10 @@ export interface FileRouteTypes {
     | '/home'
     | '/sign-in'
     | '/sign-up'
-    | '/customer/$customerId'
-    | '/customer/customer'
+    | '/customer/layout'
     | '/customer'
+    | '/customer/$customerId/add'
+    | '/customer/$customerId'
   id:
     | '__root__'
     | '/'
@@ -119,8 +141,10 @@ export interface FileRouteTypes {
     | '/(app)/(auth)/sign-in'
     | '/(app)/(auth)/sign-up'
     | '/(app)/customer/$customerId'
-    | '/(app)/customer/customer'
+    | '/(app)/customer/layout'
     | '/(app)/customer/'
+    | '/(app)/customer/$customerId/add'
+    | '/(app)/customer/$customerId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -129,8 +153,8 @@ export interface RootRouteChildren {
   appHomeRoute: typeof appHomeRoute
   appauthSignInRoute: typeof appauthSignInRoute
   appauthSignUpRoute: typeof appauthSignUpRoute
-  appCustomerCustomerIdRoute: typeof appCustomerCustomerIdRoute
-  appCustomerCustomerRoute: typeof appCustomerCustomerRoute
+  appCustomerCustomerIdRoute: typeof appCustomerCustomerIdRouteWithChildren
+  appCustomerLayoutRoute: typeof appCustomerLayoutRoute
   appCustomerIndexRoute: typeof appCustomerIndexRoute
 }
 
@@ -164,11 +188,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appCustomerIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(app)/customer/customer': {
-      id: '/(app)/customer/customer'
-      path: '/customer/customer'
-      fullPath: '/customer/customer'
-      preLoaderRoute: typeof appCustomerCustomerRouteImport
+    '/(app)/customer/layout': {
+      id: '/(app)/customer/layout'
+      path: '/customer/layout'
+      fullPath: '/customer/layout'
+      preLoaderRoute: typeof appCustomerLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(app)/customer/$customerId': {
@@ -192,8 +216,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appauthSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(app)/customer/$customerId/': {
+      id: '/(app)/customer/$customerId/'
+      path: '/'
+      fullPath: '/customer/$customerId/'
+      preLoaderRoute: typeof appCustomerCustomerIdIndexRouteImport
+      parentRoute: typeof appCustomerCustomerIdRoute
+    }
+    '/(app)/customer/$customerId/add': {
+      id: '/(app)/customer/$customerId/add'
+      path: '/add'
+      fullPath: '/customer/$customerId/add'
+      preLoaderRoute: typeof appCustomerCustomerIdAddRouteImport
+      parentRoute: typeof appCustomerCustomerIdRoute
+    }
   }
 }
+
+interface appCustomerCustomerIdRouteChildren {
+  appCustomerCustomerIdAddRoute: typeof appCustomerCustomerIdAddRoute
+  appCustomerCustomerIdIndexRoute: typeof appCustomerCustomerIdIndexRoute
+}
+
+const appCustomerCustomerIdRouteChildren: appCustomerCustomerIdRouteChildren = {
+  appCustomerCustomerIdAddRoute: appCustomerCustomerIdAddRoute,
+  appCustomerCustomerIdIndexRoute: appCustomerCustomerIdIndexRoute,
+}
+
+const appCustomerCustomerIdRouteWithChildren =
+  appCustomerCustomerIdRoute._addFileChildren(
+    appCustomerCustomerIdRouteChildren,
+  )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -201,8 +254,8 @@ const rootRouteChildren: RootRouteChildren = {
   appHomeRoute: appHomeRoute,
   appauthSignInRoute: appauthSignInRoute,
   appauthSignUpRoute: appauthSignUpRoute,
-  appCustomerCustomerIdRoute: appCustomerCustomerIdRoute,
-  appCustomerCustomerRoute: appCustomerCustomerRoute,
+  appCustomerCustomerIdRoute: appCustomerCustomerIdRouteWithChildren,
+  appCustomerLayoutRoute: appCustomerLayoutRoute,
   appCustomerIndexRoute: appCustomerIndexRoute,
 }
 export const routeTree = rootRouteImport

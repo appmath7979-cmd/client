@@ -11,6 +11,7 @@ import { DefaultPendingComponent } from "#/pages/DefaultPendingComponent";
 import { RewardNotfound } from "#/pages/RewardNotfound";
 
 export const Route = createFileRoute("/(app)/home")({
+	staticData: { isSidebar: true },
 	component: RouteComponent,
 	notFoundComponent: RewardNotfound,
 });

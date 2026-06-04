@@ -1,7 +1,12 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { FormDevtoolsPanel } from "@tanstack/react-form-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
-import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+	createRootRoute,
+	HeadContent,
+	Scripts,
+	useMatches,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "sonner";
 
@@ -48,7 +53,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			<body>
 				<QueryProvider>
 					<SideMenu />
-					<Header />
+					{<Header />}
 					<RootGuard>
 						<main>{children}</main>
 					</RootGuard>

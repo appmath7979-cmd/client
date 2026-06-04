@@ -11,15 +11,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
 import { customerConstant } from "#/constants/customer.constant";
 import { regionConstanst } from "#/constants/station.constanst";
 import { CustomerSchema } from "#/schema/customer.schema";
-import type { RegionType } from "#/types/reward.type";
+import { regions } from "#/constants/regions.contanst";
 
 export const Route = createFileRoute("/create-customer")({
+	staticData: { title: "Tạo khách hàng mới" },
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const regions: RegionType[] = ["mien-bac", "mien-trung", "mien-nam"];
-
 	const form = useForm({
 		defaultValues: customerConstant,
 		validators: { onChange: CustomerSchema },

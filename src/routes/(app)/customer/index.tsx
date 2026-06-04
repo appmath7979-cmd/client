@@ -4,6 +4,7 @@ import { PlusIcon } from "@phosphor-icons/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(app)/customer/")({
+	staticData: {title: "Danh sách khách hàng"},
 	component: RouteComponent,
 });
 

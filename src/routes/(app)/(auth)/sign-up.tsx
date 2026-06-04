@@ -10,6 +10,7 @@ import { useAuthQuery } from "#/hooks/query/useAuthQuery";
 import { AuthSignUpSchema } from "#/schema/auth.schema";
 
 export const Route = createFileRoute("/(app)/(auth)/sign-up")({
+	staticData: { isShowHeader: false },
 	component: RouteComponent,
 });
 
