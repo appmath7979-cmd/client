@@ -19,6 +19,7 @@ import {
 } from "#/components/ui/table";
 import { regionConstanst } from "#/constants/station.constanst";
 import { store } from "#/store/store";
+import { useGetCustomerById } from "#/hooks/query/useCustomerQuery";
 
 export const Route = createFileRoute("/(app)/customer/$customerId/")({
 	component: RouteComponent,
@@ -26,6 +27,10 @@ export const Route = createFileRoute("/(app)/customer/$customerId/")({
 
 function RouteComponent() {
 	const { customerId } = useParams({ from: "/(app)/customer/$customerId/" });
+	const { data } = useGetCustomerById(
+		customerId,
+		"1f42541d-fd97-4c09-8c75-b027fbf497f0",
+	);
 
 	const [{ regions, value }, { setValue }] = useAppStore(
 		store.regionDropdown,
@@ -34,25 +39,28 @@ function RouteComponent() {
 
 	return (
 		<div className="py-4">
-			<div className="flex justify-end items-center gap-1">
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant={"outline"}>{regionConstanst[value]}</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent>
-						{regions.map((region) => (
-							<DropdownMenuItem key={region} onClick={() => setValue(region)}>
-								{regionConstanst[region]}
-							</DropdownMenuItem>
-						))}
-					</DropdownMenuContent>
-				</DropdownMenu>
-				<Button asChild>
-					<Link to="/customer/$customerId/add" params={{ customerId }}>
-						<PlusIcon />
-						<span>Nhập lệnh mới</span>
-					</Link>
-				</Button>
+			<div className="flex justify-between items-center">
+				<p className="font-semibold text-lg">{data?.customer.fullName}</p>
+				<div className="flex justify-end items-center gap-1">
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant={"outline"}>{regionConstanst[value]}</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent>
+							{regions.map((region) => (
+								<DropdownMenuItem key={region} onClick={() => setValue(region)}>
+									{regionConstanst[region]}
+								</DropdownMenuItem>
+							))}
+						</DropdownMenuContent>
+					</DropdownMenu>
+					<Button asChild>
+						<Link to="/customer/$customerId/add" params={{ customerId }}>
+							<PlusIcon />
+							<span>Nhập lệnh mới</span>
+						</Link>
+					</Button>
+				</div>
 			</div>
 			<div className="sticky top-0 mt-4 border rounded-lg shadow-md bg-accent">
 				<Table>

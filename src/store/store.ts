@@ -6,6 +6,7 @@ import { sideMenuBox } from "./boxes/side-menu.box";
 import { lockBox } from "./boxes/lock.box";
 import { regionDropdownBox } from "./boxes/region-dropdown.box";
 import { testBox } from "./boxes/test.box";
+import { authBox } from "./boxes/auth.box";
 
 export const store = createStore({
 	updateReward: updateRewardBox,
@@ -15,4 +16,5 @@ export const store = createStore({
 	lock: lockBox,
 	regionDropdown: regionDropdownBox,
 	test: testBox,
+	auth: authBox,
 });

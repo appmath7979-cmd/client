@@ -7,6 +7,7 @@ import { store } from "#/store/store";
 
 export function useAuthQuery() {
 	const [, { setIsLoggedIn }] = useAppStore(store.lock, (s) => s.isLoggedIn);
+	const [, { signIn }] = useAppStore(store.auth, (s) => s);
 	return {
 		signUp: useMutation({
 			mutationFn: (value: IAuthSignUpApi) => authApi.signUp(value),
@@ -21,6 +22,7 @@ export function useAuthQuery() {
 			mutationFn: (value: AuthSignInType) => authApi.signIn(value),
 			onSuccess: (data) => {
 				setIsLoggedIn();
+				signIn(data.user, data.message);
 				toast.success(data.message);
 			},
 			onError: (error) => {

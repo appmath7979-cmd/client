@@ -1,14 +1,24 @@
-import { CustomerListBox } from "#/components/customer/CustomerListBox";
-import { Button } from "#/components/ui/button";
 import { PlusIcon } from "@phosphor-icons/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { CustomerListBox } from "#/components/customer/CustomerListBox";
+import { Button } from "#/components/ui/button";
+import { useGetCustomer } from "#/hooks/query/useCustomerQuery";
 
 export const Route = createFileRoute("/(app)/customer/")({
-	staticData: {title: "Danh sách khách hàng"},
+	staticData: { title: "Danh sách khách hàng" },
 	component: RouteComponent,
 });
 
 function RouteComponent() {
+	const { data } = useGetCustomer("1f42541d-fd97-4c09-8c75-b027fbf497f0");
+
+	const customerOwner = data
+		? data.customers?.filter((item) => item.type === "OWNER")
+		: [];
+	const customerGuest = data
+		? data.customers?.filter((item) => item.type === "GUEST")
+		: [];
+
 	return (
 		<div className="py-6">
 			<div className="flex justify-end items-center gap-2">
@@ -20,8 +30,8 @@ function RouteComponent() {
 				</Button>
 			</div>
 			<div className="h-[calc(100dvh-160px)] mt-4 space-y-10">
-				<CustomerListBox label="Khách" />
-				<CustomerListBox label="Chủ" />
+				<CustomerListBox label="Khách" item={customerGuest || undefined} />
+				<CustomerListBox label="Chủ" item={customerOwner || undefined} />
 			</div>
 		</div>
 	);

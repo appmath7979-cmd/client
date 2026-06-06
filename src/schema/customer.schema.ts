@@ -7,7 +7,6 @@ const BetPairSchema = z.object({
 });
 
 const CustomerSchema = z.object({
-	userId: z.string(),
 	fullName: z.string().min(1, "Họ tên không được để trống!"),
 	phoneNumber: z
 		.string()

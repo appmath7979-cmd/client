@@ -10,7 +10,13 @@ import {
 } from "../ui/dropdown-menu";
 import { TrashIcon } from "@phosphor-icons/react/dist/ssr";
 
-export function CustomerListItem() {
+export function CustomerListItem({
+	name,
+	customerId,
+}: {
+	name: string;
+	customerId: string;
+}) {
 	return (
 		<>
 			<Button
@@ -19,8 +25,8 @@ export function CustomerListItem() {
 				size={"lg"}
 				className="w-[calc(100%-40px)] justify-start"
 			>
-				<Link to={"/customer/$customerId"} params={{ customerId: "123" }}>
-					Khách hàng 1
+				<Link to={"/customer/$customerId"} params={{ customerId }}>
+					{name}
 				</Link>
 			</Button>
 			<DropdownMenu>

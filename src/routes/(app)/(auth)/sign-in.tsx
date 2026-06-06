@@ -7,7 +7,6 @@ import { Button } from "#/components/ui/button";
 import { authValueDefaultConstant } from "#/constants/auth.constant";
 import { useAuthQuery } from "#/hooks/query/useAuthQuery";
 import { AuthSignInSchema } from "#/schema/auth.schema";
-import { toast } from "sonner";
 
 export const Route = createFileRoute("/(app)/(auth)/sign-in")({
 	staticData: { isShowHeader: false },
@@ -17,22 +16,17 @@ export const Route = createFileRoute("/(app)/(auth)/sign-in")({
 
 function RouteComponent() {
 	const navigate = useNavigate();
-	const { mutate, isPending, isSuccess, data } = useAuthQuery().signIn;
+	const { mutate, isPending, isSuccess } = useAuthQuery().signIn;
 	const { signInDefaultValue } = authValueDefaultConstant;
 	const form = useForm({
 		defaultValues: signInDefaultValue,
 		validators: {
 			onChange: AuthSignInSchema,
 		},
-		onSubmit: async ({ value }) => {
-			await mutate(value);
-		},
+		onSubmit: async ({ value }) => await mutate(value),
 	});
 
-	if (isSuccess) {
-		toast.success(data.message);
-		navigate({ to: "/home" });
-	}
+	if (isSuccess) navigate({ to: "/home" });
 
 	return (
 		<div className="full-height--header grid place-items-center">

@@ -12,6 +12,10 @@ import { customerConstant } from "#/constants/customer.constant";
 import { regionConstanst } from "#/constants/station.constanst";
 import { CustomerSchema } from "#/schema/customer.schema";
 import { regions } from "#/constants/regions.contanst";
+import { usePostCustomer } from "#/hooks/query/useCustomerQuery";
+import type { ICustomerReq } from "#/types/customer.type";
+import { useAppStore } from "@lavaz/store";
+import { store } from "#/store/store";
 
 export const Route = createFileRoute("/create-customer")({
 	staticData: { title: "Tạo khách hàng mới" },
@@ -19,11 +23,16 @@ export const Route = createFileRoute("/create-customer")({
 });
 
 function RouteComponent() {
+	const [auth] = useAppStore(store.auth, (s) => s.user);
+	const { mutate, isPending } = usePostCustomer();
 	const form = useForm({
 		defaultValues: customerConstant,
 		validators: { onChange: CustomerSchema },
-		onSubmit: (values) => {
-			console.log(values);
+		onSubmit: async (values) => {
+			console.log(auth);
+			const userId = auth?.id || "1f42541d-fd97-4c09-8c75-b027fbf497f0";
+			const inputData: ICustomerReq = { ...values.value, userId };
+			await mutate(inputData);
 		},
 	});
 
@@ -188,11 +197,12 @@ function RouteComponent() {
 				>
 					{([canSubmit, isSubmitting]) => (
 						<Button
+							type="submit"
 							size={"lg"}
-							disabled={!canSubmit || isSubmitting}
+							disabled={!canSubmit || isSubmitting || isPending}
 							className="w-full uppercase"
 						>
-							{isSubmitting ? (
+							{isSubmitting || isPending ? (
 								<>
 									<Spinner />
 									<span>Đang xử lý...</span>
