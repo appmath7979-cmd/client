@@ -1,7 +1,7 @@
 import { useAppStore } from "@lavaz/store";
 import { SidebarOpenIcon } from "lucide-react";
-import { Button } from "../ui/button";
 import { store } from "#/store/store";
+import { Button } from "../ui/button";
 
 export function SideMenuTrigger() {
 	const [, { setIsOpen }] = useAppStore(store.sideMenu, (s) => s);

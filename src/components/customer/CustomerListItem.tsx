@@ -1,6 +1,7 @@
-import { EditIcon } from "lucide-react";
 import { CopyIcon, DotsThreeOutlineVerticalIcon } from "@phosphor-icons/react";
+import { TrashIcon } from "@phosphor-icons/react/dist/ssr";
 import { Link } from "@tanstack/react-router";
+import { EditIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import {
 	DropdownMenu,
@@ -8,7 +9,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { TrashIcon } from "@phosphor-icons/react/dist/ssr";
 
 export function CustomerListItem({
 	name,

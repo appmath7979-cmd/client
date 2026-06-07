@@ -1,7 +1,7 @@
-import { LockKeyIcon, LockKeyOpenIcon } from "@phosphor-icons/react";
 import { useAppStore } from "@lavaz/store";
-import { Button } from "./ui/button";
+import { LockKeyIcon, LockKeyOpenIcon } from "@phosphor-icons/react";
 import { store } from "#/store/store";
+import { Button } from "./ui/button";
 
 export function LockButton() {
 	const [isLock, { setIsLock }] = useAppStore(store.lock, (s) => s.isLock);

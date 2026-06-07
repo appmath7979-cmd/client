@@ -18,8 +18,8 @@ import {
 	TableRow,
 } from "#/components/ui/table";
 import { regionConstanst } from "#/constants/station.constanst";
-import { store } from "#/store/store";
 import { useGetCustomerById } from "#/hooks/query/useCustomerQuery";
+import { store } from "#/store/store";
 
 export const Route = createFileRoute("/(app)/customer/$customerId/")({
 	component: RouteComponent,
@@ -29,7 +29,7 @@ function RouteComponent() {
 	const { customerId } = useParams({ from: "/(app)/customer/$customerId/" });
 	const { data } = useGetCustomerById(
 		customerId,
-		"1f42541d-fd97-4c09-8c75-b027fbf497f0",
+		"749b56f7-d81b-46e1-8dbc-618e295f5855",
 	);
 
 	const [{ regions, value }, { setValue }] = useAppStore(

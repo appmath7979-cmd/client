@@ -1,3 +1,4 @@
+import { useAppStore } from "@lavaz/store";
 import { useForm } from "@tanstack/react-form-start";
 import { createFileRoute } from "@tanstack/react-router";
 import CustomerSwitch from "#/components/customer/create/CustomerSwitch";
@@ -9,13 +10,12 @@ import { Button } from "#/components/ui/button";
 import { Spinner } from "#/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
 import { customerConstant } from "#/constants/customer.constant";
-import { regionConstanst } from "#/constants/station.constanst";
-import { CustomerSchema } from "#/schema/customer.schema";
 import { regions } from "#/constants/regions.contanst";
+import { regionConstanst } from "#/constants/station.constanst";
 import { usePostCustomer } from "#/hooks/query/useCustomerQuery";
-import type { ICustomerReq } from "#/types/customer.type";
-import { useAppStore } from "@lavaz/store";
+import { CustomerSchema } from "#/schema/customer.schema";
 import { store } from "#/store/store";
+import type { ICustomerReq } from "#/types/customer.type";
 
 export const Route = createFileRoute("/create-customer")({
 	staticData: { title: "Tạo khách hàng mới" },
@@ -30,7 +30,7 @@ function RouteComponent() {
 		validators: { onChange: CustomerSchema },
 		onSubmit: async (values) => {
 			console.log(auth);
-			const userId = auth?.id || "1f42541d-fd97-4c09-8c75-b027fbf497f0";
+			const userId = auth?.id || "749b56f7-d81b-46e1-8dbc-618e295f5855";
 			const inputData: ICustomerReq = { ...values.value, userId };
 			await mutate(inputData);
 		},

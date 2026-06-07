@@ -10,7 +10,7 @@ export const Route = createFileRoute("/(app)/customer/")({
 });
 
 function RouteComponent() {
-	const { data } = useGetCustomer("1f42541d-fd97-4c09-8c75-b027fbf497f0");
+	const { data } = useGetCustomer("749b56f7-d81b-46e1-8dbc-618e295f5855");
 
 	const customerOwner = data
 		? data.customers?.filter((item) => item.type === "OWNER")

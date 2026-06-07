@@ -1,22 +1,17 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { FormDevtoolsPanel } from "@tanstack/react-form-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
-import {
-	createRootRoute,
-	HeadContent,
-	Scripts,
-	useMatches,
-} from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "sonner";
 
 import { Header } from "#/components/Header";
-import QueryProvider from "#/providers/QueryProvider";
-
-import appCss from "../styles.css?url";
-import { useTheme } from "#/hooks/useTheme";
 import { SideMenu } from "#/components/side-menu/SideMenu";
 import { RootGuard } from "#/guards/RootGuard";
+import { useTheme } from "#/hooks/useTheme";
+import { AppProvider } from "#/providers/AppProvider";
+
+import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
 	head: () => ({
@@ -51,7 +46,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<QueryProvider>
+				<AppProvider>
 					<SideMenu />
 					{<Header />}
 					<RootGuard>
@@ -78,7 +73,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 						]}
 					/>
 					<Scripts />
-				</QueryProvider>
+				</AppProvider>
 			</body>
 		</html>
 	);

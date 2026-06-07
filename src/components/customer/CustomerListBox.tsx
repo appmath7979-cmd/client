@@ -1,8 +1,8 @@
+import { PlusIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import type { ICustomer } from "#/types/customer.type";
 import { Button } from "../ui/button";
 import { CustomerListItem } from "./CustomerListItem";
-import { PlusIcon } from "@phosphor-icons/react";
 
 export function CustomerListBox({
 	label,

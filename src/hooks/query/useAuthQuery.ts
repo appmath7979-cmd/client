@@ -1,9 +1,9 @@
+import { useAppStore } from "@lavaz/store";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { authApi } from "#/api/auth.api";
-import type { AuthSignInType, IAuthSignUpApi } from "#/types/auth.type";
-import { useAppStore } from "@lavaz/store";
 import { store } from "#/store/store";
+import type { AuthSignInType, IAuthSignUpApi } from "#/types/auth.type";
 
 export function useAuthQuery() {
 	const [, { setIsLoggedIn }] = useAppStore(store.lock, (s) => s.isLoggedIn);

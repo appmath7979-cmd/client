@@ -1,9 +1,9 @@
 import { useAppStore } from "@lavaz/store";
-import { Button } from "./ui/button";
-import { store } from "#/store/store";
-import { cn } from "#/lib/utils";
 import { MoonIcon, SunDimIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
+import { cn } from "#/lib/utils";
+import { store } from "#/store/store";
+import { Button } from "./ui/button";
 
 export default function ModeToggle({ className }: { className?: string }) {
 	const [theme, { setTheme }] = useAppStore(store.theme, (s) => s.theme);

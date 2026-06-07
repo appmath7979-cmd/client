@@ -13,7 +13,9 @@ export function SideMenuFooter() {
 					<AvatarFallback>CN</AvatarFallback>
 				</Avatar>
 				<div className="w-full">
-					<p className="font-bold tracking-tight truncate capitalize">Display name</p>
+					<p className="font-bold tracking-tight truncate capitalize">
+						Display name
+					</p>
 					<p className="font-semibold text-xs text-muted-foreground uppercase">
 						role
 					</p>

@@ -1,11 +1,11 @@
-import { useRef } from "react";
 import { useAppStore } from "@lavaz/store";
-import { SideMenuHeader } from "./SideMenuHeader";
-import { store } from "#/store/store";
+import { useRef } from "react";
 import { useClickOutside } from "#/hooks/useClickOutside";
-import { SideMenuFooter } from "./SideMenuFooter";
 import { cn } from "#/lib/utils";
+import { store } from "#/store/store";
 import { SideMenuBody } from "./SideMenuBody";
+import { SideMenuFooter } from "./SideMenuFooter";
+import { SideMenuHeader } from "./SideMenuHeader";
 
 export function SideMenu() {
 	const [isOpen, { setIsOpen }] = useAppStore(store.sideMenu, (s) => s);

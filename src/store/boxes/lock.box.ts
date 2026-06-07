@@ -15,5 +15,6 @@ const initialState = {
 export const lockBox = createBox(initialState, (set) => ({
 	setIsLock: () => set((prev) => ({ ...prev, isLock: !prev.isLock })),
 	setIsActive: () => set((prev) => ({ ...prev, isActive: !prev.isActive })),
-	setIsLoggedIn: () => set((prev) => ({ ...prev, isLoggedIn: !prev.isLoggedIn })),
+	setIsLoggedIn: () =>
+		set((prev) => ({ ...prev, isLoggedIn: !prev.isLoggedIn })),
 })).create();
