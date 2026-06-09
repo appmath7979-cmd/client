@@ -6,6 +6,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Toaster } from "sonner";
 
 import { Header } from "#/components/Header";
+import Navigation from "#/components/navigation/Navigation";
 import { SideMenu } from "#/components/side-menu/SideMenu";
 import { RootGuard } from "#/guards/RootGuard";
 import { useTheme } from "#/hooks/useTheme";
@@ -52,6 +53,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 					<RootGuard>
 						<main>{children}</main>
 					</RootGuard>
+					<Navigation />
 					<Toaster richColors expand={false} closeButton />
 					<TanStackDevtools
 						config={{

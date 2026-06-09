@@ -1,7 +1,9 @@
 type MessageType = { message: string };
 type DetailListType = {
-	total: number;
-	page: number;
-	totalPage: number;
+  total: number;
+  page: number;
+  totalPage: number;
 };
-export type { MessageType, DetailListType };
+type MessageInputType = MessageType & { status: "success" | "error" };
+
+export type { MessageType, DetailListType, MessageInputType };

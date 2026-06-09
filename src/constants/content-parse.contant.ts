@@ -31,6 +31,45 @@ const stationList = [
 	"dno",
 ];
 
+const southStationList = [
+	"tg",
+	"kg",
+	"tp",
+	"dt",
+	"cm",
+	"vt",
+	"bli",
+	"dl",
+	"ct",
+	"st",
+	"dn",
+	"tn",
+	"ag",
+	"bt",
+	"vl",
+	"bd",
+	"tv",
+	"nt",
+	"la",
+	"hg",
+	"bp",
+];
+
+const centralStationList = [
+	"kh",
+	"kt",
+	"th",
+	"py",
+	"dn",
+	"qb",
+	"qt",
+	"gl",
+	"nt",
+	"qn",
+	"dno",
+	"dl",
+];
+
 const twoTargetForSyntaxList = ["b", "lo", "dd", "da", "dx"];
 
 const threeTargetForSyntaxList = [
@@ -51,4 +90,6 @@ export {
 	twoTargetForSyntaxList,
 	threeTargetForSyntaxList,
 	fourTargetForSyntaxList,
+	southStationList,
+	centralStationList,
 };

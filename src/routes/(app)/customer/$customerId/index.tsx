@@ -20,6 +20,7 @@ import {
 import { regionConstanst } from "#/constants/station.constanst";
 import { useGetCustomerById } from "#/hooks/query/useCustomerQuery";
 import { store } from "#/store/store";
+import { useGetAllTrans } from "#/hooks/query/useTransQuery";
 
 export const Route = createFileRoute("/(app)/customer/$customerId/")({
 	component: RouteComponent,
@@ -32,10 +33,15 @@ function RouteComponent() {
 		"749b56f7-d81b-46e1-8dbc-618e295f5855",
 	);
 
+	const { data: trans } = useGetAllTrans(customerId);
+
 	const [{ regions, value }, { setValue }] = useAppStore(
 		store.regionDropdown,
 		(s) => s,
 	);
+
+	console.log(trans);
+	const transactions = trans?.transactions;
 
 	return (
 		<div className="py-4">
@@ -75,44 +81,16 @@ function RouteComponent() {
 						<TableRow>
 							<TableCell>
 								<p className="flex justify-between items-center">
-									<span>2cb</span>
-									<span>113</span>
-								</p>
-								<p className="flex justify-between items-center">
-									<span>2cb</span>
-									<span>113</span>
-								</p>
-								<p className="flex justify-between items-center">
-									<span>2cb</span>
-									<span>113</span>
-								</p>
-							</TableCell>
-							<TableCell className="border-x">
-								<p className="flex justify-between items-center">
-									<span>2cb</span>
-									<span>113</span>
-								</p>
-								<p className="flex justify-between items-center">
-									<span>2cb</span>
-									<span>113</span>
-								</p>
-								<p className="flex justify-between items-center">
-									<span>2cb</span>
-									<span>113</span>
-								</p>
-							</TableCell>
-							<TableCell>
-								<p className="flex justify-between items-center">
-									<span>2cb</span>
-									<span>113</span>
-								</p>
-								<p className="flex justify-between items-center">
-									<span>2cb</span>
-									<span>113</span>
-								</p>
-								<p className="flex justify-between items-center">
-									<span>2cb</span>
-									<span>113</span>
+									{transactions?.map((item) => (
+										<div className="w-full">
+											{item.content.map((con) => (
+												<div className="flex justify-between items-baseline">
+													<p>{con.syntax}</p>
+													<p>{con.score}</p>
+												</div>
+											))}
+										</div>
+									))}
 								</p>
 							</TableCell>
 						</TableRow>

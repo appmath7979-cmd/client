@@ -1,17 +1,15 @@
-import type { RegionType } from "./reward.type";
-
-interface IRegionSelectTrans {
+interface ITransContent {
+	region: string;
 	station: string;
-	region: RegionType;
-	valueString: string;
-	syntaxes: string[];
-	scores: number[];
-	targets: number[];
+	target: number | number[];
+	syntax: string;
+	score: number;
 }
 
-interface ITransaction {
+interface ITransReq {
 	release: string;
-	content: IRegionSelectTrans;
+	content: ITransContent[];
+	customerId: string;
 }
 
-export type { IRegionSelectTrans, ITransaction };
+export type { ITransContent, ITransReq };
