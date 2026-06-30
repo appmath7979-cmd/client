@@ -1,361 +1,293 @@
 import { useAppStore } from "@lavaz/store";
-import { QuestionMarkIcon } from "@phosphor-icons/react";
-import { createFileRoute, useParams } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-
-import { TutorialDialog } from "#/components/tutorials/TutorialDialog";
+import { createFileRoute } from "@tanstack/react-router";
+import { useCallback, useEffect, useState } from "react";
+import { RegionDropdown } from "#/components/dropdowns/RegionDropdown";
+import { MessagItem } from "#/components/messages/MessagItem";
 import { Button } from "#/components/ui/button";
-import { Dialog, DialogTrigger } from "#/components/ui/dialog";
 import { Label } from "#/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "#/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "#/components/ui/tooltip";
+import { Spinner } from "#/components/ui/spinner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
 import { Textarea } from "#/components/ui/textarea";
-import {
-  centralStationList,
-  fourTargetForSyntaxList,
-  southStationList,
-  stationList,
-  threeTargetForSyntaxList,
-  twoTargetForSyntaxList,
-} from "#/constants/content-parse.contant";
-import { useDebounce } from "#/hooks/useDebounce";
-import { cn } from "#/lib/utils";
-import { formatDate } from "#/lib/format-date";
-import type { ITransContent } from "#/types/transaction.type";
-import { store } from "#/store/store";
+import { stationList } from "#/constants/content-parse.contant";
+import { useGetCustomerById } from "#/hooks/query/useCustomerQuery";
 import { usePostTrans } from "#/hooks/query/useTransQuery";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "#/components/ui/dropdown-menu";
-import { regionConstanst } from "#/constants/station.constanst";
+import { useDebounce } from "#/hooks/useDebounce";
+import { flattenMessage } from "#/lib/flattenMessage";
+import { formatDate } from "#/lib/format-date";
+import { cn } from "#/lib/utils";
 import { validateMessage } from "#/lib/validateMessage";
-import type { MessageInputType } from "#/types/common.type";
+import { store } from "#/store/store";
+import type {
+	MessageInputType,
+	StatusValidatedType,
+} from "#/types/common.type";
 
 export const Route = createFileRoute("/(app)/customer/$customerId/add")({
-  component: RouteComponent,
+	staticData: { title: "Thêm tin nhắn" },
+	component: RouteComponent,
+	context: ({ params }) => params,
 });
 
 function RouteComponent() {
-  const { customerId } = useParams({ from: "/(app)/customer/$customerId/add" });
-  const [{ regions, value: regionValue }, { setValue: onSetValue }] =
-    useAppStore(store.regionDropdown, (s) => s);
-  const [value, setValue] = useState<string>("");
-  const [messages, setMessage] = useState<MessageInputType>({
-    message: "Chưa nhập tin nhắn!",
-    status: "error",
-  });
-  const [valueValidated, setValueValidated] = useState<Array<string[]>>([]);
-  const [parsed, setParsed] = useState<Array<Array<string | number>>>([]);
-  const { mutate } = usePostTrans(customerId);
+	const { customerId } = Route.useParams();
+	const [value, setValue] = useState<string>("");
+	const [region] = useAppStore(store.regionDropdown, (s) => s.value);
+	const [notice, setNotice] = useState<MessageInputType>({
+		message: "",
+		status: "error",
+	});
+	const [listValues, setListValues] = useState<Array<string[]>>([]);
+	const [statusValidate, setStatusValidate] = useState<StatusValidatedType>({
+		status: "error",
+	});
+	const [canSubmit, setCanSubmit] = useState<boolean>(false);
+	const [flatMessage, setFlatMessage] = useState<Array<string[]>>([]);
 
-  const debounce = useDebounce(value);
+	const debounced = useDebounce(value, 500);
 
-  function checkValue(values: Array<string[]>) {
-    const result = values.flatMap((subArr) => {
-      const station = subArr[0]; // 'dn'
-      const pairs = [];
+	const { data } = useGetCustomerById(customerId);
+	const { mutate, isPending } = usePostTrans(customerId);
 
-      // Duyệt từ phần tử thứ 2 (index 1) đến cuối
-      // Chúng ta nhảy bước 2 để lấy cặp (số, cú pháp)
-      for (let i = 1; i < subArr.length; i += 2) {
-        const number = subArr[i];
-        const syntax = subArr[i + 1];
+	const handleEditValue = useCallback(
+		(edited: string, staleValueIndex: number) => {
+			if (listValues[staleValueIndex].join(" ") === edited) return;
+			const updatedList = [...listValues];
+			updatedList[staleValueIndex] = edited.split(" ");
+			setValue(updatedList.join(" "));
+		},
+		[listValues],
+	);
 
-        // Nếu có đủ cặp thì thêm vào kết quả
-        if (number !== undefined && syntax !== undefined) {
-          pairs.push([station, number, syntax]);
-        }
-      }
-      return pairs;
-    });
+	const handleMessage = (arrValue: Array<string[]>) => {
+		const flatten = flattenMessage(arrValue);
+		setFlatMessage(flatten);
+		setCanSubmit(true);
+	};
 
-    console.log(result);
+	const handleSubmit = async () => {
+		const date = formatDate(new Date());
+		if (!date || !data) return;
 
-    const parseValue = result.map((subArr) =>
-      subArr.map((item) => {
-        if (!item || item.trim() === "") return item;
+		const currentTime = new Date().toLocaleTimeString();
 
-        if (/[a-zA-Z]/.test(item) && /\d/.test(item)) {
-          const letter = item.replace(/\d/g, "");
-          const number = item.replace(/[a-zA-Z]/g, "");
-          return [letter, number] as const;
-        } else if (/^\d+$/.test(item)) return Number(item);
-        else return item;
-      }),
-    );
+		const regionMapper: Record<string, "NORTH" | "SOUTH" | "CENTRAL"> = {
+			"mien-bac": "NORTH",
+			"mien-nam": "SOUTH",
+			"mien-trung": "CENTRAL",
+		};
 
-    // 2. Bước Format (xử lý tổ hợp số)
-    // Sử dụng flatMap để làm phẳng các cặp tổ hợp ngay lập tức
-    const processed = parseValue.flatMap((subArray) => {
-      const numbers = subArray.filter(
-        (val): val is number => typeof val === "number",
-      );
-      const nested = subArray.filter((val) => Array.isArray(val)) as (
-        | string
-        | number
-      )[][];
-      const others = subArray.filter(
-        (val) => typeof val !== "number" && !Array.isArray(val) && val !== "",
-      );
+		const apiRegion = regionMapper[region];
+		if (!apiRegion) return;
 
-      if (numbers.length >= 2) {
-        const combinations: any[] = [];
-        for (let i = 0; i < numbers.length; i++) {
-          for (let j = i + 1; j < numbers.length; j++) {
-            combinations.push([...others, [numbers[i], numbers[j]], ...nested]);
-          }
-        }
-        return combinations;
-      }
-      return [[...others, ...numbers, ...nested]];
-    });
+		await mutate({
+			region: apiRegion,
+			customerId,
+			release: date,
+			type: "XAC",
+			createTime: currentTime,
+			content: flatMessage,
+		});
+	};
 
-    const finalResults = processed.map((item) => {
-      if (!Array.isArray(item)) return item;
+	useEffect(() => {
+		const formatMessage = () => {
+			if (!debounced.trim()) return;
 
-      return item.flatMap((element) => {
-        // 1. Nếu là mảng số [10, 20] -> giữ nguyên
-        if (
-          Array.isArray(element) &&
-          element.every((e) => typeof e === "number")
-        ) {
-          return [element];
-        }
+			const text = debounced.trim().toLocaleLowerCase();
+			let arrayValue = text
+				.replace(/[^a-zA-Z0-9\s;à-ỹÀ-ỸđĐ]]/g, " ")
+				.replaceAll(/[,._+=]/g, " ")
+				.split(/\s+/g);
 
-        // 2. Nếu là mảng KHÔNG PHẢI số (như ["b", 5]) -> trải phẳng nó ra
-        if (Array.isArray(element)) {
-          return element;
-        }
+			const replaceMap = {
+				da: ["đá", "đa", "đã", "dã", "dat"],
+				dau: ["đầu", "đau", "đâu", "dầu", "dàu"],
+				duoi: ["đuôi", "đui", "đb", "đề", "db", "de", "dê", "dề", "đê"],
+				b: ["bao", "bl", "baolo", "blo", "baol", "blô", "bo", "lo", "lô"],
+				k: ["đến", "den", "đén", "đen", "kéo", "keo", "dén"],
+				bd: ["baodao", "đảo", "đao"],
+				xduoi: ["xdui", "xduoi", "xđuôi", "xđui", "xđuoi"],
+				xdau: ["xdau", "xđầu", "xđau"],
+			};
 
-        // 3. Các thành phần đơn lẻ (như "tp", 10) -> trả về dưới dạng mảng để flatMap trải ra
-        return element;
-      });
-    });
-    setParsed(finalResults);
-    // const finalResults = values.flatMap((subArr) => {
-    // 	const station = subArr[0];
-    // 	const results: any[] = [];
+			const allWords = Object.values(replaceMap).flat();
+			const globalRegex = new RegExp(`(${allWords.join("|")})`, "gi");
 
-    // 	// Duyệt theo cặp [số, cú pháp]
-    // 	for (let i = 1; i < subArr.length; i += 2) {
-    // 		const numRaw = subArr[i];
-    // 		const synRaw = subArr[i + 1];
-    // 		if (!numRaw || !synRaw) continue;
+			const wordLookup: Record<string, string> = {};
+			for (const [correct, wrongs] of Object.entries(replaceMap)) {
+				wrongs.forEach((wrong) => {
+					wordLookup[wrong.toLowerCase()] = correct;
+				});
+			}
 
-    // 		// 1. Tách cú pháp: 'b10' -> ['b', '10']
-    // 		const synMatch = synRaw.match(/([a-zA-Z]+)(\d+)?/);
-    // 		const syntax = synMatch ? synMatch[1] : synRaw;
+			arrayValue = arrayValue.map((item) =>
+				item.replace(
+					globalRegex,
+					(match) => wordLookup[match.toLowerCase()] || match,
+				),
+			);
 
-    // 		// 2. Tách số (nếu có nhiều số được ngăn cách bởi dấu chấm/khoảng trắng)
-    // 		const numbers = numRaw
-    // 			.split(/[\s.]+/)
-    // 			.map(Number)
-    // 			.filter((n) => !isNaN(n));
+			for (let i = 0; i < arrayValue.length; i++) {
+				const currentValue = arrayValue[i];
 
-    // 		// 3. Xử lý tổ hợp (nếu có từ 2 số trở lên)
-    // 		if (numbers.length >= 2) {
-    // 			for (let idx1 = 0; idx1 < numbers.length; idx1++) {
-    // 				for (let idx2 = idx1 + 1; idx2 < numbers.length; idx2++) {
-    // 					results.push([station, [numbers[idx1], numbers[idx2]], syntax]);
-    // 				}
-    // 			}
-    // 		} else {
-    // 			results.push([station, numbers[0], syntax]);
-    // 		}
-    // 	}
-    // 	return results;
-    // });
+				if (
+					!stationList.includes(currentValue) &&
+					currentValue !== "mb" &&
+					/^[a-zA-Z]+$/.test(currentValue) &&
+					currentValue !== "k" &&
+					currentValue !== "n"
+				) {
+					if (
+						/^\d+$/.test(arrayValue[i + 1]) ||
+						/^\d+n$/.test(arrayValue[i + 1])
+					) {
+						arrayValue[i + 1] = currentValue + arrayValue[i + 1];
+						arrayValue.splice(i, 1);
+						i--;
+					}
+				}
 
-    // console.log("Kết quả cuối cùng:", finalResults);
-  }
+				if (arrayValue[i + 1] === "n") {
+					arrayValue[i + 1] = currentValue + arrayValue[i + 1];
+					arrayValue.splice(i, 1);
+					i--;
+				}
+			}
 
-  async function handleSave() {
-    const date = formatDate(new Date());
-    if (!date) return;
+			// Đã tối ưu biến formatted gọn gàng hơn
+			const formatted =
+				/\s$/.test(debounced) || /\[,.]$/.test(debounced)
+					? `${arrayValue.join(" ")} `
+					: arrayValue.join(" ");
 
-    const regionName =
-      regionValue === "mien-bac"
-        ? "NORTH"
-        : regionValue === "mien-nam"
-          ? "SOUTH"
-          : "CENTRAL";
+			setValue(formatted);
+		};
 
-    if (parsed.length === 0) return;
+		formatMessage();
+		setCanSubmit(false);
+		setFlatMessage([]);
+	}, [debounced]);
 
-    const data: ITransContent[] = parsed.map((item) => {
-      return {
-        region: regionName,
-        score: Number(item[3]),
-        station: String(item[0]),
-        syntax: String(item[2]),
-        target: Array.isArray(item[1])
-          ? item[1].map((item) => Number(item))
-          : Number(item[1]),
-      };
-    });
+	useEffect(() => {
+		const { validatedValue, notice, statusValidated } = validateMessage({
+			value: debounced,
+			region,
+		});
 
-    await mutate({ release: date, content: data, customerId });
-  }
+		setNotice(notice);
+		setListValues(validatedValue);
+		setStatusValidate(statusValidated);
+	}, [debounced, region]);
 
-  useEffect(() => {
-    if (!debounce.trim()) {
-      setMessage({ message: "Chưa nhập tin nhắn!", status: "error" });
-      return;
-    }
-    const { messages } = validateMessage({
-      value: debounce,
-      region: regionValue,
-    });
-
-    setMessage(messages);
-  }, [debounce, regionValue]);
-
-  useEffect(() => {
-    if (valueValidated.length === 0) {
-      setParsed([]);
-      return;
-    }
-  }, [valueValidated]);
-
-  return (
-    <Dialog>
-      <div className="py-2">
-        <div className="flex justify-end items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant={"outline"}>
-                {regionConstanst[regionValue]}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              {regions.map((region) => (
-                <DropdownMenuItem
-                  key={region}
-                  onClick={() => onSetValue(region)}
-                >
-                  {regionConstanst[region]}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button
-            variant={"outline"}
-            disabled={
-              valueValidated.length === 0 || messages.status === "error"
-            }
-            onClick={() => checkValue(valueValidated)}
-          >
-            Kiểm tra
-          </Button>
-          <Button
-            disabled={messages.status === "error" || parsed.length === 0}
-            onClick={handleSave}
-          >
-            Lưu tin
-          </Button>
-        </div>
-        <div className="mt-4 space-y-8">
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <Button
-                variant={"outline"}
-                size={"sm"}
-                asChild
-                className="uppercase"
-              >
-                <Label htmlFor="text-area">nhập tin nhắn</Label>
-              </Button>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DialogTrigger asChild>
-                    <Button variant={"ghost"} size={"icon-sm"}>
-                      <QuestionMarkIcon weight="fill" />
-                    </Button>
-                  </DialogTrigger>
-                </TooltipTrigger>
-                <TooltipContent side="left">Hướng dẫn</TooltipContent>
-              </Tooltip>
-            </div>
-            <Textarea
-              id="text-area"
-              placeholder="VD: tp 10 b10..."
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              className="resize-none"
-            />
-          </div>
-          <em
-            className={cn(
-              "px-2 py-1.5 rounded-md border block text-sm",
-              messages.message && messages.status === "error"
-                ? "text-destructive"
-                : "text-green-600",
-            )}
-          >
-            {messages.message}
-          </em>
-          <div className="border rounded-md overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="*:text-center">
-                  <TableHead>Tên đài</TableHead>
-                  <TableHead>Số/Cặp đánh</TableHead>
-                  <TableHead>Cú pháp</TableHead>
-                  <TableHead>Điểm</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {parsed.length > 0 ? (
-                  parsed.map((parse, i) => {
-                    const keyName = `${parse.join("-")}-${i}`;
-                    return (
-                      <TableRow key={keyName}>
-                        {parse.map((item, index) => {
-                          const key =
-                            typeof item === "number"
-                              ? `${item * index}-${i}-${index}`
-                              : Array.isArray(item)
-                                ? `${item.join("-")}-${i}-${index}`
-                                : `${item}-${i}`;
-                          return (
-                            <TableCell key={key} className="text-center">
-                              {Array.isArray(item) ? item.join("-") : item}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    );
-                  })
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={4}
-                      className="text-center font-semibold text-muted-foreground"
-                    >
-                      Chưa có tin nhắn
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
-      </div>
-      <TutorialDialog />
-    </Dialog>
-  );
+	return (
+		<div className="py-4 space-y-4">
+			<div className="flex justify-end items-center gap-2">
+				<RegionDropdown />
+				<Button
+					variant={"outline"}
+					disabled={notice.status !== "success"}
+					onClick={() => handleMessage(listValues)}
+				>
+					Xử lý tin nhắn
+				</Button>
+				<Button disabled={!canSubmit} onClick={() => handleSubmit()}>
+					Lưu tin nhắn
+				</Button>
+			</div>
+			<div>
+				<div className="space-y-2">
+					<Label htmlFor="msgInput">Nhập tin nhắn</Label>
+					<Textarea
+						id="msgInput"
+						value={value}
+						onChange={(e) => setValue(e.target.value)}
+						placeholder="Nhập tin nhắn, ví dụ: dn 79 b100,..."
+						className="min-h-20"
+					/>
+				</div>
+				<p
+					className={cn(
+						"font-semibold mt-2",
+						notice.status === "error" && "text-destructive",
+						notice.status === "success" && "text-green-600",
+					)}
+				>
+					{notice.message ?? "Chưa nhập tin nhắn!"}
+				</p>
+			</div>
+			<Tabs defaultValue="message">
+				<TabsList className="w-full flex justify-center h-10">
+					<TabsTrigger value="message">Chỉnh sửa tin nhắn</TabsTrigger>
+					<TabsTrigger value="flatten">Kiểm tra tin nhắn</TabsTrigger>
+				</TabsList>
+				<TabsContent value="message">
+					<ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+						{listValues.length > 0 &&
+							listValues.map((item, index) => {
+								const key = `value-${index}`;
+								return (
+									<li key={key}>
+										<MessagItem
+											content={item.join(" ")}
+											statusValidated={statusValidate}
+											isCurrentError={index === listValues.length - 1}
+											index={index}
+											onEditValue={handleEditValue}
+										/>
+									</li>
+								);
+							})}
+					</ul>
+				</TabsContent>
+				<TabsContent
+					value="flatten"
+					className="rounded-md overflow-hidden text-center shadow-md dark:shadow-gray-800"
+				>
+					<div className="flex justify-between items-center bg-secondary px-4 py-2 [&_p]:first-letter:uppercase [&_p]:w-1/4 text-center">
+						<p>Đài</p>
+						<p>Số/Cặp</p>
+						<p>Cú pháp</p>
+						<p>Điểm</p>
+					</div>
+					<ul className="flex flex-col [&_>_li:nth-child(even)]:bg-secondary/20">
+						{(flatMessage.length > 0 &&
+							flatMessage.map((item, index) => {
+								const key = `${item.join("-")}-${index}`;
+								return (
+									<li
+										key={key}
+										className="flex justify-between items-center px-4 py-2 rounded-md"
+									>
+										{item.map((val, i) => {
+											const keyChild = `${key}-${i}`;
+											return (
+												<p key={keyChild} className="w-1/4 text-center">
+													{val}
+												</p>
+											);
+										})}
+									</li>
+								);
+							})) || (
+							<li className="text-muted-foreground font-semibold text-center p-2">
+								Tin nhắn chưa có hoặc đã thay đổi, vui lòng kiểm tra lại tin
+								nhắn!
+							</li>
+						)}
+					</ul>
+				</TabsContent>
+			</Tabs>
+			{isPending && (
+				<div className="fixed w-full h-dvh top-0 left-0 bg-background/80 z-1000 grid place-items-center">
+					<div className="bg-background shadow-md dark:shadow-gray-800 p-8 rounded-md w-md text-center space-y-4">
+						<h2 className="text-2xl font-bold text-primary">TOANHOC</h2>
+						<div className="flex justify-center items-center gap-1 text-lg">
+							<Spinner />
+							<p className="font-semibold">Đang xử lý...</p>
+						</div>
+					</div>
+				</div>
+			)}
+		</div>
+	);
 }

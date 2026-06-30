@@ -1,5 +1,5 @@
 import type { MessageType } from "#/types/common.type";
-import type { ITransReq } from "#/types/transaction.type";
+import type { ITransReq, ITransRes } from "#/types/transaction.type";
 import { baseApi } from "./base.api";
 
 export const transApi = {
@@ -10,7 +10,7 @@ export const transApi = {
 	},
 	get: async (customerId: string) => {
 		const res = await baseApi.get(`/transaction?customerId=${customerId}`);
-		const data = res.data;
+		const data: ITransRes = res.data;
 		return data;
 	},
 };

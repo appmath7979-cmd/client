@@ -1,147 +1,175 @@
 import { useAppStore } from "@lavaz/store";
 import { PlusIcon } from "@phosphor-icons/react";
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { TransactionBox } from "#/components/customer/id/TransactionBox";
+import { DatePicker } from "#/components/DatePicker";
+import { RegionDropdown } from "#/components/dropdowns/RegionDropdown";
+import { TransactionDetail } from "#/components/transactions/TransactionDetail";
 import { Button } from "#/components/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "#/components/ui/dropdown-menu";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableFooter,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "#/components/ui/table";
-import { regionConstanst } from "#/constants/station.constanst";
+import { Skeleton } from "#/components/ui/skeleton";
 import { useGetCustomerById } from "#/hooks/query/useCustomerQuery";
-import { store } from "#/store/store";
 import { useGetAllTrans } from "#/hooks/query/useTransQuery";
+import { formatDate } from "#/lib/format-date";
+import { transactionCalculator } from "#/lib/transaction";
+import { store } from "#/store/store";
+import type { RegionApiType, RegionType } from "#/types/reward.type";
+import type { ITransItemRes } from "#/types/transaction.type";
 
 export const Route = createFileRoute("/(app)/customer/$customerId/")({
+	staticData: { title: "Khách hàng" },
 	component: RouteComponent,
 });
 
+const regionMapper: Record<RegionApiType, RegionType> = {
+	NORTH: "mien-bac",
+	CENTRAL: "mien-trung",
+	SOUTH: "mien-nam",
+};
+
 function RouteComponent() {
+	const [date, setDate] = useState<Date | undefined>(() => {
+		if (typeof window === "undefined") return;
+		return new Date();
+	});
+	const [region] = useAppStore(store.regionDropdown, (s) => s.value);
+
 	const { customerId } = useParams({ from: "/(app)/customer/$customerId/" });
-	const { data } = useGetCustomerById(
-		customerId,
-		"749b56f7-d81b-46e1-8dbc-618e295f5855",
-	);
+	const { data: cus } = useGetCustomerById(customerId);
+
+	const convertDate = formatDate(date);
 
 	const { data: trans } = useGetAllTrans(customerId);
 
-	const [{ regions, value }, { setValue }] = useAppStore(
-		store.regionDropdown,
-		(s) => s,
-	);
+	// 1. Lọc danh sách giao dịch theo vùng miền hiện tại trước
+	const transactions = useMemo(() => {
+		return (
+			trans?.transactions.filter(
+				(item) =>
+					regionMapper[item.region] === region && item.release === convertDate,
+			) ?? []
+		);
+	}, [trans, region, convertDate]);
 
-	console.log(trans);
-	const transactions = trans?.transactions;
+	// 2. TỐI ƯU: Tạo một Map index theo `createdAt` cho loại giao dịch "CO" để tìm kiếm O(1)
+	const coTransactionsMap = useMemo(() => {
+		const map = new Map<string, ITransItemRes>();
+		transactions.forEach((item) => {
+			if (item.type === "CO") {
+				map.set(item.createTime, item);
+			}
+		});
+		return map;
+	}, [transactions]);
+
+	// 3. Tách danh sách XAC để render gọn hơn ở phần Chi tiết
+	const xacTransactions = useMemo(() => {
+		return transactions.filter((item) => item.type === "XAC");
+	}, [transactions]);
+
+	const [xacList, coList] = useMemo(() => {
+		return transactionCalculator(transactions);
+	}, [transactions]);
+
+	const [totalXac, totalCo] = useMemo(() => {
+		const totalXac = xacList.reduce((total, item) => total + item[1], 0);
+		const totalCo = coList.reduce((total, item) => total + item[1], 0);
+		return [totalXac, totalCo];
+	}, [xacList, coList]);
 
 	return (
 		<div className="py-4">
 			<div className="flex justify-between items-center">
-				<p className="font-semibold text-lg">{data?.customer.fullName}</p>
-				<div className="flex justify-end items-center gap-1">
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant={"outline"}>{regionConstanst[value]}</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent>
-							{regions.map((region) => (
-								<DropdownMenuItem key={region} onClick={() => setValue(region)}>
-									{regionConstanst[region]}
-								</DropdownMenuItem>
-							))}
-						</DropdownMenuContent>
-					</DropdownMenu>
+				{cus ? (
+					<h2 className="font-medium">{cus?.customer.fullName}</h2>
+				) : (
+					<Skeleton className="h-4 w-30" />
+				)}
+				<div className="flex items-center gap-2">
+					<RegionDropdown />
+					<DatePicker date={date} onSelectDate={setDate} />
 					<Button asChild>
 						<Link to="/customer/$customerId/add" params={{ customerId }}>
 							<PlusIcon />
-							<span>Nhập lệnh mới</span>
+							<span>Thêm lệnh mới</span>
 						</Link>
 					</Button>
 				</div>
 			</div>
-			<div className="sticky top-0 mt-4 border rounded-lg shadow-md bg-accent">
-				<Table>
-					<TableHeader>
-						<TableRow className="[&_th]:font-semibold [&_th]:text-muted-foreground text-lg uppercase *:text-center">
-							<TableHead>Xác</TableHead>
-							<TableHead className="border-x">qua cò</TableHead>
-							<TableHead>trúng</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						<TableRow>
-							<TableCell>
-								<p className="flex justify-between items-center">
-									{transactions?.map((item) => (
-										<div className="w-full">
-											{item.content.map((con) => (
-												<div className="flex justify-between items-baseline">
-													<p>{con.syntax}</p>
-													<p>{con.score}</p>
-												</div>
-											))}
-										</div>
-									))}
-								</p>
-							</TableCell>
-						</TableRow>
-					</TableBody>
-					<TableFooter>
-						<TableRow>
-							<TableCell colSpan={3}>Thu: 900 x 100% = 900</TableCell>
-						</TableRow>
-					</TableFooter>
-				</Table>
+
+			<div className="rounded-lg overflow-hidden border shadow-md mt-4">
+				<div className="bg-muted/50 text-center flex items-center [&_p]:w-1/3 [&_p]:py-2 uppercase font-semibold border-b">
+					<p>Xác</p>
+					<p>Cò</p>
+					<p>Trúng</p>
+				</div>
+				<div className="h-50 overflow-y-auto flex relative">
+					{transactions.length === 0 ? (
+						<p className="size-full grid place-items-center">Chưa có dữ liệu</p>
+					) : (
+						<>
+							<TransactionBox name="xac" transactions={xacList} />
+							<TransactionBox
+								name="co"
+								transactions={coList}
+								className="border-x"
+							/>
+						</>
+					)}
+					<div className="absolute bottom-0 left-0 bg-background shadow-2xl border w-full flex items-center justify-between text-center [&_p]:w-1/3 font-semibold [&_p]:p-2">
+						<p>{totalXac}</p>
+						<p className="border-x">{totalCo}</p>
+						<p></p>
+					</div>
+				</div>
+			</div>
+
+			<div className="border shadow-md dark:shadow-gray-800 px-4 py-2 rounded-md mt-4 font-semibold">
+				{!xacList || xacList.length === 0 ? (
+					<p>Kết quả: Chưa có thông tin</p>
+				) : (
+					<p>Thu</p>
+				)}
 			</div>
 
 			<div className="mt-8 space-y-4">
-				<h2 className="font-semibold text-lg uppercase">chi tiết</h2>
-
-				<div className="border rounded-lg shadow-md bg-background">
-					<Table className="">
-						<TableHeader>
-							<TableRow>
-								<TableHead>1. 3d 44 b</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							<TableRow>
-								<TableCell>
-									<div className="flex justify-between items-center">
-										<p>2CB</p>
-										<p>49</p>
-									</div>
-								</TableCell>
-								<TableCell className="border-x">
-									<div className="flex justify-between items-center">
-										<p>2CB</p>
-										<p>49</p>
-									</div>
-								</TableCell>
-								<TableCell>
-									<div className="flex justify-between items-center">
-										<p>2CB</p>
-										<p>49</p>
-									</div>
-								</TableCell>
-							</TableRow>
-						</TableBody>
-						<TableFooter>
-							<TableRow>
-								<TableCell colSpan={3}>Thu: 756 x 100% = 756</TableCell>
-							</TableRow>
-						</TableFooter>
-					</Table>
+				<div className="flex justify-between items-center">
+					<h2 className="font-semibold text-lg">Chi tiết</h2>
+					<Button
+						variant="ghost"
+						className="text-primary hover:text-primary"
+						asChild
+					>
+						<Link
+							to="/customer/$customerId/transactions"
+							params={{ customerId }}
+						>
+							Xem tất cả
+						</Link>
+					</Button>
 				</div>
+
+				<ul className="space-y-8">
+					{xacTransactions.map((trans, index) => {
+						// TỐI ƯU: Lấy trực tiếp từ Map, không tốn vòng lặp .find() nữa
+						const findCo = coTransactionsMap.get(trans.createTime)?.content;
+
+						return (
+							<li
+								key={trans.id}
+								className="border rounded-md shadow-md dark:shadow-gray-800"
+							>
+								<TransactionDetail
+									transactionId={trans.id}
+									contents={trans.content}
+									index={index}
+									coContents={findCo}
+									customerId={customerId}
+								/>
+							</li>
+						);
+					})}
+				</ul>
 			</div>
 		</div>
 	);

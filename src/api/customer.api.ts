@@ -1,35 +1,27 @@
 import type {
-	ICustomerList,
-	ICustomerReq,
-	ICustomerRes,
+	CreateCustomerType,
+	ICustomerDetailsRes,
+	ICustomerListApi,
 } from "#/types/customer.type";
 import { baseApi } from "./base.api";
 
 export const customerApi = {
-	getAllCustomerForAdmin: async () => {
-		const res = await baseApi.get("/customer");
-		const data: ICustomerList = res.data;
+	getAllCustomer: async (userId: string) => {
+		const res = await baseApi.get("/customer", { data: userId });
+
+		const data: ICustomerListApi = res.data;
 		return data;
 	},
-	getAllCustomerForUser: async (
-		userId: string,
-		page: number = 1,
-		limit: number = 10,
-	) => {
-		const res = await baseApi.get(
-			`/customer?page=${page}&limit=${limit}&userId=${userId}`,
-		);
-		const data: ICustomerList = res.data;
+	getCustomerById: async (customerId: string) => {
+		const res = await baseApi.get(`/customer/${customerId}`);
+		const data: ICustomerDetailsRes = res.data;
 		return data;
 	},
-	getByIdForUser: async (id: string, userId: string) => {
-		const res = await baseApi.get(`/customer/${id}?userId=${userId}`);
-		const data: ICustomerRes = res.data;
-		return data;
+	createCustomer: async (data: CreateCustomerType & { userId: string }) => {
+		await baseApi.post("/customer", data);
 	},
-	createCustomer: async (inputData: ICustomerReq) => {
-		const res = await baseApi.post("/customer", inputData);
-		const data: { message: string } = res.data;
-		return data;
-	},
+	deleteCustomer: async (id: string) => await baseApi.delete(`/customer/${id}`),
+
+	deleteManyCustomer: async (ids: string[]) =>
+		await baseApi.delete("/customer/many", { data: ids }),
 };

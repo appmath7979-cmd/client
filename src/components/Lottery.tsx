@@ -33,8 +33,6 @@ export function Lottery({ day, item, data }: LotteryProps) {
 
 	const parseReward = formatReward(data);
 
-	console.log(parseReward);
-
 	return (
 		<div>
 			<h2 className="rounded-lg bg-primary py-2 font-bold text-lg text-primary-foreground text-center">
@@ -65,18 +63,23 @@ export function Lottery({ day, item, data }: LotteryProps) {
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{Array.from({ length }).map((_, index) => (
-						<TableRow key={`${region}-row}`}>
-							<TableCell className="text-center">
-								{rewardConstant[rewards[index] as keyof typeof rewardConstant]}
-							</TableCell>
-							{stations ? (
-								stations.map((st) => (
+					{Array.from({ length }).map((_, index) => {
+						const key = `${region}-row-${index}`;
+						return (
+							<TableRow key={key}>
+								<TableCell className="text-center">
+									{
+										rewardConstant[
+											rewards[index] as keyof typeof rewardConstant
+										]
+									}
+								</TableCell>
+								{stations?.map((st) => (
 									<TableCell
 										key={`${st}-row-${rewardList[index]}`}
 										className={cn(
 											"text-center justify-center items-center gap-x-4 gap-y-2 flex-wrap",
-											region === "mien-bac" ? "flex " : "space-y-2",
+											region === "mien-bac" ? "flex" : "space-y-2",
 										)}
 									>
 										{parseReward?.map((dt) => {
@@ -92,12 +95,10 @@ export function Lottery({ day, item, data }: LotteryProps) {
 											);
 										})}
 									</TableCell>
-								))
-							) : (
-								<>Chưa có kết quả</>
-							)}
-						</TableRow>
-					))}
+								))}
+							</TableRow>
+						);
+					})}
 				</TableBody>
 			</Table>
 		</div>

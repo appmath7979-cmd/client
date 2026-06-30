@@ -1,9 +1,22 @@
 type MessageType = { message: string };
 type DetailListType = {
-  total: number;
-  page: number;
-  totalPage: number;
+	total: number;
+	page: number;
+	totalPage: number;
 };
 type MessageInputType = MessageType & { status: "success" | "error" };
 
-export type { MessageType, DetailListType, MessageInputType };
+type StatusValidatedType = {
+	status: "warning" | "success" | "error";
+	itemError?: string;
+};
+
+type TransTypeT = "CO" | "XAC" | "TRUNG";
+
+export type {
+	MessageType,
+	DetailListType,
+	MessageInputType,
+	StatusValidatedType,
+	TransTypeT,
+};

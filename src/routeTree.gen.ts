@@ -19,6 +19,8 @@ import { Route as appauthSignUpRouteImport } from './routes/(app)/(auth)/sign-up
 import { Route as appauthSignInRouteImport } from './routes/(app)/(auth)/sign-in'
 import { Route as appCustomerCustomerIdIndexRouteImport } from './routes/(app)/customer/$customerId/index'
 import { Route as appCustomerCustomerIdAddRouteImport } from './routes/(app)/customer/$customerId/add'
+import { Route as appCustomerCustomerIdTransactionsIndexRouteImport } from './routes/(app)/customer/$customerId/transactions/index'
+import { Route as appCustomerCustomerIdTransactionsTransactionIdIndexRouteImport } from './routes/(app)/customer/$customerId/transactions/$transactionId/index'
 
 const CreateCustomerRoute = CreateCustomerRouteImport.update({
   id: '/create-customer',
@@ -72,6 +74,18 @@ const appCustomerCustomerIdAddRoute =
     path: '/add',
     getParentRoute: () => appCustomerCustomerIdRoute,
   } as any)
+const appCustomerCustomerIdTransactionsIndexRoute =
+  appCustomerCustomerIdTransactionsIndexRouteImport.update({
+    id: '/transactions/',
+    path: '/transactions/',
+    getParentRoute: () => appCustomerCustomerIdRoute,
+  } as any)
+const appCustomerCustomerIdTransactionsTransactionIdIndexRoute =
+  appCustomerCustomerIdTransactionsTransactionIdIndexRouteImport.update({
+    id: '/transactions/$transactionId/',
+    path: '/transactions/$transactionId/',
+    getParentRoute: () => appCustomerCustomerIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -84,6 +98,8 @@ export interface FileRoutesByFullPath {
   '/customer/': typeof appCustomerIndexRoute
   '/customer/$customerId/add': typeof appCustomerCustomerIdAddRoute
   '/customer/$customerId/': typeof appCustomerCustomerIdIndexRoute
+  '/customer/$customerId/transactions/': typeof appCustomerCustomerIdTransactionsIndexRoute
+  '/customer/$customerId/transactions/$transactionId/': typeof appCustomerCustomerIdTransactionsTransactionIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -95,6 +111,8 @@ export interface FileRoutesByTo {
   '/customer': typeof appCustomerIndexRoute
   '/customer/$customerId/add': typeof appCustomerCustomerIdAddRoute
   '/customer/$customerId': typeof appCustomerCustomerIdIndexRoute
+  '/customer/$customerId/transactions': typeof appCustomerCustomerIdTransactionsIndexRoute
+  '/customer/$customerId/transactions/$transactionId': typeof appCustomerCustomerIdTransactionsTransactionIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -108,6 +126,8 @@ export interface FileRoutesById {
   '/(app)/customer/': typeof appCustomerIndexRoute
   '/(app)/customer/$customerId/add': typeof appCustomerCustomerIdAddRoute
   '/(app)/customer/$customerId/': typeof appCustomerCustomerIdIndexRoute
+  '/(app)/customer/$customerId/transactions/': typeof appCustomerCustomerIdTransactionsIndexRoute
+  '/(app)/customer/$customerId/transactions/$transactionId/': typeof appCustomerCustomerIdTransactionsTransactionIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -122,6 +142,8 @@ export interface FileRouteTypes {
     | '/customer/'
     | '/customer/$customerId/add'
     | '/customer/$customerId/'
+    | '/customer/$customerId/transactions/'
+    | '/customer/$customerId/transactions/$transactionId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +155,8 @@ export interface FileRouteTypes {
     | '/customer'
     | '/customer/$customerId/add'
     | '/customer/$customerId'
+    | '/customer/$customerId/transactions'
+    | '/customer/$customerId/transactions/$transactionId'
   id:
     | '__root__'
     | '/'
@@ -145,6 +169,8 @@ export interface FileRouteTypes {
     | '/(app)/customer/'
     | '/(app)/customer/$customerId/add'
     | '/(app)/customer/$customerId/'
+    | '/(app)/customer/$customerId/transactions/'
+    | '/(app)/customer/$customerId/transactions/$transactionId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -230,17 +256,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appCustomerCustomerIdAddRouteImport
       parentRoute: typeof appCustomerCustomerIdRoute
     }
+    '/(app)/customer/$customerId/transactions/': {
+      id: '/(app)/customer/$customerId/transactions/'
+      path: '/transactions'
+      fullPath: '/customer/$customerId/transactions/'
+      preLoaderRoute: typeof appCustomerCustomerIdTransactionsIndexRouteImport
+      parentRoute: typeof appCustomerCustomerIdRoute
+    }
+    '/(app)/customer/$customerId/transactions/$transactionId/': {
+      id: '/(app)/customer/$customerId/transactions/$transactionId/'
+      path: '/transactions/$transactionId'
+      fullPath: '/customer/$customerId/transactions/$transactionId/'
+      preLoaderRoute: typeof appCustomerCustomerIdTransactionsTransactionIdIndexRouteImport
+      parentRoute: typeof appCustomerCustomerIdRoute
+    }
   }
 }
 
 interface appCustomerCustomerIdRouteChildren {
   appCustomerCustomerIdAddRoute: typeof appCustomerCustomerIdAddRoute
   appCustomerCustomerIdIndexRoute: typeof appCustomerCustomerIdIndexRoute
+  appCustomerCustomerIdTransactionsIndexRoute: typeof appCustomerCustomerIdTransactionsIndexRoute
+  appCustomerCustomerIdTransactionsTransactionIdIndexRoute: typeof appCustomerCustomerIdTransactionsTransactionIdIndexRoute
 }
 
 const appCustomerCustomerIdRouteChildren: appCustomerCustomerIdRouteChildren = {
   appCustomerCustomerIdAddRoute: appCustomerCustomerIdAddRoute,
   appCustomerCustomerIdIndexRoute: appCustomerCustomerIdIndexRoute,
+  appCustomerCustomerIdTransactionsIndexRoute:
+    appCustomerCustomerIdTransactionsIndexRoute,
+  appCustomerCustomerIdTransactionsTransactionIdIndexRoute:
+    appCustomerCustomerIdTransactionsTransactionIdIndexRoute,
 }
 
 const appCustomerCustomerIdRouteWithChildren =

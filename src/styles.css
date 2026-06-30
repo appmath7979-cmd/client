@@ -115,6 +115,43 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Áp dụng cho cả html, body và TẤT CẢ các vùng có thể cuộn trên trang */
+html, body, * {
+    scroll-behavior: smooth !important;
+    scrollbar-width: thin !important; /* Dành cho Firefox */
+}
+
+/* Ép tất cả các trình duyệt Webkit phải ẩn mũi tên */
+::-webkit-scrollbar-button,
+html::-webkit-scrollbar-button,
+body::-webkit-scrollbar-button,
+*::-webkit-scrollbar-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* Định dạng lại thanh trượt toàn trang */
+::-webkit-scrollbar, *::-webkit-scrollbar {
+    width: 8px !important;
+    height: 8px !important;
+}
+
+::-webkit-scrollbar-track, *::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb, *::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    border-radius: 10px !important;
+    border: 2px solid transparent !important;
+    background-clip: padding-box !important;
+}
+
+::-webkit-scrollbar-thumb:hover, *::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -144,15 +181,25 @@
 }
 
 @layer components {
-  .customer-layout {
-    @apply rounded-lg border shadow-lg bg-secondary/50 p-4 space-y-2;
+  .radio-customer--box {
+    @apply flex justify-between items-center gap-4;
   }
 
-  .radio-group--content {
-    @apply flex items-center gap-2;
+  .radio-customer {
+    @apply flex justify-center items-center gap-1 w-1/2 border p-4 rounded-md font-semibold;
   }
+}
 
-  .form-field--box {
-    @apply border rounded-lg shadow-md bg-secondary p-4;
-  }
+/* Ẩn nút tăng giảm trên mọi trình duyệt và định nghĩa thuộc tính tiêu chuẩn */
+input[type="number"] {
+  -webkit-appearance: none; /* Cho Chrome, Safari, Edge cũ */
+  -moz-appearance: textfield; /* Cho Firefox */
+  appearance: none; /* Thuộc tính tiêu chuẩn cho các trình duyệt hiện đại */
+}
+
+/* Đảm bảo xóa triệt để trên các trình duyệt sử dụng nhân WebKit */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

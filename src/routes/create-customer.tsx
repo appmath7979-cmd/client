@@ -1,65 +1,77 @@
-import { useAppStore } from "@lavaz/store";
 import { useForm } from "@tanstack/react-form-start";
-import { createFileRoute } from "@tanstack/react-router";
-import CustomerSwitch from "#/components/customer/create/CustomerSwitch";
-import { CustomerToggle } from "#/components/customer/create/CustomerToggle";
-import CustomerTypeToggle from "#/components/customer/create/CustomerTypeToggle";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
 import { InputField } from "#/components/customer/create/InputField";
-import { InputSettingField } from "#/components/customer/create/InputSettingField";
+import { RadioField } from "#/components/customer/create/RadioField";
 import { Button } from "#/components/ui/button";
+import { Field, FieldLabel } from "#/components/ui/field";
+import { Label } from "#/components/ui/label";
 import { Spinner } from "#/components/ui/spinner";
+import { Switch } from "#/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
-import { customerConstant } from "#/constants/customer.constant";
+import {
+	booleanSelectConstant,
+	customerConstant,
+	toggleSelectConstant,
+} from "#/constants/customer.constant";
 import { regions } from "#/constants/regions.contanst";
-import { regionConstanst } from "#/constants/station.constanst";
-import { usePostCustomer } from "#/hooks/query/useCustomerQuery";
+import { useCreateCustomer } from "#/hooks/query/useCustomerQuery";
+import { cn } from "#/lib/utils";
 import { CustomerSchema } from "#/schema/customer.schema";
-import { store } from "#/store/store";
-import type { ICustomerReq } from "#/types/customer.type";
+import type { CreateCustomerType } from "#/types/customer.type";
+import type { RegionType } from "#/types/reward.type";
 
 export const Route = createFileRoute("/create-customer")({
-	staticData: { title: "Tạo khách hàng mới" },
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const [auth] = useAppStore(store.auth, (s) => s.user);
-	const { mutate, isPending } = usePostCustomer();
+	const [region, setRegion] = useState<RegionType>("mien-bac");
+	const navigate = useNavigate();
+
+	const { mutate, isPending, isSuccess } = useCreateCustomer();
+
 	const form = useForm({
-		defaultValues: customerConstant,
-		validators: { onChange: CustomerSchema },
-		onSubmit: async (values) => {
-			console.log(auth);
-			const userId = auth?.id || "749b56f7-d81b-46e1-8dbc-618e295f5855";
-			const inputData: ICustomerReq = { ...values.value, userId };
-			await mutate(inputData);
+		defaultValues: customerConstant as CreateCustomerType,
+		validators: {
+			onChange: CustomerSchema,
+		},
+		onSubmit: async ({ value }) => {
+			const data = { ...value, userId: "749b56f7-d81b-46e1-8dbc-618e295f5855" };
+			await mutate(data);
 		},
 	});
 
-	const swichSelections = ["loaiCo", "xienMB", "tinhUi"] as const;
-	const toggleSelections = ["tinhTrungDaT", "tinhTrungDaX"] as const;
+	if (isSuccess) {
+		toast.success("Tạo khách hàng thành công!");
+		navigate({ to: "/customer" });
+	}
 
 	return (
-		<div className="py-6">
+		<div className="py-4">
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
 					form.handleSubmit();
 				}}
-				className="w-full max-w-4xl mx-auto space-y-8"
+				className="w-full max-w-xl p-6 rounded-lg mx-auto shadow-md dark:shadow-gray-800 bg-secondary/50 space-y-8"
 			>
-				<div className="form-field--box space-y-4">
+				<h2 className="text-center uppercase text-xl text-primary tracking-wide font-bold">
+					Tạo khách hàng
+				</h2>
+
+				<div className="space-y-4">
 					<form.Field name="fullName">
-						{({ name, state, handleChange }) => {
+						{({ state, handleChange }) => {
 							const { value, meta } = state;
 							return (
 								<InputField
-									name={name}
-									label="Họ và tên"
-									placeholder="Nguyen Van A"
+									label="Họ và Tên"
+									placeholder="Nguyễn Văn A"
 									value={value}
-									onChange={handleChange}
-									error={
+									onChange={(e) => handleChange(e.target.value)}
+									errorMsg={
 										meta.errors.length > 0 && meta.errors[0]
 											? meta.errors[0].message
 											: ""
@@ -69,17 +81,15 @@ function RouteComponent() {
 						}}
 					</form.Field>
 					<form.Field name="phoneNumber">
-						{({ name, state, handleChange }) => {
+						{({ state, handleChange }) => {
 							const { value, meta } = state;
 							return (
 								<InputField
-									name={name}
 									label="Số điện thoại"
 									placeholder="Số điện thoại"
-									type="tel"
 									value={value}
-									onChange={handleChange}
-									error={
+									onChange={(e) => handleChange(e.target.value)}
+									errorMsg={
 										meta.errors.length > 0 && meta.errors[0]
 											? meta.errors[0].message
 											: ""
@@ -89,87 +99,190 @@ function RouteComponent() {
 						}}
 					</form.Field>
 					<form.Field name="type">
-						{({ state, handleChange }) => {
-							return (
-								<div className="flex items-center gap-2">
-									<CustomerTypeToggle
-										options={["GUEST", "OWNER"]}
-										value={state.value}
-										onChange={handleChange}
+						{({ state, handleChange }) => (
+							<div className="radio-customer--box">
+								<Label
+									htmlFor="khach-radio"
+									className={cn(
+										"radio-customer trans-mooth",
+										state.value === "GUEST" && "border-primary text-primary",
+									)}
+								>
+									<input
+										id="khach-radio"
+										type="radio"
+										hidden
+										checked={state.value === "GUEST"}
+										onChange={() => handleChange("GUEST")}
 									/>
-								</div>
-							);
-						}}
+									<span>Khách</span>
+								</Label>
+								<Label
+									htmlFor="chu-radio"
+									className={cn(
+										"radio-customer trans-mooth",
+										state.value === "OWNER" && "border-primary text-primary",
+									)}
+								>
+									<input
+										id="chu-radio"
+										type="radio"
+										hidden
+										checked={state.value === "OWNER"}
+										onChange={() => handleChange("OWNER")}
+									/>
+									<span>Chủ</span>
+								</Label>
+							</div>
+						)}
 					</form.Field>
 				</div>
 
-				<div className="form-field--box space-y-4">
-					{swichSelections.map((item) => (
-						<form.Field key={item} name={item}>
-							{({ state, handleChange }) => (
-								<CustomerSwitch
-									item={item}
-									value={state.value}
-									onChange={handleChange}
-								/>
-							)}
-						</form.Field>
-					))}
+				<div className="space-y-6">
+					<form.Field name="xienMB">
+						{({ name, state, handleChange }) => (
+							<RadioField
+								name={name}
+								title="Xiên 2-3-4 Miền Bắc"
+								value={state.value}
+								onValueChange={(val) => handleChange(val as boolean)}
+								values={booleanSelectConstant}
+							/>
+						)}
+					</form.Field>
+					<form.Field name="tinhUi">
+						{({ name, state, handleChange }) => (
+							<RadioField
+								name={name}
+								title="Tính Ủi"
+								value={state.value}
+								onValueChange={(val) => handleChange(val as boolean)}
+								values={booleanSelectConstant}
+							/>
+						)}
+					</form.Field>
 				</div>
 
-				<Tabs defaultValue="mien-bac" className="form-field--box space-y-4">
-					<TabsList className="w-full">
-						{regions.map((item) => (
-							<TabsTrigger key={item} value={item}>
-								{regionConstanst[item as keyof typeof regionConstanst]}
+				<Tabs
+					defaultValue={region}
+					onValueChange={(val) => setRegion(val as RegionType)}
+				>
+					<TabsList>
+						{regions.map((reg) => (
+							<TabsTrigger key={`${reg}-tab`} value={reg}>
+								{reg === "mien-bac"
+									? "Miền Bắc"
+									: reg === "mien-nam"
+										? "Miền Nam"
+										: "Miền Trung"}
 							</TabsTrigger>
 						))}
 					</TabsList>
-					{regions.map((item) => {
-						const regionName =
-							item === "mien-bac"
-								? "BAC"
-								: item === "mien-nam"
-									? "NAM"
-									: "TRUNG";
+					{regions.map((reg) => {
+						const convertRegion =
+							reg === "mien-bac" ? "BAC" : reg === "mien-nam" ? "NAM" : "TRUNG";
 						return (
-							<TabsContent key={`content-${item}`} value={item}>
-								<form.Field name={`settings.${regionName}`}>
+							<TabsContent key={`${reg}-content`} value={reg}>
+								<form.Field name={`settings.${convertRegion}`}>
 									{({ state }) => {
+										const currentList = state.value || [];
 										return (
-											<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-												<div className="space-y-4">
-													{state.value.map((val, index) => (
-														<form.Field
-															key={`${state.value[index].label}-co`}
-															name={`settings.${regionName}[${index}].c`}
-														>
-															{({ state: stateChild, handleChange }) => (
-																<InputSettingField
-																	label={val.label}
-																	value={stateChild.value}
-																	onChange={handleChange}
-																/>
-															)}
-														</form.Field>
-													))}
-												</div>
-												<div className="space-y-4">
-													{state.value.map((val, index) => (
-														<form.Field
-															key={`${state.value[index].label}-trung`}
-															name={`settings.${regionName}[${index}].t`}
-														>
-															{({ state: stateChild, handleChange }) => (
-																<InputSettingField
-																	label={val.label}
-																	value={stateChild.value}
-																	onChange={handleChange}
-																/>
-															)}
-														</form.Field>
-													))}
-												</div>
+											<div className="space-y-4 border p-4 rounded-md bg-background/50">
+												{currentList.map((item, index) => (
+													<div
+														key={item.label}
+														className="space-y-2 border-b pb-4 last:border-0"
+													>
+														{/* Hiển thị nhãn của cặp cấu hình (ví dụ: Bao lô, Đá...) */}
+														<div className="flex items-center justify-between">
+															<h4 className="font-semibold text-sm text-primary">
+																{item.label}
+															</h4>
+															<div>
+																<form.Field
+																	name={`settings.${convertRegion}[${index}].loai`}
+																>
+																	{(loaiField) => {
+																		const isTiLe =
+																			loaiField.state.value === "ti_le";
+
+																		return (
+																			<Field
+																				orientation="horizontal"
+																				className="flex items-center gap-2"
+																			>
+																				<FieldLabel>
+																					{isTiLe ? "Tỉ lệ" : "Thành tiền"}
+																				</FieldLabel>
+																				<Switch
+																					checked={isTiLe}
+																					onCheckedChange={(checked) => {
+																						// Khi bật/tắt switch, cập nhật value dựa trên boolean
+																						loaiField.handleChange(
+																							checked ? "ti_le" : "thanh_tien",
+																						);
+																					}}
+																				/>
+																			</Field>
+																		);
+																	}}
+																</form.Field>
+															</div>
+														</div>
+
+														<div className="grid grid-cols-2 gap-4">
+															{/* 2. Ô nhập cho thuộc tính `c` */}
+															<form.Field
+																name={`settings.${convertRegion}[${index}].c`}
+															>
+																{(cField) => (
+																	<InputField
+																		label="Cò"
+																		type="number"
+																		placeholder="Nhập c"
+																		value={cField.state.value}
+																		onChange={(e) =>
+																			cField.handleChange(
+																				Number(e.target.value),
+																			)
+																		}
+																		errorMsg={
+																			cField.state.meta.errors.length > 0 &&
+																			cField.state.meta.errors[0]
+																				? cField.state.meta.errors[0].message
+																				: ""
+																		}
+																	/>
+																)}
+															</form.Field>
+
+															{/* 3. Ô nhập cho thuộc tính `t` */}
+															<form.Field
+																name={`settings.${convertRegion}[${index}].t`}
+															>
+																{(tField) => (
+																	<InputField
+																		label="Trúng"
+																		type="number"
+																		placeholder="Nhập t"
+																		value={tField.state.value}
+																		onChange={(e) =>
+																			tField.handleChange(
+																				Number(e.target.value),
+																			)
+																		}
+																		errorMsg={
+																			tField.state.meta.errors.length > 0 &&
+																			tField.state.meta.errors[0]
+																				? tField.state.meta.errors[0].message
+																				: ""
+																		}
+																	/>
+																)}
+															</form.Field>
+														</div>
+													</div>
+												))}
 											</div>
 										);
 									}}
@@ -179,19 +292,35 @@ function RouteComponent() {
 					})}
 				</Tabs>
 
-				<div className="form-field--box space-y-4">
-					{toggleSelections.map((item) => (
-						<form.Field key={item} name={item}>
-							{({ state, handleChange }) => (
-								<CustomerToggle
-									item={item}
-									value={state.value}
-									onChange={handleChange}
-								/>
-							)}
-						</form.Field>
-					))}
+				<div className="space-y-6">
+					<form.Field name="tinhTrungDaT">
+						{({ name, state, handleChange }) => (
+							<RadioField
+								name={name}
+								title="Tính trúng Đá Thẳng"
+								value={state.value}
+								values={toggleSelectConstant}
+								onValueChange={(val) => {
+									handleChange(val as "1_lan" | "ky_ruoi" | "nhieu_cap");
+								}}
+							/>
+						)}
+					</form.Field>
+					<form.Field name="tinhTrungDaX">
+						{({ name, state, handleChange }) => (
+							<RadioField
+								name={name}
+								title="Tính trúng Đá Xiên"
+								value={state.value}
+								values={toggleSelectConstant}
+								onValueChange={(val) => {
+									handleChange(val as "1_lan" | "ky_ruoi" | "nhieu_cap");
+								}}
+							/>
+						)}
+					</form.Field>
 				</div>
+
 				<form.Subscribe
 					selector={(state) => [state.canSubmit, state.isSubmitting]}
 				>
@@ -199,8 +328,8 @@ function RouteComponent() {
 						<Button
 							type="submit"
 							size={"lg"}
+							className="w-full"
 							disabled={!canSubmit || isSubmitting || isPending}
-							className="w-full uppercase"
 						>
 							{isSubmitting || isPending ? (
 								<>
@@ -208,7 +337,7 @@ function RouteComponent() {
 									<span>Đang xử lý...</span>
 								</>
 							) : (
-								"lưu thông tin"
+								<span>Lưu thông tin</span>
 							)}
 						</Button>
 					)}

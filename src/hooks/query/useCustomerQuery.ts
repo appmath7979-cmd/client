@@ -1,33 +1,58 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { customerApi } from "#/api/customer.api";
-import type { ICustomerReq } from "#/types/customer.type";
+import type { CreateCustomerType } from "#/types/customer.type";
 
-function usePostCustomer() {
+function useGetCustomerById(customerId: string) {
+	return useQuery({
+		queryKey: ["customers", customerId],
+		queryFn: () => customerApi.getCustomerById(customerId),
+	});
+}
+
+function useGetCustomers(userId: string) {
+	return useQuery({
+		queryKey: ["customers", "list"],
+		queryFn: () => customerApi.getAllCustomer(userId),
+	});
+}
+
+function useCreateCustomer() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (data: ICustomerReq) => customerApi.createCustomer(data),
-		onSuccess: (data) => {
-			queryClient.invalidateQueries({ queryKey: ["customer"] });
-			toast.success(data.message);
+		mutationFn: (data: CreateCustomerType & { userId: string }) =>
+			customerApi.createCustomer(data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["customers", "list"] });
 		},
-		onError: (error) => toast.error(error.message),
 	});
 }
 
-function useGetCustomer(userId: string, page?: number, limit?: number) {
-	return useQuery({
-		queryKey: ["customer", "list"],
-		queryFn: () => customerApi.getAllCustomerForUser(userId, page, limit),
+function useDeleteManyCustomer() {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (data: string[]) => customerApi.deleteManyCustomer(data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["customers", "list"] });
+		},
+	});
+}
+function useDeleteCustomer() {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (data: string) => customerApi.deleteCustomer(data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["customers", "list"] });
+		},
 	});
 }
 
-function useGetCustomerById(id: string, userId: string) {
-	return useQuery({
-		queryKey: ["customer", id],
-		queryFn: () => customerApi.getByIdForUser(id, userId),
-	});
-}
-
-export { useGetCustomer, usePostCustomer, useGetCustomerById };
+export {
+	useGetCustomerById,
+	useGetCustomers,
+	useCreateCustomer,
+	useDeleteManyCustomer,
+	useDeleteCustomer,
+};

@@ -1,8 +1,8 @@
 import { regionConstanst } from "#/constants/station.constanst";
 import type { RegionType } from "#/types/reward.type";
 import type { IRewardSchedule } from "#/types/schedule.type";
+import { UpdateBox } from "../home/UpdateBox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { UpdateBox } from "./UpdateBox";
 
 export function DialogUpdate({ schedule }: { schedule: IRewardSchedule[] }) {
 	const regions: RegionType[] = ["mien-bac", "mien-trung", "mien-nam"];

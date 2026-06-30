@@ -1,9 +1,11 @@
 import z from "zod";
 
 const BetPairSchema = z.object({
+	key: z.string(),
 	label: z.string(),
 	c: z.number(),
 	t: z.number(),
+	loai: z.enum(["ti_le", "thanh_tien"]),
 });
 
 const CustomerSchema = z.object({
@@ -16,11 +18,10 @@ const CustomerSchema = z.object({
 		)
 		.min(1, "Số điện thoại không được để trống!"),
 	type: z.enum(["GUEST", "OWNER"]),
-	loaiCo: z.string(),
 	xienMB: z.boolean(),
 	tinhUi: z.boolean(),
-	tinhTrungDaT: z.enum(["1_lan", "ky_ruoi", "nhieu_lan"]),
-	tinhTrungDaX: z.enum(["1_lan", "ky_ruoi", "nhieu_lan"]),
+	tinhTrungDaT: z.enum(["1_lan", "ky_ruoi", "nhieu_cap"]),
+	tinhTrungDaX: z.enum(["1_lan", "ky_ruoi", "nhieu_cap"]),
 	settings: z.object({
 		BAC: z.array(BetPairSchema),
 		TRUNG: z.array(BetPairSchema),

@@ -16,7 +16,7 @@ export default function Navigation() {
 	const match = useMatches();
 
 	const [isOpen, setIsOpen] = useState<boolean>(false);
-	const currentPathname = match[1].pathname.replace(/\//g, "");
+	const currentPathname = match[1]?.pathname?.replace(/\//g, "");
 
 	return (
 		<>

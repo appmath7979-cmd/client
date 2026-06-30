@@ -70,7 +70,7 @@ const centralStationList = [
 	"dl",
 ];
 
-const twoTargetForSyntaxList = ["b", "lo", "dd", "da", "dx"];
+const twoTargetForSyntaxList = ["b", "lo", "dd", "da", "dx", "dax"];
 
 const threeTargetForSyntaxList = [
 	"bd",

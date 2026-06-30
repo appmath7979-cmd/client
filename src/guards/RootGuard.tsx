@@ -1,12 +1,11 @@
 import { useAppStore } from "@lavaz/store";
 import { useLocation, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
 import { store } from "#/store/store";
 
 export function RootGuard({ children }: { children: React.ReactNode }) {
-	const navigate = useNavigate();
+	const _navigate = useNavigate();
 	const location = useLocation();
-	const currentPath = location.pathname;
+	const _currentPath = location.pathname;
 
 	const [{ isActive, isLock, isLoggedIn }] = useAppStore(store.lock, (s) => s);
 

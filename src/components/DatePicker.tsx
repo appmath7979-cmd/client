@@ -1,4 +1,5 @@
 import { CalendarIcon } from "@phosphor-icons/react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
@@ -9,13 +10,32 @@ export interface DatePickerProps {
 }
 
 export function DatePicker({ date, onSelectDate }: DatePickerProps) {
+	const [isMount, setIsMount] = useState<boolean>(false);
+
+	useEffect(() => {
+		setIsMount(true);
+	}, []);
+
+	if (!isMount)
+		return (
+			<Button
+				variant="outline"
+				data-empty="true"
+				className="text-left font-normal data-[empty=true]:text-muted-foreground"
+				disabled
+			>
+				<CalendarIcon />
+				Chọn ngày
+			</Button>
+		);
+
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
 				<Button
 					variant="outline"
 					data-empty={!date}
-					className="text-left font-normal data-[empty=true]:text-muted-foreground"
+					className="text-left font-semibold data-[empty=true]:text-muted-foreground"
 				>
 					<CalendarIcon />
 					{date ? date.toLocaleDateString("vi-VN") : "Chọn ngày"}

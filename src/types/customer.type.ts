@@ -1,57 +1,44 @@
 import type z from "zod";
-import type { BetPairSchema, CustomerSchema } from "#/schema/customer.schema";
-import type { DetailListType, MessageType } from "./common.type";
+import type { CustomerSchema } from "#/schema/customer.schema";
 
-type BetPairType = z.infer<typeof BetPairSchema>;
-type CustomerType = z.infer<typeof CustomerSchema>;
-
-type CustomerTypeDepartmentType = "GUEST" | "OWNER";
-type CustomerCalcType = "1_lan" | "ky_ruoi" | "nhieu_lan";
+type CreateCustomerType = z.infer<typeof CustomerSchema>;
 
 interface IBetPair {
+	key: string;
 	label: string;
 	c: number;
 	t: number;
+	loai: "ti_le" | "thanh_tien";
 }
 
-interface ISettings {
-	BAC: IBetPair[];
-	TRUNG: IBetPair[];
-	NAM: IBetPair[];
-}
-
-interface ICustomer {
+interface ICustomerListInfoApi {
 	id: string;
+	fullName: string;
+	type: "OWNER" | "GUEST";
+}
+
+interface ICustomerListApi {
+	message: string;
+	customers: ICustomerListInfoApi[];
+	total: number;
+}
+
+interface ICustomerDetailsItem extends CreateCustomerType {
+	id: string;
+	createTime: string;
 	createdAt: Date;
 	updatedAt: Date;
-	fullName: string;
-	phoneNumber: string;
-	type: CustomerTypeDepartmentType;
-	loaiCo: string;
-	xienMB: boolean;
-	tinhUi: boolean;
-	tinhTrungDaT: string;
-	tinhTrungDaX: string;
-	settings: ISettings;
-	userId: string | null;
 }
 
-type ICustomerReq = Omit<ICustomer, "id" | "createdAt" | "updatedAt">;
-type ICustomerRes = MessageType & { customer: ICustomer };
-
-interface ICustomerList extends MessageType, DetailListType {
-	customers: ICustomer[] | null;
+interface ICustomerDetailsRes {
+	message: string;
+	customer: ICustomerDetailsItem;
 }
-
 export type {
-	BetPairType,
-	CustomerType,
-	CustomerTypeDepartmentType,
-	CustomerCalcType,
 	IBetPair,
-	ISettings,
-	ICustomer,
-	ICustomerList,
-	ICustomerReq,
-	ICustomerRes,
+	CreateCustomerType,
+	ICustomerListInfoApi,
+	ICustomerListApi,
+	ICustomerDetailsItem,
+	ICustomerDetailsRes,
 };

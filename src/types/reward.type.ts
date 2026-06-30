@@ -24,13 +24,13 @@ interface IRegionRewardApiRes {
 
 interface IRewardApiRes {
 	message: string;
-	reward: {
+	rewards: {
 		id: string;
 		release: string;
 		createdAt: string;
 		updatedAt: string;
 		rewards: IRegionRewardApiRes[];
-	};
+	}[];
 }
 
 export type {
