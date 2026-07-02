@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import type { INavItem } from "#/types/nav.type";
 import { Button } from "#/components/ui/button";
+import type { INavItem } from "#/types/nav.type";
 
 export function NavItem({ href, label, icon }: INavItem) {
 	const Icon = icon ? icon : () => null;
