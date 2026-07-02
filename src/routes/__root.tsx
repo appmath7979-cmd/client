@@ -3,8 +3,8 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 
 import appCss from "../styles.css?url";
-import { Header } from "#/components/header/Header";
-import { NavList } from "#/components/navigations/NavList";
+import { Header } from "#/components/system/Header";
+import { NavList } from "#/components/system/navigations/NavList";
 
 export const Route = createRootRoute({
 	head: () => ({
@@ -38,7 +38,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				<Header />
-				{children}
+				<main className="px-4">{children}</main>
 				<NavList />
 				<TanStackDevtools
 					config={{
