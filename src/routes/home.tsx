@@ -1,21 +1,37 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Edit2Icon } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DatePicker } from "#/components/system/DatePicker";
 import { Button } from "#/components/ui/button";
+import { schedule } from "#/constansts/schedule.constanst";
+import { Lottery } from "#/components/lottery/Lottery";
+import { formatDate } from "#/lib/date-format";
 
 export const Route = createFileRoute("/home")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const [date, setDate] = useState<Date | undefined>(undefined);
+	const [date, setDate] = useState<Date>(() => new Date());
 	const [open, setOpen] = useState(false);
+	const [isMounted, setIsMounted] = useState<boolean>(false);
 
-	const handleSelect = useCallback((selectedDate: Date | undefined) => {
+	useEffect(() => {
+		setIsMounted(true);
+	}, []);
+
+	const handleSelect = (selectedDate: Date | undefined) => {
+		if (!selectedDate) return;
 		setDate(selectedDate);
 		setOpen(false);
-	}, []);
+	};
+
+	const currentReward = useMemo(() => {
+		if (!isMounted) return schedule[0];
+		return schedule[date.getDay()];
+	}, [date, isMounted]);
+
+	const formattedDate = useMemo(() => formatDate(date), [date]);
 
 	return (
 		<div className="py-4">
@@ -30,6 +46,12 @@ function RouteComponent() {
 					onOpenChange={setOpen}
 					onSelect={handleSelect}
 				/>
+			</div>
+			<div className="space-y-6">
+				<h2 className="text-center text-xl font-semibold text-primary">
+					Kết quả Xổ số ngày {formattedDate}
+				</h2>
+				<Lottery reward={currentReward} />
 			</div>
 		</div>
 	);
