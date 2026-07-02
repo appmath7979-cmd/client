@@ -3,7 +3,6 @@ import type { IReward } from "#/types/reward.type";
 import { LotteryItem } from "./LotteryItem";
 
 export function Lottery({ reward }: { reward: IReward }) {
-
 	return (
 		<div className="space-y-6">
 			{regionNameList.map((region) => {

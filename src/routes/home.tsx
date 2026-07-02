@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Edit2Icon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { DatePicker } from "#/components/system/DatePicker";
-import { Button } from "#/components/ui/button";
-import { schedule } from "#/constansts/schedule.constanst";
 import { Lottery } from "#/components/lottery/Lottery";
+import { DatePicker } from "#/components/system/DatePicker";
+import { DialogReward } from "#/components/system/dialogs/DialogReward";
+import { Button } from "#/components/ui/button";
+import { DialogTrigger } from "#/components/ui/dialog";
+import { schedule } from "#/constansts/schedule.constanst";
 import { formatDate } from "#/lib/date-format";
 
 export const Route = createFileRoute("/home")({
@@ -36,10 +38,10 @@ function RouteComponent() {
 	return (
 		<div className="py-4">
 			<div className="flex justify-end items-center gap-1">
-				<Button variant={"outline"}>
+				<DialogTrigger render={<Button variant="outline" />}>
 					<Edit2Icon />
 					<span>Cập nhật kết quả</span>
-				</Button>
+				</DialogTrigger>
 				<DatePicker
 					date={date}
 					open={open}
@@ -53,6 +55,7 @@ function RouteComponent() {
 				</h2>
 				<Lottery reward={currentReward} />
 			</div>
+			<DialogReward day={formattedDate} />
 		</div>
 	);
 }
