@@ -1,10 +1,10 @@
 import type { IProvinceItem } from "./province.type";
 
-interface IReward {
+interface IRewardProvince {
 	day: string;
 	MN: IProvinceItem[];
 	MB: IProvinceItem[];
 	MT: IProvinceItem[];
 }
 
-export type { IReward };
+export type { IRewardProvince };

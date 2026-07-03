@@ -1,8 +1,8 @@
 import { regionNameList } from "#/constansts/regions.constanst";
-import type { IReward } from "#/types/reward.type";
+import type { IRewardProvince } from "#/types/reward.type";
 import { LotteryItem } from "./LotteryItem";
 
-export function Lottery({ reward }: { reward: IReward }) {
+export function Lottery({ reward }: { reward: Omit<IRewardProvince, "day"> }) {
 	return (
 		<div className="space-y-6">
 			{regionNameList.map((region) => {

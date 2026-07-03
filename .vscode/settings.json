@@ -18,7 +18,7 @@
 		"editor.defaultFormatter": "simwai.biome-vscode"
 	},
 	"[typescriptreact]": {
-		"editor.defaultFormatter": "simwai.biome-vscode"
+		"editor.defaultFormatter": "biomejs.biome"
 	},
 	"[json]": {
 		"editor.defaultFormatter": "biomejs.biome"

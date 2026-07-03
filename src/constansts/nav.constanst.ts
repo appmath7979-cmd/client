@@ -3,6 +3,7 @@ import {
 	CircleUserRoundIcon,
 	HomeIcon,
 	ScaleIcon,
+	Users2Icon,
 } from "lucide-react";
 import type { NavListType } from "#/types/nav.type";
 
@@ -16,6 +17,11 @@ export const navList: NavListType = [
 		href: "/chatbot",
 		label: "Chatbot",
 		icon: BotIcon,
+	},
+	{
+		href: "/customers",
+		label: "Khách hàng",
+		icon: Users2Icon,
 	},
 	{
 		href: "/layoff",

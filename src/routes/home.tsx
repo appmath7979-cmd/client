@@ -30,7 +30,8 @@ function RouteComponent() {
 
 	const currentReward = useMemo(() => {
 		if (!isMounted) return schedule[0];
-		return schedule[date.getDay()];
+		const { day, ...currentReward } = schedule[date.getDay()];
+		return currentReward;
 	}, [date, isMounted]);
 
 	const formattedDate = useMemo(() => formatDate(date), [date]);
@@ -55,7 +56,7 @@ function RouteComponent() {
 				</h2>
 				<Lottery reward={currentReward} />
 			</div>
-			<DialogReward day={formattedDate} />
+			<DialogReward day={formattedDate} provinces={currentReward} />
 		</div>
 	);
 }

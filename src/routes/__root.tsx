@@ -39,7 +39,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			<body>
 				<AppProvider>
 					<Header />
-					<main className="px-4">{children}</main>
+					<main className="px-4 min-h-[calc(100dvh-84px)]">{children}</main>
 					<NavList />
 				</AppProvider>
 				<TanStackDevtools
