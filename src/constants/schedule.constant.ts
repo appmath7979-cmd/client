@@ -1,5 +1,5 @@
 import type { RegionType } from "#/types/region.type";
-import { provinces } from "./provinces.constanst";
+import { provinces } from "./provinces.constant";
 
 // 1. Tạo Lookup Map để tìm tỉnh theo code với độ phức tạp O(1)
 const provinceMap = provinces.reduce(

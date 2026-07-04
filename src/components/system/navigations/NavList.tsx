@@ -1,4 +1,4 @@
-import { navList } from "#/constansts/nav.constanst";
+import { navList } from "#/constants/nav.constant";
 import { NavItem } from "./NavItem";
 
 export function NavList() {

@@ -9,7 +9,7 @@ import {
 	DialogTitle,
 } from "#/components/ui/dialog";
 import { Separator } from "#/components/ui/separator";
-import { regionNameList } from "#/constansts/regions.constanst";
+import { regionNameList } from "#/constants/regions.constant";
 import type { IRewardProvince } from "#/types/reward.type";
 import { DialogRewardItem } from "./DialogRewardItem";
 

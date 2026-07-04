@@ -8,15 +8,36 @@ type BetPairType = z.infer<typeof BetPairSchema>;
 type CreateCustomerType = z.infer<typeof CreateCustomerSchema>;
 
 type CreateTypeValueCustomerType = "khach" | "chu";
+type CreateDaValueType = "1 lần" | "ky rưỡi" | "nhiều cặp";
 
-interface ICreateTypeCustomerItem {
+interface ICreateToggleItem {
 	label: string;
-	value: CreateTypeValueCustomerType;
+	value: string;
 }
+
+interface ICreateTypeSettingBet {
+	tile: ICreateToggleItem;
+	thanhtien: ICreateToggleItem;
+}
+
+type CreateToggleListType = ICreateToggleItem[];
+
+type SettingRecordItem = Record<
+	string,
+	{
+		c: Record<string, number>;
+		t: Record<string, number>;
+		type: "tile" | "thanhtien";
+	}
+>;
 
 export type {
 	BetPairType,
 	CreateCustomerType,
 	CreateTypeValueCustomerType,
-	ICreateTypeCustomerItem,
+	ICreateToggleItem,
+	CreateToggleListType,
+	CreateDaValueType,
+	SettingRecordItem,
+	ICreateTypeSettingBet,
 };

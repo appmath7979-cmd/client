@@ -6,53 +6,46 @@ const defaultValueCreateCustomer: CreateCustomerType = {
 	type: "khach",
 	settings: [
 		{
-			b2: {
-				c: { MB: 0, MT: 0, MN: 0 },
-				t: { MB: 0, MT: 0, MN: 0 },
-				type: "tile",
-			},
+			name: "b2",
+			c: { MB: 0, MT: 0, MN: 0 },
+			t: { MB: 0, MT: 0, MN: 0 },
+			type: "tile",
 		},
 		{
-			dd2: {
-				c: { MB: 0, MT: 0, MN: 0 },
-				t: { MB: 0, MT: 0, MN: 0 },
-				type: "tile",
-			},
+			name: "dd2",
+			c: { MB: 0, MT: 0, MN: 0 },
+			t: { MB: 0, MT: 0, MN: 0 },
+			type: "tile",
 		},
 		{
-			da: {
-				c: { MB: 0, MT: 0, MN: 0 },
-				t: { MB: 0, MT: 0, MN: 0 },
-				type: "tile",
-			},
+			name: "da",
+			c: { MB: 0, MT: 0, MN: 0 },
+			t: { MB: 0, MT: 0, MN: 0 },
+			type: "tile",
 		},
 		{
-			dax: {
-				c: { MB: 0, MT: 0, MN: 0 },
-				t: { MB: 0, MT: 0, MN: 0 },
-				type: "tile",
-			},
+			name: "dax",
+			c: { MB: 0, MT: 0, MN: 0 },
+			t: { MB: 0, MT: 0, MN: 0 },
+			type: "tile",
 		},
 		{
-			b3: {
-				c: { MB: 0, MT: 0, MN: 0 },
-				t: { MB: 0, MT: 0, MN: 0 },
-				type: "tile",
-			},
+			name: "b3",
+			c: { MB: 0, MT: 0, MN: 0 },
+			t: { MB: 0, MT: 0, MN: 0 },
+			type: "tile",
 		},
 		{
-			dd3: {
-				c: { MB: 0, MT: 0, MN: 0 },
-				t: { MB: 0, MT: 0, MN: 0 },
-				type: "tile",
-			},
+			name: "dd3",
+			c: { MB: 0, MT: 0, MN: 0 },
+			t: { MB: 0, MT: 0, MN: 0 },
+			type: "tile",
 		},
 		{
-			b4: {
-				c: { MB: 0, MT: 0, MN: 0 },
-				t: { MB: 0, MT: 0, MN: 0 },
-				type: "tile",
-			},
+			name: "b4",
+			c: { MB: 0, MT: 0, MN: 0 },
+			t: { MB: 0, MT: 0, MN: 0 },
+			type: "tile",
 		},
 	],
 	dat: "ky rưỡi",

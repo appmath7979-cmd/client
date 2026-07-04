@@ -1,4 +1,4 @@
-import { regionNameList } from "#/constansts/regions.constanst";
+import { regionNameList } from "#/constants/regions.constant";
 import type { IRewardProvince } from "#/types/reward.type";
 import { LotteryItem } from "./LotteryItem";
 

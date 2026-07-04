@@ -1,4 +1,5 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
+import { FormDevtoolsPanel } from "@tanstack/react-form-devtools";
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Header } from "#/components/system/Header";
@@ -50,6 +51,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 						{
 							name: "Tanstack Router",
 							render: <TanStackRouterDevtoolsPanel />,
+						},
+						{
+							name: "Tanstack Form",
+							render: <FormDevtoolsPanel />,
 						},
 					]}
 				/>

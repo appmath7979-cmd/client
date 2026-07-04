@@ -371,3 +371,9 @@ body::-webkit-scrollbar-button,
     @apply font-sans;
   }
 }
+
+@layer components {
+  .box-field {
+    @apply space-y-6 border rounded-md p-4 shadow-xs;
+  }
+}

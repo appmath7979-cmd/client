@@ -1,3 +1,6 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { PlusIcon } from "lucide-react";
+import { useState } from "react";
 import { Button } from "#/components/ui/button";
 import { Checkbox } from "#/components/ui/checkbox";
 import {
@@ -10,9 +13,6 @@ import {
 } from "#/components/ui/table";
 import { Tabs, TabsList, TabsPanel, TabsTab } from "#/components/ui/tabs";
 import { cn } from "#/lib/utils";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { PlusIcon } from "lucide-react";
-import { useState } from "react";
 
 export const Route = createFileRoute("/customers/")({
 	component: RouteComponent,

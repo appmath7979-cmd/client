@@ -6,7 +6,7 @@ import { DatePicker } from "#/components/system/DatePicker";
 import { DialogReward } from "#/components/system/dialogs/DialogReward";
 import { Button } from "#/components/ui/button";
 import { DialogTrigger } from "#/components/ui/dialog";
-import { schedule } from "#/constansts/schedule.constanst";
+import { schedule } from "#/constants/schedule.constant";
 import { formatDate } from "#/lib/date-format";
 
 export const Route = createFileRoute("/home")({

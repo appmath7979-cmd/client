@@ -1,5 +1,5 @@
-import { regionMapper } from "#/constansts/regions.constanst";
-import { rewardTypeList } from "#/constansts/reward.constanst";
+import { regionMapper } from "#/constants/regions.constant";
+import { rewardTypeList } from "#/constants/reward.constant";
 import { cn } from "#/lib/utils";
 import type { IProvinceItem } from "#/types/province.type";
 import type { RegionType } from "#/types/region.type";
