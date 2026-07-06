@@ -13,6 +13,8 @@ import { Route as HomeRouteImport } from './routes/home'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CustomersIndexRouteImport } from './routes/customers/index'
 import { Route as CustomersCreateRouteImport } from './routes/customers/create'
+import { Route as CustomersCustomerIdIndexRouteImport } from './routes/customers/$customerId/index'
+import { Route as CustomersCustomerIdMessageRouteImport } from './routes/customers/$customerId/message'
 
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
@@ -34,18 +36,34 @@ const CustomersCreateRoute = CustomersCreateRouteImport.update({
   path: '/customers/create',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CustomersCustomerIdIndexRoute =
+  CustomersCustomerIdIndexRouteImport.update({
+    id: '/customers/$customerId/',
+    path: '/customers/$customerId/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const CustomersCustomerIdMessageRoute =
+  CustomersCustomerIdMessageRouteImport.update({
+    id: '/customers/$customerId/message',
+    path: '/customers/$customerId/message',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
   '/customers/create': typeof CustomersCreateRoute
   '/customers/': typeof CustomersIndexRoute
+  '/customers/$customerId/message': typeof CustomersCustomerIdMessageRoute
+  '/customers/$customerId/': typeof CustomersCustomerIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
   '/customers/create': typeof CustomersCreateRoute
   '/customers': typeof CustomersIndexRoute
+  '/customers/$customerId/message': typeof CustomersCustomerIdMessageRoute
+  '/customers/$customerId': typeof CustomersCustomerIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +71,34 @@ export interface FileRoutesById {
   '/home': typeof HomeRoute
   '/customers/create': typeof CustomersCreateRoute
   '/customers/': typeof CustomersIndexRoute
+  '/customers/$customerId/message': typeof CustomersCustomerIdMessageRoute
+  '/customers/$customerId/': typeof CustomersCustomerIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/home' | '/customers/create' | '/customers/'
+  fullPaths:
+    | '/'
+    | '/home'
+    | '/customers/create'
+    | '/customers/'
+    | '/customers/$customerId/message'
+    | '/customers/$customerId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home' | '/customers/create' | '/customers'
-  id: '__root__' | '/' | '/home' | '/customers/create' | '/customers/'
+  to:
+    | '/'
+    | '/home'
+    | '/customers/create'
+    | '/customers'
+    | '/customers/$customerId/message'
+    | '/customers/$customerId'
+  id:
+    | '__root__'
+    | '/'
+    | '/home'
+    | '/customers/create'
+    | '/customers/'
+    | '/customers/$customerId/message'
+    | '/customers/$customerId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +106,8 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   CustomersCreateRoute: typeof CustomersCreateRoute
   CustomersIndexRoute: typeof CustomersIndexRoute
+  CustomersCustomerIdMessageRoute: typeof CustomersCustomerIdMessageRoute
+  CustomersCustomerIdIndexRoute: typeof CustomersCustomerIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +140,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomersCreateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/customers/$customerId/': {
+      id: '/customers/$customerId/'
+      path: '/customers/$customerId'
+      fullPath: '/customers/$customerId/'
+      preLoaderRoute: typeof CustomersCustomerIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/customers/$customerId/message': {
+      id: '/customers/$customerId/message'
+      path: '/customers/$customerId/message'
+      fullPath: '/customers/$customerId/message'
+      preLoaderRoute: typeof CustomersCustomerIdMessageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +162,8 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   CustomersCreateRoute: CustomersCreateRoute,
   CustomersIndexRoute: CustomersIndexRoute,
+  CustomersCustomerIdMessageRoute: CustomersCustomerIdMessageRoute,
+  CustomersCustomerIdIndexRoute: CustomersCustomerIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

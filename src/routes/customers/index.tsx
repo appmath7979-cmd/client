@@ -1,16 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
+import { CustomerTable } from "#/components/customer/CustomerTable";
 import { Button } from "#/components/ui/button";
-import { Checkbox } from "#/components/ui/checkbox";
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from "#/components/ui/table";
 import { Tabs, TabsList, TabsPanel, TabsTab } from "#/components/ui/tabs";
 import { cn } from "#/lib/utils";
 
@@ -20,9 +12,15 @@ export const Route = createFileRoute("/customers/")({
 
 function RouteComponent() {
 	const [toggleTab, setToggleTab] = useState<boolean>(false);
+	const [selectAll, setSelectAll] = useState<string[]>([]);
+
 	return (
 		<div className="py-4 space-y-6">
-			<div className="flex justify-end items-center">
+			<div className="flex justify-end items-center gap-2">
+				<Button variant={"outline"}>
+					<Trash2Icon />
+					<span>Xóa tất cả</span>
+				</Button>
 				<Button render={<Link to="/customers/create" />}>
 					<PlusIcon />
 					<span>Thêm khách hàng</span>
@@ -54,37 +52,10 @@ function RouteComponent() {
 					</TabsList>
 				</div>
 				<TabsPanel value={"khach"}>
-					<Table>
-						<TableHeader>
-							<TableRow>
-								<TableHead>
-									<Checkbox aria-label="Select row" />
-								</TableHead>
-								<TableHead>Tên</TableHead>
-								<TableHead>Trạng thái</TableHead>
-								<TableHead>Hành động</TableHead>
-							</TableRow>
-						</TableHeader>
-						<TableBody>
-							<TableRow>
-								<TableCell>
-									<Checkbox />
-								</TableCell>
-								<TableCell>
-									<Checkbox />
-								</TableCell>
-								<TableCell>
-									<Checkbox />
-								</TableCell>
-								<TableCell>
-									<Checkbox />
-								</TableCell>
-							</TableRow>
-						</TableBody>
-					</Table>
+					<CustomerTable />
 				</TabsPanel>
 				<TabsPanel value={"chu"}>
-					<div>Chủ</div>
+					<CustomerTable />
 				</TabsPanel>
 			</Tabs>
 		</div>

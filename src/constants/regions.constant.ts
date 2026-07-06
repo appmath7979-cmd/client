@@ -1,6 +1,10 @@
-import type { RegionListType, RegionType } from "#/types/region.type";
+import type { RegionDropdownListType, RegionType } from "#/types/region.type";
 
-const regionNameList: RegionListType = ["MB", "MT", "MN"];
+const regionDropdownList: RegionDropdownListType = [
+	{ label: "Miền Bắc", value: "MB" },
+	{ label: "Miền Trung", value: "MT" },
+	{ label: "Miền Nam", value: "MN" },
+];
 
 const regionMapper: Record<RegionType, string> = {
 	MB: "Miền Bắc",
@@ -8,4 +12,6 @@ const regionMapper: Record<RegionType, string> = {
 	MN: "Miền Nam",
 };
 
-export { regionMapper, regionNameList };
+const regionNameList: RegionType[] = ["MB", "MT", "MN"];
+
+export { regionMapper, regionDropdownList, regionNameList };

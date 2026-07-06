@@ -1,4 +1,10 @@
 type RegionType = "MB" | "MT" | "MN";
-type RegionListType = RegionType[];
 
-export type { RegionListType, RegionType };
+interface RegionDropdownItem {
+	label: string;
+	value: RegionType;
+}
+
+type RegionDropdownListType = RegionDropdownItem[];
+
+export type { RegionDropdownListType, RegionType, RegionDropdownItem };
