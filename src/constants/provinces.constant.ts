@@ -142,7 +142,7 @@ const provinces: ProvinceListType = [
 	{
 		code: "QNA",
 		name: "Quảng Nam",
-		syntax: "qna",
+		syntax: "qn",
 		region: "MT",
 	},
 	{

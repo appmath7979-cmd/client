@@ -9,26 +9,31 @@ export function parseRawMessage(
 		return "";
 	}
 
+	// Thay thế các ký tự không hợp lệ nhưng giữ lại các khoảng trắng để phân tách
 	const cleanValue = debounceTrim.replace(/[^\p{L}\s;\d]/gu, " ");
 	const initialSplit = cleanValue.split(/\s+/).filter(Boolean);
 
 	const splitValue = initialSplit.flatMap((currentValue) => {
+		// Không tách các cú pháp dạng số + d (2d, 3d, 4d, 10d...)
 		if (/^\d+[dD]$/.test(currentValue)) {
 			return currentValue;
 		}
 
 		let sanitizedValue = currentValue;
 
-		// --- SỬA TẠI ĐÂY: CHỈ XÓA CHỮ CÁI THỪA (Không phải n/N và không được là số) ---
-		// Loại trừ hẳn các chữ số \d. Chỉ bắt chữ cái [a-zA-Z] ở cuối chuỗi mà không phải n, N
+		// Xử lý các trường hợp đặc biệt:
+		// Nếu gặp 'd10', 'd20'... ta giữ nguyên để không tách 'd' ra khỏi số
+		if (/^[dD]\d+$/.test(sanitizedValue)) {
+			return sanitizedValue;
+		}
+
 		if (
 			/[a-zA-Z]+\d+[a-zA-Z]$/i.test(sanitizedValue) &&
 			!/[nN]$/i.test(sanitizedValue)
 		) {
-			sanitizedValue = sanitizedValue.replace(/[a-zA-Z]$/i, ""); // Chỉ xóa đúng 1 chữ cái lỗi ở cuối
+			sanitizedValue = sanitizedValue.replace(/[a-zA-Z]$/i, "");
 		}
 
-		// Tách số đứng trước sát cú pháp (Ví dụ: "20b20" -> ["20", "b20"])
 		const match = sanitizedValue.match(/^(\d+)([\p{L}a-zA-Z]+\d+[nN]?)$/u);
 		if (match) {
 			return [match[1], match[2]];
@@ -52,10 +57,14 @@ export function parseRawMessage(
 		const currentValue = parsedKeywords[i];
 		const nextValue = parsedKeywords[i + 1];
 
+		// Chỉ kết hợp nếu currentValue là từ khóa cần gộp và nextValue là con số
+		// Loại trừ các trường hợp không cần gộp
 		if (
 			validKeysToCombine.includes(currentValue) &&
 			nextValue &&
-			/^\d+$/.test(nextValue)
+			/^\d+$/.test(nextValue) &&
+			!/^\d+d$/i.test(currentValue) &&
+			!/^[dD]\d+$/i.test(currentValue)
 		) {
 			finalResult.push(`${currentValue}${nextValue}`);
 			i++;
