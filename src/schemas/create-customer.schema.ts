@@ -26,9 +26,9 @@ const CreateCustomerSchema = z.object({
 			"Số điện thoại không hợp lệ (phải gồm 10 số)!",
 		),
 	type: z.enum(["khach", "chu"]),
-
+	tinhUi: z.boolean(),
+	xienMienBac: z.boolean(),
 	settings: z.array(BetPairSchema),
-
 	dat: z.enum(["1 lần", "ky rưỡi", "nhiều cặp"]),
 	daxt: z.enum(["1 lần", "ky rưỡi", "nhiều cặp"]),
 });

@@ -19,6 +19,11 @@ import { validateMessage } from "#/lib/validate-message";
 import { store } from "#/store/store";
 import type { IValidateStatus } from "#/types/message.type";
 import { expandChunks } from "#/lib/message-parser";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
+import { CheckMessageBtn } from "#/components/messages/CheckMessageBtn";
+import { parseMessageChunked } from "#/lib/parse-message-chunked";
+import { DatePicker } from "#/components/system/DatePicker";
+import { formatDate } from "#/lib/date-format";
 
 export const Route = createFileRoute("/customers/$customerId/message")({
 	component: RouteComponent,
@@ -34,8 +39,10 @@ function RouteComponent() {
 	});
 	const [chunks, setChunks] = useState<Array<string[]>>([]);
 	const [isEdited, setIsEdited] = useState<boolean>(false);
+	const [isChecked, setIsChecked] = useState<boolean>(false);
+	const [checkedMessage, setCheckedMessage] = useState<Array<string[]>>([]);
 
-	const { date } = useDatePicker();
+	const { date, open, setOpen, handleSelect } = useDatePicker();
 	const rewardSchedule = useRewardSchedule(date);
 	const debounced = useDebounce(value);
 
@@ -45,14 +52,31 @@ function RouteComponent() {
 			nextChunks[index] = newValue;
 			setChunks(nextChunks);
 			setIsEdited(true);
+			setIsChecked(false);
 		},
 		[chunks],
 	);
 
-	const handleSubmit = () => {
+	const handleSubmitEdit = () => {
 		const newValue = chunks.map((item) => item.join(" ")).join(" ");
 		setValue(newValue);
 		setIsEdited(false);
+	};
+
+	const handleCheckMessage = () => {
+		const value = expandChunks(chunks, rewardSchedule, region);
+		setCheckedMessage(value);
+		setIsChecked(true);
+	};
+
+	const handleSubmit = () => {
+		const value = parseMessageChunked(checkedMessage, region);
+		const release = formatDate(date);
+		const data = {
+			region,
+			results: value,
+			release,
+		};
 	};
 
 	useEffect(() => {
@@ -76,23 +100,20 @@ function RouteComponent() {
 		setChunks(chunks);
 	}, [parsedText, region, rewardSchedule]);
 
-	const handleCheckMessage = () => {
-		const value = expandChunks(chunks, rewardSchedule, region);
-		console.log(value);
-	};
-
 	return (
 		<div className="py-4 space-y-6">
 			<div className="flex justify-end items-center gap-2">
+				<DatePicker
+					date={date}
+					open={open}
+					onOpenChange={setOpen}
+					onSelect={handleSelect}
+				/>
 				<DropdownRegion />
-				<Button
-					variant={"outline"}
-					disabled={notice.status !== "success"}
-					onClick={handleCheckMessage}
-				>
-					Kiểm tra tin nhắn
+				<CheckMessageBtn notice={notice} onCheckMessage={handleCheckMessage} />
+				<Button disabled={!isChecked} onClick={handleSubmit}>
+					Gửi tin nhắn
 				</Button>
-				<Button>Gửi tin nhắn</Button>
 			</div>
 			<div className="space-y-2">
 				<div className="space-y-1">
@@ -122,11 +143,49 @@ function RouteComponent() {
 			<div className="border rounded-md p-4 space-y-5">
 				<div className="flex justify-between items-center">
 					<p className="font-semibold">Tin nhắn đã lọc</p>
-					<Button disabled={!isEdited} onClick={handleSubmit}>
+					<Button disabled={!isEdited} onClick={handleSubmitEdit}>
 						Xác nhận sửa tin
 					</Button>
 				</div>
-				<SyntaxList chunks={chunks} onEdit={handleEditChunks} />
+				<Tabs defaultValue={"Lọc tin nhắn"}>
+					<TabsList>
+						<TabsTrigger value={"Lọc tin nhắn"}>Lọc tin nhắn</TabsTrigger>
+						<TabsTrigger value={"Kiểm tra tin nhắn"}>
+							Kiểm tra tin nhắn
+						</TabsTrigger>
+					</TabsList>
+					<TabsContent value={"Lọc tin nhắn"}>
+						{chunks.length > 0 ? (
+							<SyntaxList chunks={chunks} onEdit={handleEditChunks} />
+						) : (
+							<p className="text-center border p-4 rounded-md text-muted-foreground">
+								Chưa có tin nhắn để lọc
+							</p>
+						)}
+					</TabsContent>
+					<TabsContent value={"Kiểm tra tin nhắn"}>
+						{checkedMessage.length > 0 ? (
+							<ul className="grid md:grid-cols-2 gap-4">
+								{checkedMessage.map((check, index) => {
+									const key = `${check.join("-")}-${index}`;
+									return (
+										<li key={key} className="p-2 border rounded-md">
+											{check.join(" ")}
+										</li>
+									);
+								})}
+							</ul>
+						) : (
+							<div className="text-center border p-4 rounded-md text-muted-foreground">
+								<p>Vui lòng chọn kiểm tra tin nhắn</p>
+								<CheckMessageBtn
+									notice={notice}
+									onCheckMessage={handleCheckMessage}
+								/>
+							</div>
+						)}
+					</TabsContent>
+				</Tabs>
 			</div>
 		</div>
 	);

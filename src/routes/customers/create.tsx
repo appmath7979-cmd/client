@@ -90,6 +90,41 @@ function RouteComponent() {
 					</form.Field>
 				</div>
 
+				<div className="box-field flex justify-between">
+					<form.Field name="tinhUi">
+						{({ name, state, handleChange }) => (
+							<CreateRadioField
+								title="Tính Ủi"
+								defaultValue={
+									state.meta.isDefaultValue ? String(state.value) : ""
+								}
+								name={name}
+								values={[
+									{ label: "Cho phép", value: "true" },
+									{ label: "Không", value: "false" },
+								]}
+								onValueChange={(val) => handleChange(val === "true")}
+							/>
+						)}
+					</form.Field>
+					<form.Field name="xienMienBac">
+						{({ name, state, handleChange }) => (
+							<CreateRadioField
+								title="Xiên 2-3-4 Miền Bắc"
+								defaultValue={
+									state.meta.isDefaultValue ? String(state.value) : ""
+								}
+								name={name}
+								values={[
+									{ label: "Cho phép", value: "true" },
+									{ label: "Không", value: "false" },
+								]}
+								onValueChange={(val) => handleChange(val === "true")}
+							/>
+						)}
+					</form.Field>
+				</div>
+
 				<div className="box-field">
 					<form.Field name="settings">
 						{() => (

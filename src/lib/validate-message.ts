@@ -44,10 +44,6 @@ export function validateMessage(
 				if (matchNext) {
 					const nextPrefix = matchNext[1].toLowerCase();
 					if (currentPrefix === nextPrefix) {
-						console.log(
-							"⚠️ MẢNG LỌC ĐƯỢC TRƯỚC KHI LỖI TRÙNG CƯỢC:",
-							processedMessageChunks,
-						);
 						return {
 							message: `LỖI CÚ PHÁP: Nhập trùng kiểu cược giống nhau liên tiếp "${word} ${nextWord}".`,
 							status: "error",
@@ -89,19 +85,23 @@ export function validateMessage(
 				currentProvinces.includes(w.toLowerCase()),
 			);
 
+			// 1. Lọc tất cả các phím cược trong cụm để phục vụ kiểm tra
+			const betWordsInChunk = chunkToProcess.filter((w) =>
+				/^[\p{L}a-zA-Z]+\d+[nN]?$/u.test(w),
+			);
+			const betPrefixes = betWordsInChunk.map(
+				(w) => w.match(/^([\p{L}a-zA-Z]+)/u)?.[1].toLowerCase() || "",
+			);
+
+			// 2. Kiểm tra cú pháp kéo chữ "k"
 			const kIndex = chunkToProcess.findIndex((w) => w.toLowerCase() === "k");
 			if (kIndex !== -1) {
-				if (numbersInChunk.length !== 2) {
-					console.log(
-						"⚠️ MẢNG LỌC ĐƯỢC TRƯỚC KHI LỖI CHỮ K:",
-						processedMessageChunks,
-					);
+				if (numbersInChunk.length !== 2)
 					return {
 						message: `LỖI CÚ PHÁP: Cú pháp kéo chữ "k" ở cụm ${currentIdx + 1} chỉ chấp nhận đúng 2 số (Ví dụ: 00 k 09).`,
 						status: "error",
 						chunks: processedMessageChunks,
 					};
-				}
 
 				const prevWordOfK = chunkToProcess[kIndex - 1];
 				const nextWordOfK = chunkToProcess[kIndex + 1];
@@ -117,14 +117,15 @@ export function validateMessage(
 						chunks: processedMessageChunks,
 					};
 				}
-			}
 
-			const betWordsInChunk = chunkToProcess.filter((w) =>
-				/^[\p{L}a-zA-Z]+\d+[nN]?$/u.test(w),
-			);
-			const betPrefixes = betWordsInChunk.map(
-				(w) => w.match(/^([\p{L}a-zA-Z]+)/u)?.[1].toLowerCase() || "",
-			);
+				if (betPrefixes.includes("da") || betPrefixes.includes("dax")) {
+					return {
+						message: `LỖI CÚ PHÁP: Cụm số ${currentIdx + 1} đang dùng cú pháp kéo "k" thì không được phép sử dụng kiểu cược "da" hoặc "dax".`,
+						status: "error",
+						chunks: processedMessageChunks,
+					};
+				}
+			}
 
 			if (
 				betPrefixes.includes("dd") &&
@@ -180,10 +181,6 @@ export function validateMessage(
 					}
 
 					if (chunkStationCount < 2 || chunkStationCount > totalStationsToday) {
-						console.log(
-							"⚠️ MẢNG LỌC ĐƯỢC TRƯỚC KHI LỖI SỐ ĐÀI DAX:",
-							processedMessageChunks,
-						);
 						return {
 							message: `LỖI CÚ PHÁP: Cú pháp đá xiên "dax" tại cụm số ${currentIdx + 1} yêu cầu tối thiểu là 2 đài và tối đa bằng số đài mở thưởng hôm nay (${totalStationsToday} đài). Bạn hiện đang chạy cho ${chunkStationCount} đài.`,
 							status: "error",
@@ -216,10 +213,6 @@ export function validateMessage(
 					);
 
 					if (!isSameDigitCount) {
-						console.log(
-							"⚠️ MẢNG LỌC ĐƯỢC TRƯỚC KHI LỖI LỆCH CÀNG:",
-							processedMessageChunks,
-						);
 						return {
 							message: `LỖI CÚ PHÁP: Cụm số ${currentIdx + 1} chứa các con số lệch càng. Kiểu viết trộn lẫn độ dài số CHỈ được áp dụng khi cụm có duy nhất cú pháp cược "b".`,
 							status: "error",
@@ -270,6 +263,8 @@ export function validateMessage(
 						chunks: processedMessageChunks,
 					};
 				}
+
+				chunkToProcess.unshift("mb");
 			} else {
 				const invalidProvince = pureTextsInChunk.find(
 					(w) => !currentProvinces.includes(w.toLowerCase()),

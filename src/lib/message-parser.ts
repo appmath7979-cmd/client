@@ -1,23 +1,41 @@
 import type { RegionType } from "#/types/region.type";
 import type { IRewardProvince } from "#/types/reward.type";
 
+// Hàm helper hoán vị chuỗi số không trùng lặp (ví dụ: 123 -> [123, 132, 213, 231, 312, 321])
+function getPermutations(str: string): string[] {
+	const results: string[] = [];
+	function permute(arr: string[], memo: string[] = []) {
+		if (arr.length === 0) {
+			results.push(memo.join(""));
+			return;
+		}
+		const seen = new Set<string>();
+		for (let i = 0; i < arr.length; i++) {
+			if (seen.has(arr[i])) continue;
+			seen.add(arr[i]);
+			const current = arr.splice(i, 1);
+			permute([...arr], memo.concat(current));
+			arr.splice(i, 0, current[0]);
+		}
+	}
+	permute(str.split(""));
+	return results;
+}
+
 export function expandChunks(
 	chunks: Array<string[]>,
-	rewardSchedule: Omit<IRewardProvince, "day"> & {
-		MN?: any[];
-		MT?: any[];
-		MB?: any[];
-	},
+	rewardSchedule: Omit<IRewardProvince, "day">,
 	region: RegionType,
 ): Array<string[]> {
 	return chunks.flatMap((subArray: string[]) => {
 		let stations: string[] = [];
 		let numbers: string[] = [];
-		let actionTypes: Array<{ type: string; value: string }> = [];
+		const actionTypes: Array<{ type: string; value: string }> = [];
 
 		const rawNumbers: string[] = [];
 		let hasKéo = false;
 		let has3D = false;
+		let hasBaoĐảo = false; // Thêm cờ đánh dấu nếu cụm có phím cược bd
 
 		// Bước 1: Phân loại dữ liệu từ mảng con
 		subArray.forEach((item) => {
@@ -26,6 +44,11 @@ export function expandChunks(
 			if (match) {
 				const charPart = match[1].toLowerCase();
 				const numPart = match[2];
+
+				// Kiểm tra xem phím cược có phải là bd (bao đảo) hay không
+				if (charPart === "bd") {
+					hasBaoĐảo = true;
+				}
 
 				if (charPart === "xc") {
 					actionTypes.push(
@@ -75,6 +98,11 @@ export function expandChunks(
 			}
 		} else {
 			numbers = rawNumbers;
+		}
+
+		// XỬ LÝ ĐẢO SỐ: Nếu phát hiện có phím bd trong cụm, thực hiện hoán vị danh sách số thu được
+		if (hasBaoĐảo) {
+			numbers = numbers.flatMap((num) => getPermutations(num));
 		}
 
 		// Bước 3: Tạo tổ hợp kết quả trả về đúng kiểu Array<string[]>

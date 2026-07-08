@@ -4,6 +4,8 @@ const defaultValueCreateCustomer: CreateCustomerType = {
 	fullName: "",
 	phoneNumber: "",
 	type: "khach",
+	tinhUi: false,
+	xienMienBac: false,
 	settings: [
 		{
 			name: "b2",
