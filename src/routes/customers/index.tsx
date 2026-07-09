@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsPanel, TabsTab } from "#/components/ui/tabs";
 import { cn } from "#/lib/utils";
 
 export const Route = createFileRoute("/customers/")({
+	staticData: { title: "Khách hàng" },
 	component: RouteComponent,
 });
 

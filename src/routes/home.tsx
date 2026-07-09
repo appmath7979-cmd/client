@@ -11,6 +11,7 @@ import { useDatePicker } from "#/hooks/use-date-picker";
 import { formatDate } from "#/lib/date-format";
 
 export const Route = createFileRoute("/home")({
+	staticData: { title: "Trang chủ" },
 	component: RouteComponent,
 });
 

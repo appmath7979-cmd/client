@@ -1,10 +1,13 @@
 import { useAppStore } from "@lavaz/store";
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
+import { CheckMessageBtn } from "#/components/messages/CheckMessageBtn";
 import { SyntaxList } from "#/components/messages/SyntaxList";
+import { DatePicker } from "#/components/system/DatePicker";
 import { DropdownRegion } from "#/components/system/dropdowns/DropdownRegion";
 import { Button } from "#/components/ui/button";
 import { Label } from "#/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
 import { Textarea } from "#/components/ui/textarea";
 import {
 	betPairSyntaxes,
@@ -13,19 +16,17 @@ import {
 import { useRewardSchedule } from "#/hooks/app/use-reward-schedule";
 import { useDatePicker } from "#/hooks/use-date-picker";
 import { useDebounce } from "#/hooks/use-debounce";
+import { formatDate } from "#/lib/date-format";
+import { expandChunks } from "#/lib/message-parser";
+import { parseMessageChunked } from "#/lib/parse-message-chunked";
 import { parseRawMessage } from "#/lib/parse-raw-message";
 import { cn } from "#/lib/utils";
 import { validateMessage } from "#/lib/validate-message";
 import { store } from "#/store/store";
 import type { IValidateStatus } from "#/types/message.type";
-import { expandChunks } from "#/lib/message-parser";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
-import { CheckMessageBtn } from "#/components/messages/CheckMessageBtn";
-import { parseMessageChunked } from "#/lib/parse-message-chunked";
-import { DatePicker } from "#/components/system/DatePicker";
-import { formatDate } from "#/lib/date-format";
 
 export const Route = createFileRoute("/customers/$customerId/message")({
+	staticData: { title: "Xử lý tin nhắn" },
 	component: RouteComponent,
 });
 

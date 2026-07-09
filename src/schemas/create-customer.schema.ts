@@ -33,7 +33,4 @@ const CreateCustomerSchema = z.object({
 	daxt: z.enum(["1 lần", "ky rưỡi", "nhiều cặp"]),
 });
 
-export type CreateCustomerType = z.infer<typeof CreateCustomerSchema>;
-export type BetPairType = z.infer<typeof BetPairSchema>;
-
 export { BetPairSchema, CreateCustomerSchema };

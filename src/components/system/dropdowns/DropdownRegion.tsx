@@ -4,7 +4,6 @@ import {
 	SelectItem,
 	SelectPopup,
 	SelectTrigger,
-	SelectValue,
 } from "#/components/ui/select";
 import { regionDropdownList } from "#/constants/regions.constant";
 import { store } from "#/store/store";
@@ -14,6 +13,7 @@ export function DropdownRegion() {
 		store.region,
 		(s) => s.default,
 	);
+	const [region] = useAppStore(store.region, (s) => s.region);
 
 	return (
 		<Select
@@ -22,7 +22,7 @@ export function DropdownRegion() {
 			items={regionDropdownList}
 		>
 			<SelectTrigger className={"w-fit"}>
-				<SelectValue />
+				{regionDropdownList.find((item) => item.value === region)?.label}
 			</SelectTrigger>
 			<SelectPopup>
 				{regionDropdownList.map((item) => (

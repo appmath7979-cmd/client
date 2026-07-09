@@ -9,13 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LayoffRouteImport } from './routes/layoff'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CustomersIndexRouteImport } from './routes/customers/index'
 import { Route as CustomersCreateRouteImport } from './routes/customers/create'
+import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as CustomersCustomerIdIndexRouteImport } from './routes/customers/$customerId/index'
 import { Route as CustomersCustomerIdMessageRouteImport } from './routes/customers/$customerId/message'
 
+const LayoffRoute = LayoffRouteImport.update({
+  id: '/layoff',
+  path: '/layoff',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -36,6 +43,11 @@ const CustomersCreateRoute = CustomersCreateRouteImport.update({
   path: '/customers/create',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthSignUpRoute = AuthSignUpRouteImport.update({
+  id: '/auth/sign-up',
+  path: '/auth/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CustomersCustomerIdIndexRoute =
   CustomersCustomerIdIndexRouteImport.update({
     id: '/customers/$customerId/',
@@ -52,6 +64,8 @@ const CustomersCustomerIdMessageRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
+  '/layoff': typeof LayoffRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
   '/customers/create': typeof CustomersCreateRoute
   '/customers/': typeof CustomersIndexRoute
   '/customers/$customerId/message': typeof CustomersCustomerIdMessageRoute
@@ -60,6 +74,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
+  '/layoff': typeof LayoffRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
   '/customers/create': typeof CustomersCreateRoute
   '/customers': typeof CustomersIndexRoute
   '/customers/$customerId/message': typeof CustomersCustomerIdMessageRoute
@@ -69,6 +85,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
+  '/layoff': typeof LayoffRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
   '/customers/create': typeof CustomersCreateRoute
   '/customers/': typeof CustomersIndexRoute
   '/customers/$customerId/message': typeof CustomersCustomerIdMessageRoute
@@ -79,6 +97,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/home'
+    | '/layoff'
+    | '/auth/sign-up'
     | '/customers/create'
     | '/customers/'
     | '/customers/$customerId/message'
@@ -87,6 +107,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/home'
+    | '/layoff'
+    | '/auth/sign-up'
     | '/customers/create'
     | '/customers'
     | '/customers/$customerId/message'
@@ -95,6 +117,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/home'
+    | '/layoff'
+    | '/auth/sign-up'
     | '/customers/create'
     | '/customers/'
     | '/customers/$customerId/message'
@@ -104,6 +128,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HomeRoute: typeof HomeRoute
+  LayoffRoute: typeof LayoffRoute
+  AuthSignUpRoute: typeof AuthSignUpRoute
   CustomersCreateRoute: typeof CustomersCreateRoute
   CustomersIndexRoute: typeof CustomersIndexRoute
   CustomersCustomerIdMessageRoute: typeof CustomersCustomerIdMessageRoute
@@ -112,6 +138,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/layoff': {
+      id: '/layoff'
+      path: '/layoff'
+      fullPath: '/layoff'
+      preLoaderRoute: typeof LayoffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/home': {
       id: '/home'
       path: '/home'
@@ -140,6 +173,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomersCreateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/sign-up': {
+      id: '/auth/sign-up'
+      path: '/auth/sign-up'
+      fullPath: '/auth/sign-up'
+      preLoaderRoute: typeof AuthSignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/customers/$customerId/': {
       id: '/customers/$customerId/'
       path: '/customers/$customerId'
@@ -160,6 +200,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HomeRoute: HomeRoute,
+  LayoffRoute: LayoffRoute,
+  AuthSignUpRoute: AuthSignUpRoute,
   CustomersCreateRoute: CustomersCreateRoute,
   CustomersIndexRoute: CustomersIndexRoute,
   CustomersCustomerIdMessageRoute: CustomersCustomerIdMessageRoute,

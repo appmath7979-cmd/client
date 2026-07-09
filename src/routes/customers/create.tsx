@@ -21,6 +21,7 @@ import type {
 	CreateTypeValueCustomerType,
 } from "#/types/create-customer.type";
 export const Route = createFileRoute("/customers/create")({
+	staticData: { title: "Tạo khách hàng" },
 	component: RouteComponent,
 });
 

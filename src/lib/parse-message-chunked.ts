@@ -1,9 +1,9 @@
 import { provinces } from "#/constants/provinces.constant";
-import type { RegionType } from "#/types/region.type";
 import type {
-	ISimpleStationGroup,
 	IGroupedBetItem,
+	ISimpleStationGroup,
 } from "#/types/message.type"; // Import từ file types chung
+import type { RegionType } from "#/types/region.type";
 
 export function parseMessageChunked(
 	checkedMessage: Array<string[]>,
