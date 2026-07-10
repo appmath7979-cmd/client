@@ -1,4 +1,4 @@
-import type { CreateToggleListType } from "#/types/create-customer.type";
+import type { CreateToggleListType } from "#/types/customer.type";
 
 const typeValues: CreateToggleListType = [
 	{ label: "Khách", value: "khach" },

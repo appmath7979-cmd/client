@@ -1,20 +1,19 @@
-import type { CreateCustomerType } from "../create-customer.type";
+import type { CreateCustomerType } from "../customer.type";
+import type { IBaseApi, IBaseApiTime } from "./base.type";
 
 type CustomerType = "ACTIVE" | "INACTIVE";
 
 interface IPostCustomerApi extends CreateCustomerType {}
 
-interface ICustomerListItemApi {
+interface ICustomerListItemApi extends IBaseApiTime {
 	id: string;
 	fullName: string;
 	status: CustomerType;
-	createdAt: string;
-	updatedAt: string;
+	type: CustomerType;
 }
 
-interface IGetCustomerApi {
-	message: string;
+interface IGetCustomerApi extends IBaseApi {
 	customers: ICustomerListItemApi[];
 }
 
-export type { IPostCustomerApi, IGetCustomerApi };
+export type { IPostCustomerApi, IGetCustomerApi, ICustomerListItemApi };

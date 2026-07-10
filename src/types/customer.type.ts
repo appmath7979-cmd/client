@@ -7,8 +7,8 @@ import type {
 type BetPairType = z.infer<typeof BetPairSchema>;
 type CreateCustomerType = z.infer<typeof CreateCustomerSchema>;
 
-type CreateTypeValueCustomerType = "khach" | "chu";
-type CreateDaValueType = "1 lần" | "ky rưỡi" | "nhiều cặp";
+type CustomerType = "khach" | "chu";
+type DaValueType = "1 lần" | "ky rưỡi" | "nhiều cặp";
 
 interface ICreateToggleItem {
 	label: string;
@@ -31,13 +31,16 @@ type SettingRecordItem = Record<
 	}
 >;
 
+type SelectCustomerType = Record<CustomerType, string[]>;
+
 export type {
 	BetPairType,
 	CreateCustomerType,
-	CreateTypeValueCustomerType,
 	ICreateToggleItem,
 	CreateToggleListType,
-	CreateDaValueType,
+	DaValueType,
 	SettingRecordItem,
 	ICreateTypeSettingBet,
+	CustomerType,
+	SelectCustomerType,
 };

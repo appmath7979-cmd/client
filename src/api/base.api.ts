@@ -2,16 +2,30 @@ import axios from "axios";
 
 const isDev = import.meta.env.NODE_ENV === "development";
 
-const baseUrl = !isDev
+const baseURL = !isDev
 	? import.meta.env.VITE_API_URL
 	: "http://100.73.129.78:4000/api/v1";
 
 const baseApi = axios.create({
-	baseURL: baseUrl,
-	timeout: 10000, // Thêm timeout 10s để app không bị treo nếu server nghẽn
+	baseURL,
+	timeout: 10000,
 	headers: {
 		"Content-Type": "application/json",
 	},
 });
+
+baseApi.interceptors.response.use(
+	(response) => {
+		return response.data ?? null;
+	},
+
+	(error) => {
+		const apiMessage =
+			error.response?.data?.message || "Đã có lỗi hệ thống xảy ra!";
+		error.message = apiMessage;
+
+		return Promise.reject(error);
+	},
+);
 
 export { baseApi };

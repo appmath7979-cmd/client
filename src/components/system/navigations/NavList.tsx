@@ -3,15 +3,11 @@ import { NavItem } from "./NavItem";
 
 export function NavList() {
 	return (
-		<nav className="sticky bottom-2 left-1/2 w-fit -translate-x-1/2 rounded-full bg-primary p-2 z-999 text-primary-foreground shadow-md flex items-center">
-			{navList.map((item) => (
-				<NavItem
-					key={item.label}
-					href={item.href}
-					label={item.label}
-					icon={item.icon}
-				/>
-			))}
+		<nav className="fixed bottom-0 inset-x-0 mx-auto bg-primary p-2 z-40 text-primary-foreground shadow-md flex justify-center items-center">
+			{navList.map((item) => {
+				const { label, href, icon } = item;
+				return <NavItem key={label} href={href} label={label} icon={icon} />;
+			})}
 		</nav>
 	);
 }

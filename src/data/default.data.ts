@@ -1,4 +1,4 @@
-import type { CreateCustomerType } from "#/types/create-customer.type";
+import type { CreateCustomerType } from "#/types/customer.type";
 
 const defaultValueCreateCustomer: CreateCustomerType = {
 	fullName: "",

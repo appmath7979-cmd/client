@@ -14,6 +14,7 @@ import {
 	validKeysToCombine,
 } from "#/constants/message.constant";
 import { useRewardSchedule } from "#/hooks/app/use-reward-schedule";
+import { usePostCustomer } from "#/hooks/query/use-customer-query";
 import { useDatePicker } from "#/hooks/use-date-picker";
 import { useDebounce } from "#/hooks/use-debounce";
 import { formatDate } from "#/lib/date-format";

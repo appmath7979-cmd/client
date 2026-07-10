@@ -1,6 +1,6 @@
 import { Label } from "#/components/ui/label";
 import { Switch } from "#/components/ui/switch";
-import type { ICreateTypeSettingBet } from "#/types/create-customer.type";
+import type { ICreateTypeSettingBet } from "#/types/customer.type";
 
 interface CreateSwitchProps {
 	value: "tile" | "thanhtien";

@@ -1,12 +1,12 @@
 import { Label } from "#/components/ui/label";
 import { Radio, RadioGroup } from "#/components/ui/radio-group";
-import type { CreateToggleListType } from "#/types/create-customer.type";
+import type { CreateToggleListType } from "#/types/customer.type";
 
 interface CreateRadioFieldProps {
 	title?: string;
 	name: string;
 	values: CreateToggleListType;
-	defaultValue: string;
+	value: string;
 	onValueChange: (val: string) => void;
 }
 
@@ -15,7 +15,7 @@ export function CreateRadioField({
 	name,
 	values,
 	onValueChange,
-	defaultValue,
+	value,
 }: CreateRadioFieldProps) {
 	if (values.length <= 1) return null;
 
@@ -23,7 +23,7 @@ export function CreateRadioField({
 		<div className="space-y-1">
 			{title && <h3 className="font-semibold">{title}</h3>}
 			<RadioGroup
-				defaultValue={defaultValue}
+				defaultValue={value}
 				className={"p-4 border rounded-md flex-row w-fit"}
 				onValueChange={(val: string) => onValueChange(val)}
 			>

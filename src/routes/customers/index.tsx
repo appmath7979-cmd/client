@@ -4,7 +4,9 @@ import { useState } from "react";
 import { CustomerTable } from "#/components/customer/CustomerTable";
 import { Button } from "#/components/ui/button";
 import { Tabs, TabsList, TabsPanel, TabsTab } from "#/components/ui/tabs";
+import { useGetCustomer } from "#/hooks/query/use-customer-query";
 import { cn } from "#/lib/utils";
+import type { SelectCustomerType } from "#/types/customer.type";
 
 export const Route = createFileRoute("/customers/")({
 	staticData: { title: "Khách hàng" },
@@ -12,13 +14,20 @@ export const Route = createFileRoute("/customers/")({
 });
 
 function RouteComponent() {
+	const { data } = useGetCustomer();
 	const [toggleTab, setToggleTab] = useState<boolean>(false);
-	const [selectAll, setSelectAll] = useState<string[]>([]);
+	const [selectAll, setSelectAll] = useState<SelectCustomerType>({
+		chu: [],
+		khach: [],
+	});
 
 	return (
 		<div className="py-4 space-y-6">
 			<div className="flex justify-end items-center gap-2">
-				<Button variant={"outline"}>
+				<Button
+					variant={"outline"}
+					disabled={selectAll.chu.length === 0 && selectAll.khach.length === 0}
+				>
 					<Trash2Icon />
 					<span>Xóa tất cả</span>
 				</Button>
@@ -53,10 +62,20 @@ function RouteComponent() {
 					</TabsList>
 				</div>
 				<TabsPanel value={"khach"}>
-					<CustomerTable />
+					<CustomerTable
+						selectAll={selectAll}
+						data={data?.customers || undefined}
+						type="khach"
+						onSelectAll={setSelectAll}
+					/>
 				</TabsPanel>
 				<TabsPanel value={"chu"}>
-					<CustomerTable />
+					<CustomerTable
+						selectAll={selectAll}
+						data={data?.customers || undefined}
+						type="chu"
+						onSelectAll={setSelectAll}
+					/>
 				</TabsPanel>
 			</Tabs>
 		</div>
