@@ -1,13 +1,23 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { FormDevtoolsPanel } from "@tanstack/react-form-devtools";
-import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import type { QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
+import {
+	createRootRouteWithContext,
+	HeadContent,
+	Scripts,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Header } from "#/components/system/Header";
 import { NavList } from "#/components/system/navigations/NavList";
 import { AppProvider } from "#/providers/AppProvider";
 import appCss from "../styles.css?url";
 
-export const Route = createRootRoute({
+interface MyRouterContext {
+	queryClient: QueryClient;
+}
+
+export const Route = createRootRouteWithContext<MyRouterContext>()({
 	head: () => ({
 		meta: [
 			{
@@ -47,7 +57,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				</AppProvider>
 				<TanStackDevtools
 					config={{
-						position: "bottom-right",
+						position: "top-right",
 					}}
 					plugins={[
 						{
@@ -57,6 +67,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 						{
 							name: "Tanstack Form",
 							render: <FormDevtoolsPanel />,
+						},
+						{
+							name: "Tanstack Query",
+							render: <ReactQueryDevtoolsPanel />,
 						},
 					]}
 				/>

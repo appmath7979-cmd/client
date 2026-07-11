@@ -4,17 +4,20 @@ import { useState } from "react";
 import { CustomerTable } from "#/components/customer/CustomerTable";
 import { Button } from "#/components/ui/button";
 import { Tabs, TabsList, TabsPanel, TabsTab } from "#/components/ui/tabs";
-import { useGetCustomer } from "#/hooks/query/use-customer-query";
+import { useCustomerQuery } from "#/hooks/query/use-customer-query";
 import { cn } from "#/lib/utils";
 import type { SelectCustomerType } from "#/types/customer.type";
 
 export const Route = createFileRoute("/customers/")({
 	staticData: { title: "Khách hàng" },
+	loader: ({ context }) =>
+		context.queryClient.ensureQueryData(useCustomerQuery.getMany()),
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const { data } = useGetCustomer();
+	const data = Route.useLoaderData();
+
 	const [toggleTab, setToggleTab] = useState<boolean>(false);
 	const [selectAll, setSelectAll] = useState<SelectCustomerType>({
 		chu: [],

@@ -1,17 +1,29 @@
 import type { IBaseApi } from "#/types/apis/base.type";
 import type {
 	IGetCustomerApi,
+	IGetCustomerByIdApi,
 	IPostCustomerApi,
 } from "#/types/apis/customer.type";
-import { baseApi } from "./base.api";
+import { apiRouteName, baseApi } from "./base.api";
 
 export const customerApi = {
+	getById: async (customerId: string) => {
+		const response: IGetCustomerByIdApi = await baseApi.get(
+			`${apiRouteName.customer}/${customerId}`,
+		);
+		return response;
+	},
 	getAll: async () => {
-		const res: IGetCustomerApi = await baseApi.get("/customer");
-		return res;
+		const response: IGetCustomerApi = await baseApi.get(
+			`${apiRouteName.customer}`,
+		);
+		return response;
 	},
 	post: async (postData: IPostCustomerApi) => {
-		const res: IBaseApi = await baseApi.post("/customer", postData);
-		return res;
+		const response: IBaseApi = await baseApi.post(
+			`${apiRouteName.customer}`,
+			postData,
+		);
+		return response;
 	},
 };

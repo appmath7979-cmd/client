@@ -1,5 +1,5 @@
 import { useAppStore } from "@lavaz/store";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { CheckMessageBtn } from "#/components/messages/CheckMessageBtn";
 import { SyntaxList } from "#/components/messages/SyntaxList";
@@ -14,7 +14,6 @@ import {
 	validKeysToCombine,
 } from "#/constants/message.constant";
 import { useRewardSchedule } from "#/hooks/app/use-reward-schedule";
-import { usePostCustomer } from "#/hooks/query/use-customer-query";
 import { useDatePicker } from "#/hooks/use-date-picker";
 import { useDebounce } from "#/hooks/use-debounce";
 import { formatDate } from "#/lib/date-format";
@@ -24,6 +23,7 @@ import { parseRawMessage } from "#/lib/parse-raw-message";
 import { cn } from "#/lib/utils";
 import { validateMessage } from "#/lib/validate-message";
 import { store } from "#/store/store";
+import type { IPostOrderMessageApi } from "#/types/apis/message.type";
 import type { IValidateStatus } from "#/types/message.type";
 
 export const Route = createFileRoute("/customers/$customerId/message")({
@@ -32,6 +32,7 @@ export const Route = createFileRoute("/customers/$customerId/message")({
 });
 
 function RouteComponent() {
+	const { customerId } = useParams({ from: "/customers/$customerId/message" });
 	const [region] = useAppStore(store.region, (s) => s.region);
 	const [value, setValue] = useState<string>("");
 	const [parsedText, setParsedText] = useState<string>("");
@@ -43,7 +44,6 @@ function RouteComponent() {
 	const [isEdited, setIsEdited] = useState<boolean>(false);
 	const [isChecked, setIsChecked] = useState<boolean>(false);
 	const [checkedMessage, setCheckedMessage] = useState<Array<string[]>>([]);
-
 	const { date, open, setOpen, handleSelect } = useDatePicker();
 	const rewardSchedule = useRewardSchedule(date);
 	const debounced = useDebounce(value);
@@ -73,12 +73,18 @@ function RouteComponent() {
 
 	const handleSubmit = () => {
 		const value = parseMessageChunked(checkedMessage, region);
-		const release = formatDate(date);
-		const data = {
+		const dateRelease = formatDate(date);
+		const timeRelease = date.toLocaleTimeString();
+
+		const data: IPostOrderMessageApi = {
 			region,
 			results: value,
-			release,
+			dateRelease,
+			timeRelease,
+			customerId,
 		};
+
+		console.group(data);
 	};
 
 	useEffect(() => {

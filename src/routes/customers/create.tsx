@@ -16,7 +16,7 @@ import {
 } from "#/constants/create-customer.constant";
 import { regionMapper, regionNameList } from "#/constants/regions.constant";
 import { defaultValueCreateCustomer } from "#/data/default.data";
-import { usePostCustomer } from "#/hooks/query/use-customer-query";
+import { useCustomerMutation } from "#/hooks/query/use-customer-query";
 import { CreateCustomerSchema } from "#/schemas/create-customer.schema";
 import type { CustomerType, DaValueType } from "#/types/customer.type";
 export const Route = createFileRoute("/customers/create")({
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/customers/create")({
 });
 
 function RouteComponent() {
-	const { mutate, isPending } = usePostCustomer();
+	const { mutate, isPending } = useCustomerMutation();
 
 	const form = useForm({
 		defaultValues: defaultValueCreateCustomer,

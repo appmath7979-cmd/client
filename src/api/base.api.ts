@@ -28,4 +28,9 @@ baseApi.interceptors.response.use(
 	},
 );
 
-export { baseApi };
+const apiRouteName = {
+	customer: "/customer",
+	order: "/order",
+};
+
+export { baseApi, apiRouteName };

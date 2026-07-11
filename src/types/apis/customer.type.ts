@@ -12,8 +12,17 @@ interface ICustomerListItemApi extends IBaseApiTime {
 	type: CustomerType;
 }
 
+interface IGetCustomerByIdApi extends IBaseApi {
+	customer: CreateCustomerType;
+}
+
 interface IGetCustomerApi extends IBaseApi {
 	customers: ICustomerListItemApi[];
 }
 
-export type { IPostCustomerApi, IGetCustomerApi, ICustomerListItemApi };
+export type {
+	IPostCustomerApi,
+	IGetCustomerApi,
+	ICustomerListItemApi,
+	IGetCustomerByIdApi,
+};
