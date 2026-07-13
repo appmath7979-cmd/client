@@ -13,7 +13,7 @@ interface ICustomerListItemApi extends IBaseApiTime {
 }
 
 interface IGetCustomerByIdApi extends IBaseApi {
-	customer: CreateCustomerType;
+	customer: CreateCustomerType & { id: string };
 }
 
 interface IGetCustomerApi extends IBaseApi {

@@ -5,6 +5,7 @@ import { CheckMessageBtn } from "#/components/messages/CheckMessageBtn";
 import { SyntaxList } from "#/components/messages/SyntaxList";
 import { DatePicker } from "#/components/system/DatePicker";
 import { DropdownRegion } from "#/components/system/dropdowns/DropdownRegion";
+import { Notice } from "#/components/system/Notice";
 import { Button } from "#/components/ui/button";
 import { Label } from "#/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
@@ -14,6 +15,7 @@ import {
 	validKeysToCombine,
 } from "#/constants/message.constant";
 import { useRewardSchedule } from "#/hooks/app/use-reward-schedule";
+import { useOrderMutation } from "#/hooks/query/use-order-query";
 import { useDatePicker } from "#/hooks/use-date-picker";
 import { useDebounce } from "#/hooks/use-debounce";
 import { formatDate } from "#/lib/date-format";
@@ -33,6 +35,7 @@ export const Route = createFileRoute("/customers/$customerId/message")({
 
 function RouteComponent() {
 	const { customerId } = useParams({ from: "/customers/$customerId/message" });
+	const { mutate, isSuccess, data } = useOrderMutation();
 	const [region] = useAppStore(store.region, (s) => s.region);
 	const [value, setValue] = useState<string>("");
 	const [parsedText, setParsedText] = useState<string>("");
@@ -43,6 +46,7 @@ function RouteComponent() {
 	const [chunks, setChunks] = useState<Array<string[]>>([]);
 	const [isEdited, setIsEdited] = useState<boolean>(false);
 	const [isChecked, setIsChecked] = useState<boolean>(false);
+	const [isShowNotice, setIsShowNotice] = useState<boolean>(false);
 	const [checkedMessage, setCheckedMessage] = useState<Array<string[]>>([]);
 	const { date, open, setOpen, handleSelect } = useDatePicker();
 	const rewardSchedule = useRewardSchedule(date);
@@ -82,9 +86,10 @@ function RouteComponent() {
 			dateRelease,
 			timeRelease,
 			customerId,
+			type: "XAC",
 		};
 
-		console.group(data);
+		mutate(data);
 	};
 
 	useEffect(() => {
@@ -107,6 +112,10 @@ function RouteComponent() {
 		setNotice({ message, status });
 		setChunks(chunks);
 	}, [parsedText, region, rewardSchedule]);
+
+	useEffect(() => {
+		if (isSuccess) setIsShowNotice(true);
+	}, [isSuccess]);
 
 	return (
 		<div className="py-4 space-y-6">
@@ -195,6 +204,15 @@ function RouteComponent() {
 					</TabsContent>
 				</Tabs>
 			</div>
+			{isSuccess && isShowNotice && (
+				<Notice
+					title={data.message}
+					description="Bạn có muốn tiếp tục nhập tin?"
+					cancelContent="Tiếp tục nhập tin"
+					submitContent="Hòa thành"
+					onSetIsShow={setIsShowNotice}
+				/>
+			)}
 		</div>
 	);
 }

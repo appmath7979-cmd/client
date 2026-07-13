@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-query";
 import { customerApi } from "#/api/customer.api";
 import { toastManager } from "#/components/ui/toast";
+import { toastTimeout } from "#/constants/toast.constant";
 import type { IPostCustomerApi } from "#/types/apis/customer.type";
 
 const useCustomerQuery = {
@@ -31,7 +32,7 @@ function useCustomerMutation() {
 				title: "Tạo khách hàng mới",
 				description: data.message ?? "Tạo khách hàng thành công",
 				type: "success",
-				timeout: 4500,
+				...toastTimeout,
 			});
 		},
 		onError: (error) => {
@@ -39,7 +40,7 @@ function useCustomerMutation() {
 				title: "Tạo khách hàng mới",
 				description: error.message ?? "Tạo khách hàng thất bại!",
 				type: "error",
-				timeout: 4500,
+				...toastTimeout,
 			});
 		},
 	});
