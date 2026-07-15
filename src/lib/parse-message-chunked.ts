@@ -44,35 +44,44 @@ export function parseMessageChunked(
 
 		// 3. Chuẩn hóa tên cú pháp (name) dựa vào phím cược và độ dài số
 		let betTypeName = actionType;
+		let numberKey = num; // Biến tạm để lưu key của số (có thể kèm dấu dau/duoi)
+
+		const digitCount = num.includes("-")
+			? num.split("-")[0].length
+			: num.length;
+
 		if (actionType === "b") {
-			const digitCount = num.includes("-")
-				? num.split("-")[0].length
-				: num.length;
 			betTypeName = `b${digitCount}`;
-		} else if (
-			actionType === "dd" ||
-			actionType === "dau" ||
-			actionType === "duoi"
-		) {
-			const digitCount = num.includes("-")
-				? num.split("-")[0].length
-				: num.length;
+		}
+		// Xử lý nhóm đầu đuôi (bao gồm dd, dau, duoi, xdau, xduoi,...)
+		else if (["dd", "dau", "duoi", "xdau", "xduoi"].includes(actionType)) {
 			betTypeName = `dd${digitCount}`;
-		} else betTypeName = actionType;
+
+			// Đánh dấu vào số nếu là loại cược riêng biệt biệt để tránh bị cộng dồn sai
+			if (actionType === "dau" || actionType === "xdau") {
+				numberKey = `${num}_dau`;
+			} else if (actionType === "duoi" || actionType === "xduoi") {
+				numberKey = `${num}_duoi`;
+			} else {
+				numberKey = `${num}_dd`; // Cho trường hợp "dd" thông thường
+			}
+		} else {
+			betTypeName = actionType;
+		}
 
 		if (!tempResult[betTypeName]) tempResult[betTypeName] = {};
-
 		if (!tempResult[betTypeName][stationCodeKey])
 			tempResult[betTypeName][stationCodeKey] = [];
 
 		const stationArray = tempResult[betTypeName][stationCodeKey];
 
-		const existingBet = stationArray.find((item) => item.number === num);
+		// Tìm kiếm theo numberKey đã được phân loại đầu/đuôi
+		const existingBet = stationArray.find((item) => item.number === numberKey);
 		if (existingBet) {
 			existingBet.score.xac += money;
 		} else {
 			stationArray.push({
-				number: num,
+				number: numberKey, // Lưu dưới dạng "20_dau", "20_duoi", hoặc "20_dd"
 				score: { xac: money, co: 0, trung: 0 },
 			});
 		}

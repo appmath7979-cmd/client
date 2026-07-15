@@ -1,8 +1,8 @@
 import { useAppStore } from "@lavaz/store";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { PlusIcon } from "lucide-react";
 import { CustomerMessageList } from "#/components/customer/item/CustomerMessageList";
-import { DetailList } from "#/components/customer/item/DetailList";
+import { DetailList } from "#/components/customer/item/detail/DetailList";
 import { DatePicker } from "#/components/system/DatePicker";
 import { DropdownRegion } from "#/components/system/dropdowns/DropdownRegion";
 import { Button } from "#/components/ui/button";
@@ -20,10 +20,13 @@ export const Route = createFileRoute("/customers/$customerId/")({
 
 function RouteComponent() {
 	const [region] = useAppStore(store.region, (s) => s.region);
+	const { customerId } = useParams({ from: "/customers/$customerId/" });
 	const { date, handleSelect, open, setOpen } = useDatePicker();
 	const { customer } = Route.useLoaderData();
-	const { data } = useOrderQuery.getByDate(formatDate(date));
+	const dateFormatted = formatDate(date);
+	const { data } = useOrderQuery.getByDate(dateFormatted);
 	const orders = data?.orders;
+
 
 	return (
 		<div className="py-4 space-y-6">
@@ -61,7 +64,7 @@ function RouteComponent() {
 			</div>
 			<div className="space-y-4">
 				<h3 className="font-semibold">Chi tiết</h3>
-				<DetailList data={orders} region={region} />
+				<DetailList data={orders} region={region} customerId={customerId} />
 			</div>
 		</div>
 	);

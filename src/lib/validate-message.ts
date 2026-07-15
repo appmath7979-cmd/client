@@ -19,7 +19,7 @@ export function validateMessage(
 		rewardSchedule?.[region as keyof typeof rewardSchedule] || []
 	)
 		.filter(Boolean)
-		.map((p: any) => p.syntax.toLowerCase());
+		.map((p) => p.syntax.toLowerCase());
 
 	const totalStationsToday = currentProvinces.length;
 	const allWords = parsedText.split(/\s+/).filter(Boolean);

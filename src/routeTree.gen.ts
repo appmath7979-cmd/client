@@ -17,6 +17,7 @@ import { Route as CustomersCreateRouteImport } from './routes/customers/create'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as CustomersCustomerIdIndexRouteImport } from './routes/customers/$customerId/index'
 import { Route as CustomersCustomerIdMessageRouteImport } from './routes/customers/$customerId/message'
+import { Route as CustomersCustomerIdOrderIdEditRouteImport } from './routes/customers/$customerId/$orderId.edit'
 
 const LayoffRoute = LayoffRouteImport.update({
   id: '/layoff',
@@ -60,6 +61,12 @@ const CustomersCustomerIdMessageRoute =
     path: '/customers/$customerId/message',
     getParentRoute: () => rootRouteImport,
   } as any)
+const CustomersCustomerIdOrderIdEditRoute =
+  CustomersCustomerIdOrderIdEditRouteImport.update({
+    id: '/customers/$customerId/$orderId/edit',
+    path: '/customers/$customerId/$orderId/edit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/customers/': typeof CustomersIndexRoute
   '/customers/$customerId/message': typeof CustomersCustomerIdMessageRoute
   '/customers/$customerId/': typeof CustomersCustomerIdIndexRoute
+  '/customers/$customerId/$orderId/edit': typeof CustomersCustomerIdOrderIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -80,6 +88,7 @@ export interface FileRoutesByTo {
   '/customers': typeof CustomersIndexRoute
   '/customers/$customerId/message': typeof CustomersCustomerIdMessageRoute
   '/customers/$customerId': typeof CustomersCustomerIdIndexRoute
+  '/customers/$customerId/$orderId/edit': typeof CustomersCustomerIdOrderIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -91,6 +100,7 @@ export interface FileRoutesById {
   '/customers/': typeof CustomersIndexRoute
   '/customers/$customerId/message': typeof CustomersCustomerIdMessageRoute
   '/customers/$customerId/': typeof CustomersCustomerIdIndexRoute
+  '/customers/$customerId/$orderId/edit': typeof CustomersCustomerIdOrderIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -103,6 +113,7 @@ export interface FileRouteTypes {
     | '/customers/'
     | '/customers/$customerId/message'
     | '/customers/$customerId/'
+    | '/customers/$customerId/$orderId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -113,6 +124,7 @@ export interface FileRouteTypes {
     | '/customers'
     | '/customers/$customerId/message'
     | '/customers/$customerId'
+    | '/customers/$customerId/$orderId/edit'
   id:
     | '__root__'
     | '/'
@@ -123,6 +135,7 @@ export interface FileRouteTypes {
     | '/customers/'
     | '/customers/$customerId/message'
     | '/customers/$customerId/'
+    | '/customers/$customerId/$orderId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -134,6 +147,7 @@ export interface RootRouteChildren {
   CustomersIndexRoute: typeof CustomersIndexRoute
   CustomersCustomerIdMessageRoute: typeof CustomersCustomerIdMessageRoute
   CustomersCustomerIdIndexRoute: typeof CustomersCustomerIdIndexRoute
+  CustomersCustomerIdOrderIdEditRoute: typeof CustomersCustomerIdOrderIdEditRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -194,6 +208,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomersCustomerIdMessageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/customers/$customerId/$orderId/edit': {
+      id: '/customers/$customerId/$orderId/edit'
+      path: '/customers/$customerId/$orderId/edit'
+      fullPath: '/customers/$customerId/$orderId/edit'
+      preLoaderRoute: typeof CustomersCustomerIdOrderIdEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -206,6 +227,7 @@ const rootRouteChildren: RootRouteChildren = {
   CustomersIndexRoute: CustomersIndexRoute,
   CustomersCustomerIdMessageRoute: CustomersCustomerIdMessageRoute,
   CustomersCustomerIdIndexRoute: CustomersCustomerIdIndexRoute,
+  CustomersCustomerIdOrderIdEditRoute: CustomersCustomerIdOrderIdEditRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

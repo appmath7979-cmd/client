@@ -82,7 +82,7 @@ export function expandChunks(
 
 			// Lấy danh sách cú pháp (syntax) của các đài mở thưởng ngày hôm đó
 			const scheduledStations = openProvinces
-				.map((p: any) => p?.syntax)
+				.map((p) => p?.syntax)
 				.filter(Boolean); // Loại bỏ phần tử undefined nếu có
 
 			stations = [...stations, ...scheduledStations];

@@ -4,7 +4,7 @@ import type { RegionType } from "#/types/region.type";
 import { CustomerMessageItem } from "./CustomerMessageItem";
 
 interface CustomerTypeListProps {
-	data: OrderItemApiType | undefined;
+	data: OrderItemApiType[] | undefined;
 	region: RegionType;
 }
 

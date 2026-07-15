@@ -1,11 +1,14 @@
 import { useAppStore } from "@lavaz/store";
-import { createFileRoute, useParams } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	useNavigate,
+	useParams,
+} from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { CheckMessageBtn } from "#/components/messages/CheckMessageBtn";
 import { SyntaxList } from "#/components/messages/SyntaxList";
 import { DatePicker } from "#/components/system/DatePicker";
 import { DropdownRegion } from "#/components/system/dropdowns/DropdownRegion";
-import { Notice } from "#/components/system/Notice";
 import { Button } from "#/components/ui/button";
 import { Label } from "#/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
@@ -35,7 +38,7 @@ export const Route = createFileRoute("/customers/$customerId/message")({
 
 function RouteComponent() {
 	const { customerId } = useParams({ from: "/customers/$customerId/message" });
-	const { mutate, isSuccess, data } = useOrderMutation();
+	const { mutate, isSuccess } = useOrderMutation().post;
 	const [region] = useAppStore(store.region, (s) => s.region);
 	const [value, setValue] = useState<string>("");
 	const [parsedText, setParsedText] = useState<string>("");
@@ -46,10 +49,10 @@ function RouteComponent() {
 	const [chunks, setChunks] = useState<Array<string[]>>([]);
 	const [isEdited, setIsEdited] = useState<boolean>(false);
 	const [isChecked, setIsChecked] = useState<boolean>(false);
-	const [isShowNotice, setIsShowNotice] = useState<boolean>(false);
 	const [checkedMessage, setCheckedMessage] = useState<Array<string[]>>([]);
+	const navigate = useNavigate();
 	const { date, open, setOpen, handleSelect } = useDatePicker();
-	const rewardSchedule = useRewardSchedule(date);
+	const rewardSchedule = useRewardSchedule({ date });
 	const debounced = useDebounce(value);
 
 	const handleEditChunks = useCallback(
@@ -77,20 +80,21 @@ function RouteComponent() {
 
 	const handleSubmit = () => {
 		const value = parseMessageChunked(checkedMessage, region);
-		const dateRelease = formatDate(date);
-		const timeRelease = date.toLocaleTimeString();
+		const release = formatDate(date);
 
 		const data: IPostOrderMessageApi = {
 			region,
 			results: value,
-			dateRelease,
-			timeRelease,
+			release,
 			customerId,
 			type: "XAC",
 		};
 
 		mutate(data);
 	};
+
+	if (isSuccess)
+		navigate({ to: "/customers/$customerId", params: { customerId } });
 
 	useEffect(() => {
 		const resultString = parseRawMessage(
@@ -112,10 +116,6 @@ function RouteComponent() {
 		setNotice({ message, status });
 		setChunks(chunks);
 	}, [parsedText, region, rewardSchedule]);
-
-	useEffect(() => {
-		if (isSuccess) setIsShowNotice(true);
-	}, [isSuccess]);
 
 	return (
 		<div className="py-4 space-y-6">
@@ -204,15 +204,6 @@ function RouteComponent() {
 					</TabsContent>
 				</Tabs>
 			</div>
-			{isSuccess && isShowNotice && (
-				<Notice
-					title={data.message}
-					description="Bạn có muốn tiếp tục nhập tin?"
-					cancelContent="Tiếp tục nhập tin"
-					submitContent="Hòa thành"
-					onSetIsShow={setIsShowNotice}
-				/>
-			)}
 		</div>
 	);
 }
