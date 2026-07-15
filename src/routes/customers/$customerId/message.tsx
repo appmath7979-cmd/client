@@ -90,6 +90,8 @@ function RouteComponent() {
 			type: "XAC",
 		};
 
+		console.log(data)
+
 		mutate(data);
 	};
 

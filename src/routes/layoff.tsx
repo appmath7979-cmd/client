@@ -23,7 +23,7 @@ function RouteComponent() {
 	const { date, handleSelect, open, setOpen } = useDatePicker();
 	const [region] = useAppStore(store.region, (s) => s.region);
 
-	const rewardSchedule = useRewardSchedule(date);
+	const rewardSchedule = useRewardSchedule({ date });
 
 	return (
 		<div className="py-4 space-y-5">
@@ -36,7 +36,7 @@ function RouteComponent() {
 					onSelect={handleSelect}
 				/>
 				<Tooltip>
-					<TooltipTrigger render={<Button variant={"outline"} size={"icon"} />}>
+					<TooltipTrigger render={<Button variant={"outline"} size={"icon"} className="border-primary text-primary" />}>
 						<SettingsIcon />
 					</TooltipTrigger>
 					<TooltipPopup>Cài đặt</TooltipPopup>
@@ -66,7 +66,7 @@ function RouteComponent() {
 					</TabsTrigger>
 				</TabsList>
 				<TabsContent value={"thong-ke"}>
-					<Analysis provinces={rewardSchedule[region]} />
+					<Analysis provinces={rewardSchedule[region]} region={region} />
 				</TabsContent>
 				<TabsContent value={"du-chuan"}></TabsContent>
 			</Tabs>
