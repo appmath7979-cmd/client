@@ -7,6 +7,10 @@ interface IProvinceItem {
 	region: RegionType;
 }
 
+interface IProvinceItemWithScore extends IProvinceItem {
+	score: number;
+}
+
 type ProvinceListType = IProvinceItem[];
 
-export type { IProvinceItem, ProvinceListType };
+export type { IProvinceItem, ProvinceListType, IProvinceItemWithScore };

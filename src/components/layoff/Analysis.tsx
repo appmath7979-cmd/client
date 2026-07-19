@@ -6,9 +6,10 @@ import { AnalysisList } from "./AnalysisList";
 interface AnalysProps {
 	provinces: IProvinceItem[];
 	region: RegionType;
+	date: Date;
 }
 
-export function Analysis({ provinces, region }: AnalysProps) {
+export function Analysis({ provinces, region, date }: AnalysProps) {
 	return (
 		<Tabs className={"space-y-1"}>
 			<TabsList className={"w-full"}>
@@ -26,7 +27,7 @@ export function Analysis({ provinces, region }: AnalysProps) {
 					key={`${item.code}-${item.region}--content`}
 					value={item.code}
 				>
-					<AnalysisList provinceCode={item.code} region={region} />
+					<AnalysisList provinceCode={item.code} region={region} date={date} />
 				</TabsContent>
 			))}
 		</Tabs>

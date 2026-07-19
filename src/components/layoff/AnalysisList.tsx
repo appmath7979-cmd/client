@@ -1,7 +1,5 @@
 import { syntaxTypeList } from "#/constants/syntax-type.constant";
 import { useOrderQuery } from "#/hooks/query/use-order-query";
-import { useDatePicker } from "#/hooks/use-date-picker";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { formatDate } from "#/lib/date-format";
 import {
 	Table,
@@ -11,29 +9,34 @@ import {
 	TableHeader,
 	TableRow,
 } from "../ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 interface IScore {
 	co: number;
-	xac: number;
+	xac: number; // Đây chính là TỔNG
 	trung: number;
 }
 
 interface IDetailItem {
 	number: string;
 	score: IScore;
-	syntaxName?: string; // Ví dụ: b2, dd2, v.v.
+	syntaxName?: string;
+	displayProvince?: string; // Tên đài/cặp đài (VD: "VL-BD")
 }
 
 interface AnalysisListProps {
 	provinceCode: string;
 	region: string;
+	date: Date;
 }
 
-export function AnalysisList({ provinceCode, region }: AnalysisListProps) {
-	const { date } = useDatePicker();
+export function AnalysisList({
+	provinceCode,
+	region,
+	date,
+}: AnalysisListProps) {
 	const { data } = useOrderQuery.getByDate(formatDate(date));
 
-	// 1. Lọc orders theo đúng Vùng miền
 	const ordersInRegion = data
 		? data.orders.filter((order) => order.region === region)
 		: [];
@@ -50,7 +53,6 @@ export function AnalysisList({ provinceCode, region }: AnalysisListProps) {
 
 			{syntaxTypeList.map((syntax) => {
 				// Sử dụng một Record (object) để nhóm và cộng dồn dữ liệu
-				// Key của map sẽ có dạng: "syntaxName-number" (VD: "b2-20_dau")
 				const groupedData: Record<string, IDetailItem> = {};
 
 				ordersInRegion.forEach((order) => {
@@ -63,7 +65,6 @@ export function AnalysisList({ provinceCode, region }: AnalysisListProps) {
 
 								// XỬ LÝ RIÊNG CHO TAB "2c"
 								if (syntax === "2c") {
-									// Thỏa mãn: Key có chứa số '2' VÀ không phải 'da', 'dax'
 									if (key.includes("2") && key !== "da" && key !== "dax") {
 										isMatched = true;
 									}
@@ -76,32 +77,49 @@ export function AnalysisList({ provinceCode, region }: AnalysisListProps) {
 								}
 
 								if (isMatched) {
-									const provinceData = resultObj[key][provinceCode];
-									if (Array.isArray(provinceData)) {
-										provinceData.forEach((item) => {
-											// Tạo một key duy nhất kết hợp giữa cú pháp và số đánh
-											const groupKey = `${key}-${item.number}`;
+									const targetObject = resultObj[key];
+									if (!targetObject) return;
 
-											if (groupedData[groupKey]) {
-												// Nếu đã tồn tại, cộng dồn các giá trị score
-												groupedData[groupKey].score.co += item.score?.co ?? 0;
-												groupedData[groupKey].score.xac += item.score?.xac ?? 0;
-												groupedData[groupKey].score.trung +=
-													item.score?.trung ?? 0;
-											} else {
-												// Nếu chưa tồn tại, khởi tạo phần tử mới (nhớ clone object score để không ảnh hưởng dữ liệu gốc)
-												groupedData[groupKey] = {
-													number: item.number,
-													syntaxName: key,
-													score: {
-														co: item.score?.co ?? 0,
-														xac: item.score?.xac ?? 0,
-														trung: item.score?.trung ?? 0,
-													},
-												};
+									// Lọc tìm các key đài phù hợp trong data
+									const matchedProvinceKeys = Object.keys(targetObject).filter(
+										(pKey) => {
+											if (key === "da" || key === "dax") {
+												const parts = pKey.split("-");
+												return parts.includes(provinceCode);
 											}
-										});
-									}
+											return pKey === provinceCode;
+										},
+									);
+
+									matchedProvinceKeys.forEach((pKey) => {
+										const provinceData = targetObject[pKey];
+
+										if (Array.isArray(provinceData)) {
+											provinceData.forEach((item) => {
+												// Nhóm dữ liệu kết hợp cả key đài để không bị cộng dồn nhầm giữa các cặp đài dax khác nhau
+												const groupKey = `${key}-${item.number}-${pKey}`;
+
+												if (groupedData[groupKey]) {
+													groupedData[groupKey].score.co += item.score?.co ?? 0;
+													groupedData[groupKey].score.xac +=
+														item.score?.xac ?? 0;
+													groupedData[groupKey].score.trung +=
+														item.score?.trung ?? 0;
+												} else {
+													groupedData[groupKey] = {
+														number: item.number,
+														syntaxName: key,
+														displayProvince: pKey,
+														score: {
+															co: item.score?.co ?? 0,
+															xac: item.score?.xac ?? 0,
+															trung: item.score?.trung ?? 0,
+														},
+													};
+												}
+											});
+										}
+									});
 								}
 							});
 						});
@@ -119,10 +137,11 @@ export function AnalysisList({ provinceCode, region }: AnalysisListProps) {
 									<Table className="min-w-full divide-y divide-border text-left">
 										<TableHeader className="bg-muted text-muted-foreground uppercase text-xs font-semibold">
 											<TableRow className="[&_th]:font-semibold! [&_th]:text-center">
+												{/* Đài để ở ngoài cùng bên trái */}
+												<TableHead>Đài</TableHead>
 												<TableHead>Cú pháp</TableHead>
 												<TableHead>Số đánh</TableHead>
 												<TableHead>Điểm</TableHead>
-												{/* Các cột này bạn có thể bổ sung dữ liệu sau theo yêu cầu thực tế */}
 												<TableHead>Đã cân</TableHead>
 												<TableHead>Tổng</TableHead>
 												<TableHead>Đang dư</TableHead>
@@ -130,19 +149,34 @@ export function AnalysisList({ provinceCode, region }: AnalysisListProps) {
 										</TableHeader>
 										<TableBody className="divide-y divide-border bg-background text-foreground">
 											{finalDataList.map((item, idx) => {
-												const rowKey = `${item.syntaxName}-${item.number}-${idx}`;
+												const rowKey = `${item.syntaxName}-${item.number}-${item.displayProvince}-${idx}`;
+
+												const tong = item.score.xac;
+												const daCan = 0;
+												const diem = tong - daCan;
+
 												return (
 													<TableRow key={rowKey} className="text-center">
+														{/* Cột Đài ở ngoài cùng: Chỉ hiển thị khi cú pháp là dax */}
+														<TableCell className="font-semibold text-blue-600 lowercase">
+															{item.syntaxName === "dax"
+																? item.displayProvince
+																: ""}
+														</TableCell>
 														<TableCell className="font-bold text-muted-foreground uppercase">
 															{item.syntaxName}
 														</TableCell>
 														<TableCell>{item.number}</TableCell>
-														<TableCell className="px-4 py-2.5 text-center text-blue-500">
-															{item.score.xac}
+														<TableCell className="px-4 py-2.5 text-center text-blue-500 font-medium">
+															{diem}
 														</TableCell>
-														<TableCell>-</TableCell>
-														<TableCell>-</TableCell>
-														<TableCell>-</TableCell>
+														<TableCell className="text-muted-foreground">
+															{daCan}
+														</TableCell>
+														<TableCell className="font-semibold text-emerald-600">
+															{tong}
+														</TableCell>
+														<TableCell>0</TableCell>
 													</TableRow>
 												);
 											})}

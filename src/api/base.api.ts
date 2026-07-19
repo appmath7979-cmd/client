@@ -31,6 +31,7 @@ baseApi.interceptors.response.use(
 const apiRouteName = {
 	customer: "/customer",
 	order: "/order",
+	setting: "/setting",
 };
 
 export { baseApi, apiRouteName };

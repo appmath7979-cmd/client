@@ -1,8 +1,7 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useMatchRoute } from "@tanstack/react-router";
 import { Button } from "#/components/ui/button";
-import type { INavItem } from "#/types/nav.type";
-import { useMatchRoute } from "@tanstack/react-router";
 import { cn } from "#/lib/utils";
+import type { INavItem } from "#/types/nav.type";
 
 export function NavItem({ href, label, icon }: INavItem) {
 	const matchRoute = useMatchRoute();

@@ -3,15 +3,17 @@ import {
 	useNavigate,
 	useParams,
 } from "@tanstack/react-router";
-import { ChevronLeft, Trash2Icon } from "lucide-react";
+import { Trash2Icon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { CheckMessageBtn } from "#/components/messages/CheckMessageBtn";
 import { SyntaxList } from "#/components/messages/SyntaxList";
+import { BackBtn } from "#/components/system/BackBtn";
+import { DialogConfirm } from "#/components/system/dialogs/DialogConfirm";
+import { AlertDialog, AlertDialogTrigger } from "#/components/ui/alert-dialog";
 import { Button } from "#/components/ui/button";
 import { Label } from "#/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "#/components/ui/tabs";
 import { Textarea } from "#/components/ui/textarea";
-import { Tooltip, TooltipPopup, TooltipTrigger } from "#/components/ui/tooltip";
 import {
 	betPairSyntaxes,
 	validKeysToCombine,
@@ -28,8 +30,6 @@ import { cn } from "#/lib/utils";
 import { validateMessage } from "#/lib/validate-message";
 import type { IPatchOrderMessageApi } from "#/types/apis/message.type";
 import type { IValidateStatus } from "#/types/message.type";
-import { AlertDialog, AlertDialogTrigger } from "#/components/ui/alert-dialog";
-import { DialogConfirm } from "#/components/system/dialogs/DialogConfirm";
 
 export const Route = createFileRoute("/customers/$customerId/$orderId/edit")({
 	staticData: { title: "Sửa tin nhắn" },
@@ -146,25 +146,7 @@ function RouteComponent() {
 		<div className="py-4 space-y-6">
 			<div className="space-y-4">
 				<div className="flex justify-between items-center">
-					<Tooltip>
-						<TooltipTrigger
-							render={
-								<Button
-									variant={"outline"}
-									size={"icon-sm"}
-									onClick={() =>
-										navigate({
-											to: "/customers/$customerId",
-											params: { customerId },
-										})
-									}
-								/>
-							}
-						>
-							<ChevronLeft />
-						</TooltipTrigger>
-						<TooltipPopup>Quay lại</TooltipPopup>
-					</Tooltip>
+					<BackBtn />
 					<div className="flex items-center gap-2">
 						{isEdit ? (
 							<>

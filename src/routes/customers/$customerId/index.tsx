@@ -27,7 +27,6 @@ function RouteComponent() {
 	const { data } = useOrderQuery.getByDate(dateFormatted);
 	const orders = data?.orders;
 
-
 	return (
 		<div className="py-4 space-y-6">
 			<div className="flex justify-between items-center">

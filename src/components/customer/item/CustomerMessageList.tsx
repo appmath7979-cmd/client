@@ -8,72 +8,95 @@ interface CustomerTypeListProps {
 	region: RegionType;
 }
 
+interface IGroupedSyntax {
+	typeKey: string;
+	tongXac: number;
+	tongCo: number;
+	tongTrung: number;
+}
+
 export function CustomerMessageList({ data, region }: CustomerTypeListProps) {
+	// 1. Lọc orders theo đúng Vùng miền
 	const list = data?.filter((item) => item.region === region) || [];
+
+	// Tạo đối tượng gom nhóm theo Cú pháp (typeKey)
+	const groupedSyntaxes: Record<string, IGroupedSyntax> = {};
 
 	let grandTotalCo = 0;
 	let grandTotalTrung = 0;
 
+	// 2. Tiến hành duyệt và cộng dồn toàn bộ dữ liệu cùng cú pháp
+	list.forEach((order) => {
+		order.results?.forEach((resultItem) => {
+			if (!resultItem) return;
+
+			Object.keys(resultItem).forEach((typeKey) => {
+				const stations = resultItem[typeKey] || {};
+
+				// Khởi tạo cú pháp trong group nếu chưa tồn tại
+				if (!groupedSyntaxes[typeKey]) {
+					groupedSyntaxes[typeKey] = {
+						typeKey,
+						tongXac: 0,
+						tongCo: 0,
+						tongTrung: 0,
+					};
+				}
+
+				Object.keys(stations).forEach((stationName) => {
+					stations[stationName]?.forEach?.((item) => {
+						const xac = Number(item.score?.xac ?? 0);
+						const co = Number(item.score?.co ?? 0);
+						const trung = Number(item.score?.trung ?? 0);
+
+						groupedSyntaxes[typeKey].tongXac += xac;
+						groupedSyntaxes[typeKey].tongCo += co;
+						groupedSyntaxes[typeKey].tongTrung += trung;
+
+						grandTotalCo += co;
+						grandTotalTrung += trung;
+					});
+				});
+			});
+		});
+	});
+
+	const finalGroupedList = Object.values(groupedSyntaxes);
+
 	return (
 		<div>
-			{list.length > 0 ? (
+			{finalGroupedList.length > 0 ? (
 				<>
-					{list.map((order) => (
-						<div key={order.id} className="divide-y border-b last:border-0">
-							{order.results?.map((resultItem, resIndex) => {
-								const key = `${resultItem}-${resIndex}`;
-								return (
-									<div
-										key={key}
-										className={cn(resIndex % 2 !== 0 && "bg-muted/0")}
-									>
-										{Object.keys(resultItem || {}).map((typeKey) => {
-											const stations = resultItem?.[typeKey] || {};
-
-											let tongXac = 0;
-											let tongCo = 0;
-											let tongTrung = 0;
-
-											Object.keys(stations).forEach((stationName) => {
-												stations[stationName]?.forEach?.((item) => {
-													const co = Number(item.score?.co ?? 0);
-													const trung = Number(item.score?.trung ?? 0);
-
-													tongXac += Number(item.score?.xac ?? 0);
-													tongCo += co;
-													tongTrung += trung;
-
-													grandTotalCo += co;
-													grandTotalTrung += trung;
-												});
-											});
-
-											return (
-												<div
-													key={typeKey}
-													className="flex items-center text-center text-sm hover:bg-muted/30 transition-colors [&>div]:py-2 [&>*:not(:first-child)]:border-l"
-												>
-													<CustomerMessageItem type="TYPE" content={typeKey} />
-													<CustomerMessageItem
-														type="XAC"
-														content={tongXac.toLocaleString("vi-VN")}
-													/>
-													<CustomerMessageItem
-														type="CO"
-														content={tongCo.toLocaleString("vi-VN")}
-													/>
-													<CustomerMessageItem
-														type="TRUNG"
-														content={tongTrung.toLocaleString("vi-VN")}
-													/>
-												</div>
-											);
-										})}
-									</div>
-								);
-							})}
-						</div>
-					))}
+					<div className="divide-y border-b">
+						{finalGroupedList.map((groupedItem, index) => {
+							return (
+								<div
+									key={groupedItem.typeKey}
+									className={cn(
+										"flex items-center text-center text-sm hover:bg-muted/30 transition-colors [&>div]:py-2 [&>*:not(:first-child)]:border-l",
+										index % 2 !== 0 && "bg-muted/10",
+									)}
+								>
+									<CustomerMessageItem
+										type="TYPE"
+										content={groupedItem.typeKey}
+									/>
+									<CustomerMessageItem
+										type="XAC"
+										content={groupedItem.tongXac.toLocaleString("vi-VN")}
+									/>
+									<CustomerMessageItem
+										type="CO"
+										content={groupedItem.tongCo.toLocaleString("vi-VN")}
+									/>
+									<CustomerMessageItem
+										type="TRUNG"
+										content={groupedItem.tongTrung.toLocaleString("vi-VN")}
+									/>
+								</div>
+							);
+						})}
+					</div>
 
 					<p
 						className={cn(

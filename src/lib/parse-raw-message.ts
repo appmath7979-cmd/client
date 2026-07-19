@@ -57,17 +57,27 @@ export function parseRawMessage(
 		const currentValue = parsedKeywords[i];
 		const nextValue = parsedKeywords[i + 1];
 
-		// Chỉ kết hợp nếu currentValue là từ khóa cần gộp và nextValue là con số
-		// Loại trừ các trường hợp không cần gộp
+		// Lấy giá trị đứng trước currentValue từ mảng parsedKeywords ban đầu
+		const prevValue = parsedKeywords[i - 1];
+
+		// Kiểm tra xem phía trước có phải là số đánh thuần túy hay không (ví dụ: "100", "50")
+		// và loại trừ trường hợp đứng trước là dạng chữ nối số như b20, bd200 hoặc các chữ đài tp, dn
+		const isPrevPureNumber = prevValue && /^\d+$/.test(prevValue);
+
+		// Chỉ kết hợp nếu:
+		// 1. currentValue thuộc danh sách cần gộp (ví dụ: bd)
+		// 2. Phía sau nó là một con số (ví dụ: 20)
+		// 3. Phía trước nó BẮT BUỘC phải là một số đánh thuần túy
 		if (
 			validKeysToCombine.includes(currentValue) &&
 			nextValue &&
 			/^\d+$/.test(nextValue) &&
+			isPrevPureNumber && // Thêm điều kiện này
 			!/^\d+d$/i.test(currentValue) &&
 			!/^[dD]\d+$/i.test(currentValue)
 		) {
 			finalResult.push(`${currentValue}${nextValue}`);
-			i++;
+			i++; // Bỏ qua phần tử số kế tiếp vì đã gộp
 		} else {
 			finalResult.push(currentValue);
 		}

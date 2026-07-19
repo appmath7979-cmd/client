@@ -9,21 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LayoffRouteImport } from './routes/layoff'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LayoffIndexRouteImport } from './routes/layoff/index'
 import { Route as CustomersIndexRouteImport } from './routes/customers/index'
+import { Route as LayoffSettingsRouteImport } from './routes/layoff/settings'
+import { Route as LayoffOverStandardRouteImport } from './routes/layoff/over-standard'
 import { Route as CustomersCreateRouteImport } from './routes/customers/create'
 import { Route as AuthSignUpRouteImport } from './routes/auth/sign-up'
 import { Route as CustomersCustomerIdIndexRouteImport } from './routes/customers/$customerId/index'
 import { Route as CustomersCustomerIdMessageRouteImport } from './routes/customers/$customerId/message'
 import { Route as CustomersCustomerIdOrderIdEditRouteImport } from './routes/customers/$customerId/$orderId.edit'
 
-const LayoffRoute = LayoffRouteImport.update({
-  id: '/layoff',
-  path: '/layoff',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -34,9 +31,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LayoffIndexRoute = LayoffIndexRouteImport.update({
+  id: '/layoff/',
+  path: '/layoff/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CustomersIndexRoute = CustomersIndexRouteImport.update({
   id: '/customers/',
   path: '/customers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LayoffSettingsRoute = LayoffSettingsRouteImport.update({
+  id: '/layoff/settings',
+  path: '/layoff/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LayoffOverStandardRoute = LayoffOverStandardRouteImport.update({
+  id: '/layoff/over-standard',
+  path: '/layoff/over-standard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CustomersCreateRoute = CustomersCreateRouteImport.update({
@@ -71,10 +83,12 @@ const CustomersCustomerIdOrderIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
-  '/layoff': typeof LayoffRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/customers/create': typeof CustomersCreateRoute
+  '/layoff/over-standard': typeof LayoffOverStandardRoute
+  '/layoff/settings': typeof LayoffSettingsRoute
   '/customers/': typeof CustomersIndexRoute
+  '/layoff/': typeof LayoffIndexRoute
   '/customers/$customerId/message': typeof CustomersCustomerIdMessageRoute
   '/customers/$customerId/': typeof CustomersCustomerIdIndexRoute
   '/customers/$customerId/$orderId/edit': typeof CustomersCustomerIdOrderIdEditRoute
@@ -82,10 +96,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
-  '/layoff': typeof LayoffRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/customers/create': typeof CustomersCreateRoute
+  '/layoff/over-standard': typeof LayoffOverStandardRoute
+  '/layoff/settings': typeof LayoffSettingsRoute
   '/customers': typeof CustomersIndexRoute
+  '/layoff': typeof LayoffIndexRoute
   '/customers/$customerId/message': typeof CustomersCustomerIdMessageRoute
   '/customers/$customerId': typeof CustomersCustomerIdIndexRoute
   '/customers/$customerId/$orderId/edit': typeof CustomersCustomerIdOrderIdEditRoute
@@ -94,10 +110,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
-  '/layoff': typeof LayoffRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/customers/create': typeof CustomersCreateRoute
+  '/layoff/over-standard': typeof LayoffOverStandardRoute
+  '/layoff/settings': typeof LayoffSettingsRoute
   '/customers/': typeof CustomersIndexRoute
+  '/layoff/': typeof LayoffIndexRoute
   '/customers/$customerId/message': typeof CustomersCustomerIdMessageRoute
   '/customers/$customerId/': typeof CustomersCustomerIdIndexRoute
   '/customers/$customerId/$orderId/edit': typeof CustomersCustomerIdOrderIdEditRoute
@@ -107,10 +125,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/home'
-    | '/layoff'
     | '/auth/sign-up'
     | '/customers/create'
+    | '/layoff/over-standard'
+    | '/layoff/settings'
     | '/customers/'
+    | '/layoff/'
     | '/customers/$customerId/message'
     | '/customers/$customerId/'
     | '/customers/$customerId/$orderId/edit'
@@ -118,10 +138,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/home'
-    | '/layoff'
     | '/auth/sign-up'
     | '/customers/create'
+    | '/layoff/over-standard'
+    | '/layoff/settings'
     | '/customers'
+    | '/layoff'
     | '/customers/$customerId/message'
     | '/customers/$customerId'
     | '/customers/$customerId/$orderId/edit'
@@ -129,10 +151,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/home'
-    | '/layoff'
     | '/auth/sign-up'
     | '/customers/create'
+    | '/layoff/over-standard'
+    | '/layoff/settings'
     | '/customers/'
+    | '/layoff/'
     | '/customers/$customerId/message'
     | '/customers/$customerId/'
     | '/customers/$customerId/$orderId/edit'
@@ -141,10 +165,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HomeRoute: typeof HomeRoute
-  LayoffRoute: typeof LayoffRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
   CustomersCreateRoute: typeof CustomersCreateRoute
+  LayoffOverStandardRoute: typeof LayoffOverStandardRoute
+  LayoffSettingsRoute: typeof LayoffSettingsRoute
   CustomersIndexRoute: typeof CustomersIndexRoute
+  LayoffIndexRoute: typeof LayoffIndexRoute
   CustomersCustomerIdMessageRoute: typeof CustomersCustomerIdMessageRoute
   CustomersCustomerIdIndexRoute: typeof CustomersCustomerIdIndexRoute
   CustomersCustomerIdOrderIdEditRoute: typeof CustomersCustomerIdOrderIdEditRoute
@@ -152,13 +178,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/layoff': {
-      id: '/layoff'
-      path: '/layoff'
-      fullPath: '/layoff'
-      preLoaderRoute: typeof LayoffRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/home': {
       id: '/home'
       path: '/home'
@@ -173,11 +192,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/layoff/': {
+      id: '/layoff/'
+      path: '/layoff'
+      fullPath: '/layoff/'
+      preLoaderRoute: typeof LayoffIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/customers/': {
       id: '/customers/'
       path: '/customers'
       fullPath: '/customers/'
       preLoaderRoute: typeof CustomersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/layoff/settings': {
+      id: '/layoff/settings'
+      path: '/layoff/settings'
+      fullPath: '/layoff/settings'
+      preLoaderRoute: typeof LayoffSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/layoff/over-standard': {
+      id: '/layoff/over-standard'
+      path: '/layoff/over-standard'
+      fullPath: '/layoff/over-standard'
+      preLoaderRoute: typeof LayoffOverStandardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/customers/create': {
@@ -221,10 +261,12 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HomeRoute: HomeRoute,
-  LayoffRoute: LayoffRoute,
   AuthSignUpRoute: AuthSignUpRoute,
   CustomersCreateRoute: CustomersCreateRoute,
+  LayoffOverStandardRoute: LayoffOverStandardRoute,
+  LayoffSettingsRoute: LayoffSettingsRoute,
   CustomersIndexRoute: CustomersIndexRoute,
+  LayoffIndexRoute: LayoffIndexRoute,
   CustomersCustomerIdMessageRoute: CustomersCustomerIdMessageRoute,
   CustomersCustomerIdIndexRoute: CustomersCustomerIdIndexRoute,
   CustomersCustomerIdOrderIdEditRoute: CustomersCustomerIdOrderIdEditRoute,
