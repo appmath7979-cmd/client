@@ -25,8 +25,8 @@ export function DialogConfirm({
 				<AlertDialogTitle>{title}</AlertDialogTitle>
 				<AlertDialogDescription>{description}</AlertDialogDescription>
 			</AlertDialogHeader>
-			<AlertDialogFooter>
-				<AlertDialogClose>Hủy</AlertDialogClose>
+			<AlertDialogFooter variant="bare">
+				<AlertDialogClose>Hủy bỏ</AlertDialogClose>
 				<AlertDialogClose
 					render={<Button variant="destructive" onClick={onConfirm} />}
 				>

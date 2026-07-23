@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 
 export function Header() {
 	const matches = useMatches();
-	const currentName = matches.map((match) => match.staticData.title).join("");
+	const currentName = matches.map((match) => match?.staticData?.title)[1];
 
 	return (
 		<header className="sticky top-0 left-0 z-9999 bg-background/80 backdrop-blur-sm p-4 shadow-md flex justify-between items-center">

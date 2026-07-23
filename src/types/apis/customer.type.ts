@@ -1,15 +1,15 @@
 import type { CreateCustomerType } from "../customer.type";
 import type { IBaseApi, IBaseApiTime } from "./base.type";
 
-type CustomerType = "ACTIVE" | "INACTIVE";
+type CustomerStatusType = "ACTIVE" | "INACTIVE";
 
 interface IPostCustomerApi extends CreateCustomerType {}
 
 interface ICustomerListItemApi extends IBaseApiTime {
 	id: string;
 	fullName: string;
-	status: CustomerType;
-	type: CustomerType;
+	status: CustomerStatusType;
+	type: "khach" | "chu";
 }
 
 interface IGetCustomerByIdApi extends IBaseApi {

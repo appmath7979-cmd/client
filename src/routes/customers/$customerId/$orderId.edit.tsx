@@ -21,34 +21,32 @@ import {
 import { useRewardSchedule } from "#/hooks/app/use-reward-schedule";
 import { useOrderMutation, useOrderQuery } from "#/hooks/query/use-order-query";
 import { useDebounce } from "#/hooks/use-debounce";
-import { convertOrderToText } from "#/lib/convert-order-to-text";
 import { parseToDayOfWeek } from "#/lib/date-format";
+import { formatRawMessage } from "#/lib/format-raw-message";
 import { expandChunks } from "#/lib/message-parser";
 import { parseMessageChunked } from "#/lib/parse-message-chunked";
-import { parseRawMessage } from "#/lib/parse-raw-message";
+import { splitMessageToChunks } from "#/lib/split-message-to-chunks";
 import { cn } from "#/lib/utils";
-import { validateMessage } from "#/lib/validate-message";
 import type { IPatchOrderMessageApi } from "#/types/apis/message.type";
 import type { IValidateStatus } from "#/types/message.type";
 
 export const Route = createFileRoute("/customers/$customerId/$orderId/edit")({
 	staticData: { title: "Sửa tin nhắn" },
 	component: RouteComponent,
-	loader: ({ context, params }) =>
-		context.queryClient.fetchQuery(useOrderQuery.getById(params.orderId)),
 });
 
 function RouteComponent() {
 	const { customerId, orderId } = useParams({
 		from: "/customers/$customerId/$orderId/edit",
 	});
-	const { order } = Route.useLoaderData();
-	const text = convertOrderToText(order);
+	const { data } = useOrderQuery.getById(orderId);
+	const order = data?.order;
+	const text = data?.order?.message ?? "";
 
 	const navigate = useNavigate();
 	const mutation = useOrderMutation();
 
-	const [value, setValue] = useState<string>(text);
+	const [value, setValue] = useState<string>("");
 	const [isEdit, setIsEdit] = useState<boolean>(false);
 	const [isEdited, setIsEdited] = useState<boolean>(false);
 	const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -61,10 +59,10 @@ function RouteComponent() {
 	const [checkedMessage, setCheckedMessage] = useState<Array<string[]>>([]);
 	const debounced = useDebounce(value === text ? "" : value);
 
-	const day = parseToDayOfWeek(order.release);
+	const day = parseToDayOfWeek(order?.release ?? "");
 
 	const rewardSchedule = useRewardSchedule({ day });
-	const region = order.region;
+	const region = order?.region;
 
 	const handleEditChunks = useCallback(
 		(newValue: string[], index: number) => {
@@ -84,6 +82,7 @@ function RouteComponent() {
 	};
 
 	const handleCheckMessage = () => {
+		if (!region) return;
 		const val = expandChunks(chunks, rewardSchedule, region);
 		setCheckedMessage(val);
 		setIsChecked(text !== value);
@@ -95,17 +94,24 @@ function RouteComponent() {
 	};
 
 	const handleSubmit = () => {
-		const value = parseMessageChunked(checkedMessage, region);
+		if (!region) return;
+		const details = parseMessageChunked(checkedMessage, region);
 		const data: IPatchOrderMessageApi = {
 			id: orderId,
-			results: value,
+			details,
+			message: value,
 			customerId,
 		};
 		mutation.patch.mutate(data);
 	};
 
 	useEffect(() => {
-		const resultString = parseRawMessage(
+		if (!text) return;
+		setValue(text);
+	}, [text]);
+
+	useEffect(() => {
+		const resultString = formatRawMessage(
 			debounced,
 			betPairSyntaxes,
 			validKeysToCombine,
@@ -116,8 +122,18 @@ function RouteComponent() {
 	}, [debounced]);
 
 	useEffect(() => {
+		if (!region) return;
+
+		if (!value || value === text) {
+			setNotice({
+				message: "Tin nhắn hợp lệ",
+				status: "success",
+			});
+			return;
+		}
+
 		if (value === text) return;
-		const { status, message, chunks } = validateMessage(
+		const { status, message, chunks } = splitMessageToChunks(
 			parsedText,
 			rewardSchedule,
 			region,
@@ -126,16 +142,6 @@ function RouteComponent() {
 		setNotice({ message, status });
 		setChunks(chunks);
 	}, [parsedText, region, rewardSchedule, value, text]);
-
-	useEffect(() => {
-		if (mutation.patch.isSuccess) {
-			const orderUpdated = mutation.patch.data.order;
-			const newText = convertOrderToText(orderUpdated);
-			setValue(newText);
-			setIsChecked(false);
-			setIsEdit(false);
-		}
-	}, [mutation]);
 
 	useEffect(() => {
 		if (mutation.delete.isSuccess)

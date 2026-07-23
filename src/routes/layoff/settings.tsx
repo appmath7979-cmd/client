@@ -115,6 +115,8 @@ function RouteComponent() {
 			...toastTimeout,
 		});
 
+	console.group(data);
+
 	return (
 		<div className="py-4 space-y-6">
 			<div className="flex items-center justify-end gap-2 border-b pb-4">

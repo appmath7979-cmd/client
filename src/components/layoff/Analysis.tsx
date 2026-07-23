@@ -1,3 +1,4 @@
+import type { OrderItemApiType } from "#/types/apis/message.type";
 import type { IProvinceItem } from "#/types/province.type";
 import type { RegionType } from "#/types/region.type";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
@@ -7,6 +8,7 @@ interface AnalysProps {
 	provinces: IProvinceItem[];
 	region: RegionType;
 	date: Date;
+	orders: OrderItemApiType[];
 }
 
 export function Analysis({ provinces, region, date }: AnalysProps) {

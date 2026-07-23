@@ -8,9 +8,15 @@ import type {
 import { apiRouteName, baseApi } from "./base.api";
 
 export const orderApi = {
-	getByDate: async (dateRelease: string) => {
+	getByDate: async (release: string) => {
 		const res: IGetOrderMessageApi = await baseApi.get(
-			`${apiRouteName.order}?release=${dateRelease}`,
+			`${apiRouteName.order}?release=${release}`,
+		);
+		return res;
+	},
+	getByDateWithCustomerId: async (customerId: string, dateRelease: string) => {
+		const res: IGetOrderMessageApi = await baseApi.get(
+			`${apiRouteName.order}/customer/${customerId}?release=${dateRelease}`,
 		);
 
 		return res;
@@ -35,6 +41,13 @@ export const orderApi = {
 	},
 	deleteById: async (id: string) => {
 		const res: IBaseApi = await baseApi.delete(`${apiRouteName.order}/${id}`);
+		return res;
+	},
+	postLayoff: async (data: IPostOrderMessageApi) => {
+		const res: IBaseApi = await baseApi.post(
+			`${apiRouteName.order}/layoff`,
+			data,
+		);
 		return res;
 	},
 };

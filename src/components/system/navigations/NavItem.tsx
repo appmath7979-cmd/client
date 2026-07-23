@@ -1,12 +1,12 @@
-import { Link, useMatchRoute } from "@tanstack/react-router";
+import { Link, useChildMatches } from "@tanstack/react-router";
 import { Button } from "#/components/ui/button";
 import { cn } from "#/lib/utils";
 import type { INavItem } from "#/types/nav.type";
 
 export function NavItem({ href, label, icon }: INavItem) {
-	const matchRoute = useMatchRoute();
-	const isActive = matchRoute({ to: href, fuzzy: false });
+	const isActive = useChildMatches()[0].fullPath.includes(href);
 	const Icon = icon ? icon : () => null;
+
 	return (
 		<Button
 			variant={isActive ? "secondary" : "default"}

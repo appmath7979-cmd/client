@@ -1,17 +1,37 @@
-import type { IGroupedBetItem } from "../message.type";
+import type { IOrderDetailsInput } from "../message.type";
 import type { RegionType } from "../region.type";
 import type { IBaseApi, IBaseApiTime } from "./base.type";
 
+// 1. Dữ liệu Order thô khi Client đẩy lên (POST)
 interface IPostOrderMessageApi {
 	region: RegionType;
-	results: IGroupedBetItem[];
+	message: string;
+	details: IOrderDetailsInput[]; // Dữ liệu thô chưa có id, co, price, trung
 	release: string;
-	customerId: string;
-	type: "XAC";
+	isSend?: boolean;
+	customerId?: string;
+	isLayoff: boolean;
+	type?: string; // Thêm nếu bạn có truyền trường loại tin nhắn ("XAC")
 }
 
-type OrderItemApiType = IPostOrderMessageApi & { id: string } & IBaseApiTime;
+interface IOrderDetailFromDb extends IOrderDetailsInput, IBaseApiTime {
+	id: string;
+	orderId: string;
+	customerId: string;
+	date: string;
+	price: number;
+	co: number;
+	trung: number;
+}
 
+// 3. Định nghĩa cấu trúc Order hoàn chỉnh trả về từ API (Đã override lại trường details)
+type OrderItemApiType = Omit<IPostOrderMessageApi, "details"> & {
+	id: string;
+	details: IOrderDetailFromDb[]; // details lúc này là bản ghi DB đầy đủ trường
+	isSend: boolean;
+} & IBaseApiTime;
+
+// 4. Các Type phục vụ cho các API GET, PATCH
 interface IGetOrderMessageApi extends IBaseApi {
 	orders: OrderItemApiType[];
 }
@@ -24,8 +44,9 @@ type IPatchOrderMessageApi = Partial<IPostOrderMessageApi> & { id: string };
 
 export type {
 	IPostOrderMessageApi,
-	IGetOrderMessageApi,
+	IOrderDetailFromDb, // Export thêm để dùng nếu cần render component con
 	OrderItemApiType,
+	IGetOrderMessageApi,
 	IGetOrderMessageByIdApi,
 	IPatchOrderMessageApi,
 };

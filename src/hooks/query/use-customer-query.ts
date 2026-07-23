@@ -1,6 +1,7 @@
 import {
 	queryOptions,
 	useMutation,
+	useQuery,
 	useQueryClient,
 } from "@tanstack/react-query";
 import { customerApi } from "#/api/customer.api";
@@ -10,7 +11,7 @@ import type { IPostCustomerApi } from "#/types/apis/customer.type";
 
 const useCustomerQuery = {
 	getMany: () =>
-		queryOptions({
+		useQuery({
 			queryKey: ["customers", "list"],
 			queryFn: () => customerApi.getAll(),
 		}),

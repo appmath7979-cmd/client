@@ -10,13 +10,11 @@ import type { SelectCustomerType } from "#/types/customer.type";
 
 export const Route = createFileRoute("/customers/")({
 	staticData: { title: "Khách hàng" },
-	loader: ({ context }) =>
-		context.queryClient.ensureQueryData(useCustomerQuery.getMany()),
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const data = Route.useLoaderData();
+	const { data } = useCustomerQuery.getMany();
 
 	const [toggleTab, setToggleTab] = useState<boolean>(false);
 	const [selectAll, setSelectAll] = useState<SelectCustomerType>({

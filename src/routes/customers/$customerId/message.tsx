@@ -22,11 +22,11 @@ import { useOrderMutation } from "#/hooks/query/use-order-query";
 import { useDatePicker } from "#/hooks/use-date-picker";
 import { useDebounce } from "#/hooks/use-debounce";
 import { formatDate } from "#/lib/date-format";
+import { formatRawMessage } from "#/lib/format-raw-message";
 import { expandChunks } from "#/lib/message-parser";
 import { parseMessageChunked } from "#/lib/parse-message-chunked";
-import { parseRawMessage } from "#/lib/parse-raw-message";
+import { splitMessageToChunks } from "#/lib/split-message-to-chunks";
 import { cn } from "#/lib/utils";
-import { validateMessage } from "#/lib/validate-message";
 import { store } from "#/store/store";
 import type { IPostOrderMessageApi } from "#/types/apis/message.type";
 import type { IValidateStatus } from "#/types/message.type";
@@ -79,18 +79,17 @@ function RouteComponent() {
 	};
 
 	const handleSubmit = () => {
-		const value = parseMessageChunked(checkedMessage, region);
+		const details = parseMessageChunked(checkedMessage, region);
 		const release = formatDate(date);
 
 		const data: IPostOrderMessageApi = {
 			region,
-			results: value,
+			message: value,
+			isLayoff: false,
 			release,
+			details: details,
 			customerId,
-			type: "XAC",
 		};
-
-		console.log(data);
 
 		mutate(data);
 	};
@@ -99,7 +98,7 @@ function RouteComponent() {
 		navigate({ to: "/customers/$customerId", params: { customerId } });
 
 	useEffect(() => {
-		const resultString = parseRawMessage(
+		const resultString = formatRawMessage(
 			debounced,
 			betPairSyntaxes,
 			validKeysToCombine,
@@ -109,7 +108,7 @@ function RouteComponent() {
 	}, [debounced]);
 
 	useEffect(() => {
-		const { status, message, chunks } = validateMessage(
+		const { status, message, chunks } = splitMessageToChunks(
 			parsedText,
 			rewardSchedule,
 			region,

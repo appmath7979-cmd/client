@@ -16,24 +16,27 @@ interface IGroupedSyntax {
 }
 
 export function CustomerMessageList({ data, region }: CustomerTypeListProps) {
-	// 1. Lọc orders theo đúng Vùng miền
+	// 1. Lọc danh sách orders theo đúng miền (Vd: MN, MB, MT)
 	const list = data?.filter((item) => item.region === region) || [];
 
-	// Tạo đối tượng gom nhóm theo Cú pháp (typeKey)
+	// Khởi tạo Object gom nhóm và các biến tính tổng lớn
 	const groupedSyntaxes: Record<string, IGroupedSyntax> = {};
-
 	let grandTotalCo = 0;
 	let grandTotalTrung = 0;
 
-	// 2. Tiến hành duyệt và cộng dồn toàn bộ dữ liệu cùng cú pháp
+	// 2. Duyệt qua mảng phẳng details của từng order để cộng dồn
 	list.forEach((order) => {
-		order.results?.forEach((resultItem) => {
-			if (!resultItem) return;
+		if (order.details && Array.isArray(order.details)) {
+			order.details.forEach((item) => {
+				// Kiểm tra xem có syntax ghép đằng trước type hay không (VD: 2c_bao, 2c_dau, 3c_duoi,...)
+				const hasSyntaxPrefix =
+					item.syntax && item.type && !item.type.includes(item.syntax);
 
-			Object.keys(resultItem).forEach((typeKey) => {
-				const stations = resultItem[typeKey] || {};
+				const typeKey = hasSyntaxPrefix
+					? `${item.syntax}_${item.type}`
+					: item.type || item.syntax || "KHAC";
 
-				// Khởi tạo cú pháp trong group nếu chưa tồn tại
+				// Khởi tạo cấu trúc nhóm nếu loại cược này xuất hiện lần đầu
 				if (!groupedSyntaxes[typeKey]) {
 					groupedSyntaxes[typeKey] = {
 						typeKey,
@@ -43,30 +46,30 @@ export function CustomerMessageList({ data, region }: CustomerTypeListProps) {
 					};
 				}
 
-				Object.keys(stations).forEach((stationName) => {
-					stations[stationName]?.forEach?.((item) => {
-						const xac = Number(item.score?.xac ?? 0);
-						const co = Number(item.score?.co ?? 0);
-						const trung = Number(item.score?.trung ?? 0);
+				const xac = Number(item.xac ?? 0);
+				const co = Number(item.co ?? 0);
+				const trung = Number(item.trung ?? 0);
 
-						groupedSyntaxes[typeKey].tongXac += xac;
-						groupedSyntaxes[typeKey].tongCo += co;
-						groupedSyntaxes[typeKey].tongTrung += trung;
+				// Cộng dồn vào nhóm tương ứng
+				groupedSyntaxes[typeKey].tongXac += xac;
+				groupedSyntaxes[typeKey].tongCo += co;
+				groupedSyntaxes[typeKey].tongTrung += trung;
 
-						grandTotalCo += co;
-						grandTotalTrung += trung;
-					});
-				});
+				// Cộng dồn vào tổng lớn của toàn bộ bảng
+				grandTotalCo += co;
+				grandTotalTrung += trung;
 			});
-		});
+		}
 	});
 
+	// Chuyển đối tượng map thành mảng để render
 	const finalGroupedList = Object.values(groupedSyntaxes);
 
 	return (
 		<div>
 			{finalGroupedList.length > 0 ? (
 				<>
+					{/* Bảng hiển thị gộp tổng theo loại cược */}
 					<div className="divide-y border-b">
 						{finalGroupedList.map((groupedItem, index) => {
 							return (
@@ -79,7 +82,7 @@ export function CustomerMessageList({ data, region }: CustomerTypeListProps) {
 								>
 									<CustomerMessageItem
 										type="TYPE"
-										content={groupedItem.typeKey}
+										content={groupedItem.typeKey.toUpperCase()}
 									/>
 									<CustomerMessageItem
 										type="XAC"
@@ -98,16 +101,21 @@ export function CustomerMessageList({ data, region }: CustomerTypeListProps) {
 						})}
 					</div>
 
+					{/* Dòng tổng kết Thu / Chi toàn cục của miền đó */}
 					<p
 						className={cn(
-							"bg-muted/60 px-3 py-2 text-center text-sm font-semibold",
+							"bg-muted/60 px-3 py-2 text-center text-sm font-semibold flex justify-between items-center",
 							grandTotalCo - grandTotalTrung >= 0
 								? "text-emerald-600"
 								: "text-red-600",
 						)}
 					>
-						{grandTotalCo - grandTotalTrung >= 0 ? "Thu" : "Chi"}{" "}
-						{(grandTotalCo - grandTotalTrung).toLocaleString("vi-VN")}
+						<span>
+							{grandTotalCo - grandTotalTrung >= 0 ? "Tổng Thu" : "Tổng Chi"}
+						</span>
+						<span>
+							{Math.abs(grandTotalCo - grandTotalTrung).toLocaleString("vi-VN")}
+						</span>
 					</p>
 				</>
 			) : (

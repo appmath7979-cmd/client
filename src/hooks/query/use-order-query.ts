@@ -1,9 +1,4 @@
-import {
-	queryOptions,
-	useMutation,
-	useQuery,
-	useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { orderApi } from "#/api/order.api";
 import { toastManager } from "#/components/ui/toast";
 import { toastTimeout } from "#/constants/toast.constant";
@@ -13,15 +8,20 @@ import type {
 } from "#/types/apis/message.type";
 
 const useOrderQuery = {
-	getByDate: (releaseDate: string) =>
+	getByDateWithCustomerId: (customerId: string, releaseDate: string) =>
 		useQuery({
 			queryKey: ["orders", releaseDate],
-			queryFn: () => orderApi.getByDate(releaseDate),
+			queryFn: () => orderApi.getByDateWithCustomerId(customerId, releaseDate),
 		}),
 	getById: (orderId: string) =>
-		queryOptions({
+		useQuery({
 			queryKey: ["orders", orderId],
 			queryFn: () => orderApi.getById(orderId),
+		}),
+	getAllByDate: (release: string) =>
+		useQuery({
+			queryKey: ["orders", "all", release],
+			queryFn: () => orderApi.getByDate(release),
 		}),
 };
 
@@ -83,6 +83,26 @@ function useOrderMutation() {
 				toastManager.add({
 					title: "Xóa tin nhắn",
 					description: error.message ?? "Xóa tin nhắn thất bại!",
+					type: "error",
+					...toastTimeout,
+				});
+			},
+		}),
+		postLayoff: useMutation({
+			mutationFn: (data: IPostOrderMessageApi) => orderApi.postLayoff(data),
+			onSuccess: (data) => {
+				queryClient.invalidateQueries({ queryKey: ["orders"] });
+				toastManager.add({
+					title: "Cân hàng",
+					description: data.message ?? "Cân hàng thành công",
+					type: "success",
+					...toastTimeout,
+				});
+			},
+			onError: (error) => {
+				toastManager.add({
+					title: "Cân hàng",
+					description: error.message ?? "Cân hàng thất bại!",
 					type: "error",
 					...toastTimeout,
 				});

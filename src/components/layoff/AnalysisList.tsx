@@ -1,27 +1,27 @@
+import { useMemo } from "react";
 import { syntaxTypeList } from "#/constants/syntax-type.constant";
 import { useOrderQuery } from "#/hooks/query/use-order-query";
+import { useStandardSettingQuery } from "#/hooks/query/use-setting-query";
 import { formatDate } from "#/lib/date-format";
+import type { IOrderDetailFromDb } from "#/types/apis/message.type";
 import {
 	Table,
 	TableBody,
-	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
 } from "../ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { AnalysisItem } from "./AnalysisItem";
 
-interface IScore {
-	co: number;
-	xac: number; // Đây chính là TỔNG
-	trung: number;
-}
-
-interface IDetailItem {
+export interface IAnalysisSummaryItem {
+	stationCode: string;
+	syntax: string;
 	number: string;
-	score: IScore;
-	syntaxName?: string;
-	displayProvince?: string; // Tên đài/cặp đài (VD: "VL-BD")
+	diem: number;
+	daCan: number;
+	tong: number;
+	dangDu: number;
 }
 
 interface AnalysisListProps {
@@ -35,109 +35,205 @@ export function AnalysisList({
 	region,
 	date,
 }: AnalysisListProps) {
-	const { data } = useOrderQuery.getByDate(formatDate(date));
+	const { data } = useOrderQuery.getAllByDate(formatDate(date));
+	const { data: settingsData } = useStandardSettingQuery(date.getDay());
 
-	const ordersInRegion = data
-		? data.orders.filter((order) => order.region === region)
-		: [];
+	// 1. Map tra cứu mức chuẩn (score) từ Setting
+	// Chuẩn hóa key lưu trong Map: `${syntax}:${provinceCode}` viết thường (VD: "2c:tn-bao", "da:tn")
+	const settingLookup = useMemo(() => {
+		const map = new Map<string, number>();
+		if (settingsData?.settings) {
+			settingsData.settings.forEach((set) => {
+				const searchKey = `${set.syntax}:${set.provinceCode}`.toLowerCase();
+				map.set(searchKey, set.score ?? 0);
+			});
+		}
+		return map;
+	}, [settingsData]);
+
+	// 2. Tách riêng đơn thường và đơn cân hàng
+	const { normalDetails, layoffDetails } = useMemo(() => {
+		if (!data?.orders) return { normalDetails: [], layoffDetails: [] };
+
+		const normalList: IOrderDetailFromDb[] = [];
+		const layoffList: IOrderDetailFromDb[] = [];
+
+		data.orders.forEach((order) => {
+			if (order.region === region && Array.isArray(order.details)) {
+				const isLayoff = Boolean(order.isLayoff);
+				const targetList = isLayoff ? layoffList : normalList;
+
+				order.details.forEach((detail) => {
+					if (provinceCode && detail.stationCode !== provinceCode) return;
+					targetList.push(detail);
+				});
+			}
+		});
+
+		return { normalDetails: normalList, layoffDetails: layoffList };
+	}, [data, region, provinceCode]);
+
+	// 3. Gom nhóm TỔNG THEO CON SỐ VÀ CÚ PHÁP
+	const getGroupedListBySyntax = (targetSyntax: string) => {
+		const map = new Map<
+			string,
+			{
+				baseDetail: IOrderDetailFromDb;
+				normalXac: number;
+				layoffXac: number;
+			}
+		>();
+
+		const checkMatchSyntax = (detail: IOrderDetailFromDb) => {
+			const currentSyntax = (detail.syntax || "").toLowerCase();
+			const currentType = (detail.type || "").toLowerCase();
+
+			if (targetSyntax === "da") {
+				return currentSyntax === "da" || currentType === "da";
+			}
+
+			if (targetSyntax === "dax") {
+				return currentSyntax === "dax" || currentType === "dax";
+			}
+
+			if (targetSyntax === "2c") {
+				const isDaOrDax =
+					currentSyntax === "da" ||
+					currentSyntax === "dax" ||
+					currentType === "da" ||
+					currentType === "dax";
+
+				if (isDaOrDax) return false;
+
+				return (
+					currentSyntax === "2c" ||
+					(currentSyntax.includes("2") && !currentSyntax.includes("da"))
+				);
+			}
+
+			return currentSyntax === targetSyntax || currentType === targetSyntax;
+		};
+
+		normalDetails.forEach((detail) => {
+			if (!checkMatchSyntax(detail)) return;
+
+			const typeOrSyntax = detail.type || detail.syntax;
+			const groupKey = `${detail.stationCode}-${typeOrSyntax}-${detail.number}`;
+			const currentXac = detail.xac ?? 0;
+
+			const existing = map.get(groupKey);
+			if (existing) {
+				existing.normalXac += currentXac;
+			} else {
+				map.set(groupKey, {
+					baseDetail: detail,
+					normalXac: currentXac,
+					layoffXac: 0,
+				});
+			}
+		});
+
+		layoffDetails.forEach((detail) => {
+			if (!checkMatchSyntax(detail)) return;
+
+			const typeOrSyntax = detail.type || detail.syntax;
+			const groupKey = `${detail.stationCode}-${typeOrSyntax}-${detail.number}`;
+			const currentXac = detail.xac ?? 0;
+
+			const existing = map.get(groupKey);
+			if (existing) {
+				existing.layoffXac += currentXac;
+			} else {
+				map.set(groupKey, {
+					baseDetail: detail,
+					normalXac: 0,
+					layoffXac: currentXac,
+				});
+			}
+		});
+
+		const result: IAnalysisSummaryItem[] = [];
+
+		map.forEach(({ baseDetail, normalXac, layoffXac }) => {
+			const displaySyntax = baseDetail.type
+				? baseDetail.type
+				: baseDetail.syntax;
+
+			const station = baseDetail.stationCode.toLowerCase();
+			const typeStr = displaySyntax.toLowerCase();
+			const syntaxStr = (baseDetail.syntax || "").toLowerCase();
+
+			// HÀM TRA CỨU MỨC CHUẨN THÔNG MINH (Khớp đúng cấu trúc TN-bao trong DB)
+			const getSettingScore = () => {
+				const candidateKeys = [
+					// 1. Trường hợp có cả syntax + đài + type (VD: "2c:tn-bao") -> Khớp chính xác DB của bạn!
+					`${syntaxStr}:${station}-${typeStr}`,
+					// 2. Trường hợp chỉ có syntax + đài (VD: "da:tn", "4c:tn")
+					`${syntaxStr}:${station}`,
+					// 3. Trường hợp fallback nếu DB dùng type làm syntax (VD: "bao:tn")
+					`${typeStr}:${station}`,
+				];
+
+				for (const key of candidateKeys) {
+					if (settingLookup.has(key)) {
+						return settingLookup.get(key);
+					}
+				}
+				return 0;
+			};
+
+			const mucChuan = getSettingScore() ?? 0;
+
+			const tong = normalXac;
+			const daCan = layoffXac;
+
+			// Điểm thực giữ còn lại
+			const diem = Math.max(0, tong - daCan);
+
+			// Đang dư = Điểm thực giữ - Mức chuẩn (Đã cân đủ <= mức chuẩn -> dư = 0)
+			const chenhLech = diem - mucChuan;
+			const dangDu = chenhLech > 0 ? chenhLech : 0;
+
+			result.push({
+				stationCode: baseDetail.stationCode,
+				syntax: displaySyntax,
+				number: baseDetail.number,
+				diem,
+				daCan,
+				tong,
+				dangDu,
+			});
+		});
+
+		return result;
+	};
 
 	return (
-		<Tabs>
-			<TabsList className={"w-full"}>
+		<Tabs defaultValue={syntaxTypeList[0]} className="w-full">
+			<TabsList className="w-full flex overflow-x-auto">
 				{syntaxTypeList.map((syntax) => (
-					<TabsTrigger key={`${syntax}-trigger`} value={syntax}>
+					<TabsTrigger
+						key={`${syntax}-trigger`}
+						value={syntax}
+						className="flex-1 uppercase font-semibold"
+					>
 						{syntax}
 					</TabsTrigger>
 				))}
 			</TabsList>
 
 			{syntaxTypeList.map((syntax) => {
-				// Sử dụng một Record (object) để nhóm và cộng dồn dữ liệu
-				const groupedData: Record<string, IDetailItem> = {};
-
-				ordersInRegion.forEach((order) => {
-					if (order.results && Array.isArray(order.results)) {
-						order.results.forEach((resultObj) => {
-							const allKeys = Object.keys(resultObj);
-
-							allKeys.forEach((key) => {
-								let isMatched = false;
-
-								// XỬ LÝ RIÊNG CHO TAB "2c"
-								if (syntax === "2c") {
-									if (key.includes("2") && key !== "da" && key !== "dax") {
-										isMatched = true;
-									}
-								}
-								// CÁC TAB CÒN LẠI (3c, 4c, da, dax)
-								else {
-									if (key === syntax) {
-										isMatched = true;
-									}
-								}
-
-								if (isMatched) {
-									const targetObject = resultObj[key];
-									if (!targetObject) return;
-
-									// Lọc tìm các key đài phù hợp trong data
-									const matchedProvinceKeys = Object.keys(targetObject).filter(
-										(pKey) => {
-											if (key === "da" || key === "dax") {
-												const parts = pKey.split("-");
-												return parts.includes(provinceCode);
-											}
-											return pKey === provinceCode;
-										},
-									);
-
-									matchedProvinceKeys.forEach((pKey) => {
-										const provinceData = targetObject[pKey];
-
-										if (Array.isArray(provinceData)) {
-											provinceData.forEach((item) => {
-												// Nhóm dữ liệu kết hợp cả key đài để không bị cộng dồn nhầm giữa các cặp đài dax khác nhau
-												const groupKey = `${key}-${item.number}-${pKey}`;
-
-												if (groupedData[groupKey]) {
-													groupedData[groupKey].score.co += item.score?.co ?? 0;
-													groupedData[groupKey].score.xac +=
-														item.score?.xac ?? 0;
-													groupedData[groupKey].score.trung +=
-														item.score?.trung ?? 0;
-												} else {
-													groupedData[groupKey] = {
-														number: item.number,
-														syntaxName: key,
-														displayProvince: pKey,
-														score: {
-															co: item.score?.co ?? 0,
-															xac: item.score?.xac ?? 0,
-															trung: item.score?.trung ?? 0,
-														},
-													};
-												}
-											});
-										}
-									});
-								}
-							});
-						});
-					}
-				});
-
-				// Chuyển đổi object đã nhóm về lại dạng mảng để render
-				const finalDataList = Object.values(groupedData);
+				const groupedList = getGroupedListBySyntax(syntax);
 
 				return (
 					<TabsContent key={`${syntax}-content`} value={syntax}>
 						<div className="p-2 text-sm text-muted-foreground">
-							{finalDataList.length > 0 ? (
+							{groupedList.length > 0 ? (
 								<div className="overflow-x-auto border rounded-lg">
 									<Table className="min-w-full divide-y divide-border text-left">
 										<TableHeader className="bg-muted text-muted-foreground uppercase text-xs font-semibold">
-											<TableRow className="[&_th]:font-semibold! [&_th]:text-center">
-												{/* Đài để ở ngoài cùng bên trái */}
+											<TableRow className="[&_th]:font-semibold [&_th]:text-center">
+												<TableHead>STT</TableHead>
 												<TableHead>Đài</TableHead>
 												<TableHead>Cú pháp</TableHead>
 												<TableHead>Số đánh</TableHead>
@@ -148,37 +244,9 @@ export function AnalysisList({
 											</TableRow>
 										</TableHeader>
 										<TableBody className="divide-y divide-border bg-background text-foreground">
-											{finalDataList.map((item, idx) => {
-												const rowKey = `${item.syntaxName}-${item.number}-${item.displayProvince}-${idx}`;
-
-												const tong = item.score.xac;
-												const daCan = 0;
-												const diem = tong - daCan;
-
-												return (
-													<TableRow key={rowKey} className="text-center">
-														{/* Cột Đài ở ngoài cùng: Chỉ hiển thị khi cú pháp là dax */}
-														<TableCell className="font-semibold text-blue-600 lowercase">
-															{item.syntaxName === "dax"
-																? item.displayProvince
-																: ""}
-														</TableCell>
-														<TableCell className="font-bold text-muted-foreground uppercase">
-															{item.syntaxName}
-														</TableCell>
-														<TableCell>{item.number}</TableCell>
-														<TableCell className="px-4 py-2.5 text-center text-blue-500 font-medium">
-															{diem}
-														</TableCell>
-														<TableCell className="text-muted-foreground">
-															{daCan}
-														</TableCell>
-														<TableCell className="font-semibold text-emerald-600">
-															{tong}
-														</TableCell>
-														<TableCell>0</TableCell>
-													</TableRow>
-												);
+											{groupedList.map((item, idx) => {
+												const key = `${item.stationCode}-${item.syntax}-${item.number}-${idx}`;
+												return <AnalysisItem key={key} idx={idx} item={item} />;
 											})}
 										</TableBody>
 									</Table>
