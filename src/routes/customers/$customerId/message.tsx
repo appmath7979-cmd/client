@@ -120,7 +120,8 @@ function RouteComponent() {
 
 	return (
 		<div className="py-4 space-y-6">
-			<div className="flex justify-end items-center gap-2">
+			{/* Thanh công cụ phía trên: Thêm flex-wrap để chống bể giao diện */}
+			<div className="flex flex-wrap justify-end items-center gap-2">
 				<DatePicker
 					date={date}
 					open={open}
@@ -133,6 +134,7 @@ function RouteComponent() {
 					Gửi tin nhắn
 				</Button>
 			</div>
+
 			<div className="space-y-2">
 				<div className="space-y-1">
 					<Label>Nhập tin nhắn</Label>
@@ -143,28 +145,33 @@ function RouteComponent() {
 						onChange={(e) => setValue(e.target.value)}
 					/>
 				</div>
-				<em
-					className={cn(
-						"text-sm inline-flex px-2 py-1 rounded-md",
-						notice.status === "error" &&
-							"text-destructive-foreground bg-destructive",
-						notice.status === "success" &&
-							"text-success-foreground bg-success/30",
-						notice.status === "warning" &&
-							"text-warning-foreground bg-warning/30",
-					)}
-				>
-					{notice.message}
-				</em>
+
+				{/* Chỉ hiển thị khung thông báo khi có nội dung để tránh khoảng trống thừa */}
+				{notice?.message && (
+					<em
+						className={cn(
+							"text-sm inline-flex px-2 py-1 rounded-md not-italic",
+							notice.status === "error" &&
+								"text-destructive-foreground bg-destructive",
+							notice.status === "success" &&
+								"text-success-foreground bg-success/30",
+							notice.status === "warning" &&
+								"text-warning-foreground bg-warning/30",
+						)}
+					>
+						{notice.message}
+					</em>
+				)}
 			</div>
 
 			<div className="border rounded-md p-4 space-y-5">
-				<div className="flex justify-between items-center">
+				<div className="flex justify-between items-center flex-wrap gap-2">
 					<p className="font-semibold">Tin nhắn đã lọc</p>
 					<Button disabled={!isEdited} onClick={handleSubmitEdit}>
 						Xác nhận sửa tin
 					</Button>
 				</div>
+
 				<Tabs defaultValue={"Lọc tin nhắn"}>
 					<TabsList>
 						<TabsTrigger value={"Lọc tin nhắn"}>Lọc tin nhắn</TabsTrigger>
@@ -172,7 +179,8 @@ function RouteComponent() {
 							Kiểm tra tin nhắn
 						</TabsTrigger>
 					</TabsList>
-					<TabsContent value={"Lọc tin nhắn"}>
+
+					<TabsContent value={"Lọc tin nhắn"} className="mt-4">
 						{chunks.length > 0 ? (
 							<SyntaxList chunks={chunks} onEdit={handleEditChunks} />
 						) : (
@@ -181,7 +189,8 @@ function RouteComponent() {
 							</p>
 						)}
 					</TabsContent>
-					<TabsContent value={"Kiểm tra tin nhắn"}>
+
+					<TabsContent value={"Kiểm tra tin nhắn"} className="mt-4">
 						{checkedMessage.length > 0 ? (
 							<ul className="grid md:grid-cols-2 gap-4">
 								{checkedMessage.map((check, index) => {
@@ -194,12 +203,14 @@ function RouteComponent() {
 								})}
 							</ul>
 						) : (
-							<div className="text-center border p-4 rounded-md text-muted-foreground">
+							<div className="text-center border p-6 rounded-md text-muted-foreground space-y-3">
 								<p>Vui lòng chọn kiểm tra tin nhắn</p>
-								<CheckMessageBtn
-									notice={notice}
-									onCheckMessage={handleCheckMessage}
-								/>
+								<div className="inline-block">
+									<CheckMessageBtn
+										notice={notice}
+										onCheckMessage={handleCheckMessage}
+									/>
+								</div>
 							</div>
 						)}
 					</TabsContent>

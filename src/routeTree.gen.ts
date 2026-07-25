@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ReportRouteImport } from './routes/report'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LayoffIndexRouteImport } from './routes/layoff/index'
@@ -21,6 +22,11 @@ import { Route as CustomersCustomerIdIndexRouteImport } from './routes/customers
 import { Route as CustomersCustomerIdMessageRouteImport } from './routes/customers/$customerId/message'
 import { Route as CustomersCustomerIdOrderIdEditRouteImport } from './routes/customers/$customerId/$orderId.edit'
 
+const ReportRoute = ReportRouteImport.update({
+  id: '/report',
+  path: '/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -83,6 +89,7 @@ const CustomersCustomerIdOrderIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
+  '/report': typeof ReportRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/customers/create': typeof CustomersCreateRoute
   '/layoff/over-standard': typeof LayoffOverStandardRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
+  '/report': typeof ReportRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/customers/create': typeof CustomersCreateRoute
   '/layoff/over-standard': typeof LayoffOverStandardRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/home': typeof HomeRoute
+  '/report': typeof ReportRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/customers/create': typeof CustomersCreateRoute
   '/layoff/over-standard': typeof LayoffOverStandardRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/home'
+    | '/report'
     | '/auth/sign-up'
     | '/customers/create'
     | '/layoff/over-standard'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/home'
+    | '/report'
     | '/auth/sign-up'
     | '/customers/create'
     | '/layoff/over-standard'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/home'
+    | '/report'
     | '/auth/sign-up'
     | '/customers/create'
     | '/layoff/over-standard'
@@ -165,6 +177,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HomeRoute: typeof HomeRoute
+  ReportRoute: typeof ReportRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
   CustomersCreateRoute: typeof CustomersCreateRoute
   LayoffOverStandardRoute: typeof LayoffOverStandardRoute
@@ -178,6 +191,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/report': {
+      id: '/report'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof ReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/home': {
       id: '/home'
       path: '/home'
@@ -261,6 +281,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HomeRoute: HomeRoute,
+  ReportRoute: ReportRoute,
   AuthSignUpRoute: AuthSignUpRoute,
   CustomersCreateRoute: CustomersCreateRoute,
   LayoffOverStandardRoute: LayoffOverStandardRoute,

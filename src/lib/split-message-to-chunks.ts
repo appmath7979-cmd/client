@@ -46,7 +46,7 @@ function validateKInstruction(
 }
 
 /**
- * Kiểm tra loại trừ lẫn nhau (CẬP NHẬT LOGIC):
+ * Kiểm tra loại trừ lẫn nhau:
  * - Đã có dd thì KHÔNG được có dau/duoi. Có dau/duoi thì KHÔNG được có dd. (dau và duoi ĐƯỢC ĐI CHUNG)
  * - Đã có xc thì KHÔNG được có xdau/xduoi. Có xdau/xduoi thì KHÔNG được có xc. (xdau và xduoi ĐƯỢC ĐI CHUNG)
  */
@@ -157,29 +157,34 @@ export function splitMessageToChunks(
 			};
 		}
 
-		// --- ĐIỀU KIỆN NGẮT CỤM ĐƯỢC TỐI ƯU HÓA ---
+		// --- ĐIỀU KIỆN NGẮT CỤM ĐƯỢC TỐI ƯU CHO PHÉP NHIỀU SỐ TRƯỚC PHÍM CƯỢC ---
 		const isBetSyntax = /^[\p{L}a-zA-Z]+\d+[nN]?$/u.test(word);
-		let shouldCloseChunk = isBetSyntax || i === allWords.length - 1;
+		let shouldCloseChunk = false;
 
-		// Cải tiến: Nếu từ hiện tại và từ tiếp theo ĐỀU là phím cược,
-		// chúng ta sẽ KHÔNG ngắt cụm nếu chúng thuộc các cặp bổ trợ hợp lệ (như dau đi kèm duoi, xdau đi kèm xduoi)
-		// nhằm gom chúng lại để bắt lỗi loại trừ chéo (ví dụ: dd đi kèm dau).
-		if (isBetSyntax && nextWord) {
-			const isNextBetSyntax = /^[\p{L}a-zA-Z]+\d+[nN]?$/u.test(nextWord);
-			if (isNextBetSyntax) {
+		if (i === allWords.length - 1) {
+			shouldCloseChunk = true;
+		} else if (isBetSyntax) {
+			const hasNumberBefore = currentChunk.some((w) => /^\d+$/.test(w));
+			const isNextBet = nextWord
+				? /^[\p{L}a-zA-Z]+\d+[nN]?$/u.test(nextWord)
+				: false;
+
+			// Nếu từ tiếp theo không phải là phím cược và cụm đã có số thì đóng cụm
+			if (!isNextBet && hasNumberBefore) {
+				// Kiểm tra thêm ngoại lệ các cặp phím cược được phép đi chung liền nhau
 				const currentPrefix =
 					word.match(/^([\p{L}a-zA-Z]+)/u)?.[1]?.toLowerCase() || "";
-				const nextPrefix =
-					nextWord.match(/^([\p{L}a-zA-Z]+)/u)?.[1]?.toLowerCase() || "";
+				const nextPrefix = nextWord
+					? nextWord.match(/^([\p{L}a-zA-Z]+)/u)?.[1]?.toLowerCase() || ""
+					: "";
 
-				// Danh sách các cặp phím cược được phép đứng liền nhau trong một cụm
 				const allowedPairs = [
 					["dau", "duoi"],
 					["duoi", "dau"],
 					["xdau", "xduoi"],
 					["xduoi", "xdau"],
 					["dd", "dau"],
-					["dau", "dd"], // Gom lại để tí nữa hàm validateExclusive báo lỗi
+					["dau", "dd"],
 					["dd", "duoi"],
 					["duoi", "dd"],
 					["xc", "xdau"],
@@ -192,8 +197,8 @@ export function splitMessageToChunks(
 					([p1, p2]) => currentPrefix === p1 && nextPrefix === p2,
 				);
 
-				if (isAllowedToGroup) {
-					shouldCloseChunk = false; // Giữ lại không ngắt để gom chung vào cụm
+				if (!isAllowedToGroup) {
+					shouldCloseChunk = true;
 				}
 			}
 		}
@@ -251,7 +256,6 @@ export function splitMessageToChunks(
 				chunks: processedMessageChunks,
 			};
 
-		// Chạy kiểm tra loại trừ chéo (dd/dau/duoi và xc/xdau/xduoi)
 		const errorExclusive = validateMutuallyExclusiveBets(
 			betPrefixes,
 			currentIdx,

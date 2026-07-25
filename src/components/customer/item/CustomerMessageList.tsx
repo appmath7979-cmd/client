@@ -24,11 +24,15 @@ export function CustomerMessageList({ data, region }: CustomerTypeListProps) {
 	let grandTotalCo = 0;
 	let grandTotalTrung = 0;
 
+	// Biến lưu trữ tổng của từng cột cho toàn bộ bảng theo miền
+	let totalXacRegion = 0;
+	let totalCoRegion = 0;
+	let totalTrungRegion = 0;
+
 	// 2. Duyệt qua mảng phẳng details của từng order để cộng dồn
 	list.forEach((order) => {
 		if (order.details && Array.isArray(order.details)) {
 			order.details.forEach((item) => {
-				// Kiểm tra xem có syntax ghép đằng trước type hay không (VD: 2c_bao, 2c_dau, 3c_duoi,...)
 				const hasSyntaxPrefix =
 					item.syntax && item.type && !item.type.includes(item.syntax);
 
@@ -36,7 +40,6 @@ export function CustomerMessageList({ data, region }: CustomerTypeListProps) {
 					? `${item.syntax}_${item.type}`
 					: item.type || item.syntax || "KHAC";
 
-				// Khởi tạo cấu trúc nhóm nếu loại cược này xuất hiện lần đầu
 				if (!groupedSyntaxes[typeKey]) {
 					groupedSyntaxes[typeKey] = {
 						typeKey,
@@ -50,72 +53,86 @@ export function CustomerMessageList({ data, region }: CustomerTypeListProps) {
 				const co = Number(item.co ?? 0);
 				const trung = Number(item.trung ?? 0);
 
-				// Cộng dồn vào nhóm tương ứng
 				groupedSyntaxes[typeKey].tongXac += xac;
 				groupedSyntaxes[typeKey].tongCo += co;
 				groupedSyntaxes[typeKey].tongTrung += trung;
 
-				// Cộng dồn vào tổng lớn của toàn bộ bảng
 				grandTotalCo += co;
 				grandTotalTrung += trung;
 			});
 		}
 	});
 
-	// Chuyển đối tượng map thành mảng để render
 	const finalGroupedList = Object.values(groupedSyntaxes);
+
+	// Tính tổng từng cột sau khi đã gom nhóm xong
+	finalGroupedList.forEach((item) => {
+		totalXacRegion += item.tongXac;
+		totalCoRegion += item.tongCo;
+		totalTrungRegion += item.tongTrung;
+	});
 
 	return (
 		<div>
 			{finalGroupedList.length > 0 ? (
 				<>
-					{/* Bảng hiển thị gộp tổng theo loại cược */}
-					<div className="divide-y border-b">
+					{/* Bảng hiển thị gộp tổng theo loại cược (Cấu trúc 3 cột: Xác, Cò, Trúng) */}
+					<div className="border-b">
 						{finalGroupedList.map((groupedItem, index) => {
+							const prefixLabel = groupedItem.typeKey.toLowerCase();
+
 							return (
 								<div
 									key={groupedItem.typeKey}
 									className={cn(
-										"flex items-center text-center text-sm hover:bg-muted/30 transition-colors [&>div]:py-2 [&>*:not(:first-child)]:border-l",
+										"grid grid-cols-3 text-sm hover:bg-muted/30 transition-colors [&>div]:py-2 [&>*:not(:first-child)]:border-l",
 										index % 2 !== 0 && "bg-muted/10",
 									)}
 								>
 									<CustomerMessageItem
-										type="TYPE"
-										content={groupedItem.typeKey.toUpperCase()}
-									/>
-									<CustomerMessageItem
 										type="XAC"
+										prefix={prefixLabel}
 										content={groupedItem.tongXac.toLocaleString("vi-VN")}
 									/>
 									<CustomerMessageItem
 										type="CO"
+										prefix={prefixLabel}
 										content={groupedItem.tongCo.toLocaleString("vi-VN")}
 									/>
 									<CustomerMessageItem
 										type="TRUNG"
+										prefix={prefixLabel}
 										content={groupedItem.tongTrung.toLocaleString("vi-VN")}
 									/>
 								</div>
 							);
 						})}
+
+						{/* Dòng tổng hợp từng cột (Xác, Cò, Trúng) của toàn bộ miền */}
+						<div className="grid grid-cols-3 items-center text-center font-bold bg-muted/70 [&>*:not(:first-child)]:border-l border-t-2">
+							<div className="py-2 px-2 text-amber-600 flex justify-center items-center">
+								{totalXacRegion.toLocaleString("vi-VN")}
+							</div>
+							<div className="py-2 px-2 text-emerald-600 flex justify-center items-center">
+								{totalCoRegion.toLocaleString("vi-VN")}
+							</div>
+							<div className="py-2 px-2 text-red-600 flex justify-center items-center">
+								{totalTrungRegion.toLocaleString("vi-VN")}
+							</div>
+						</div>
 					</div>
 
 					{/* Dòng tổng kết Thu / Chi toàn cục của miền đó */}
 					<p
 						className={cn(
-							"bg-muted/60 px-3 py-2 text-center text-sm font-semibold flex justify-between items-center",
+							"bg-muted/60 px-3 py-2 text-center font-semibold flex justify-between items-center mt-2 rounded-md border",
 							grandTotalCo - grandTotalTrung >= 0
 								? "text-emerald-600"
 								: "text-red-600",
 						)}
 					>
-						<span>
-							{grandTotalCo - grandTotalTrung >= 0 ? "Tổng Thu" : "Tổng Chi"}
-						</span>
-						<span>
-							{Math.abs(grandTotalCo - grandTotalTrung).toLocaleString("vi-VN")}
-						</span>
+						{grandTotalCo - grandTotalTrung >= 0 ? "Tổng Thu" : "Tổng Chi"}{" "}
+						{Math.abs(grandTotalCo - grandTotalTrung).toLocaleString("vi-VN")}
 					</p>
 				</>
 			) : (

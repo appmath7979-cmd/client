@@ -2,6 +2,7 @@ import { Checkbox } from "#/components/ui/checkbox";
 import {
 	Table,
 	TableBody,
+	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
@@ -25,14 +26,14 @@ export const CustomerTable = ({
 }: CustomerTableProp) => {
 	const list =
 		data?.filter((item) => (item.type as CustomerType) === type) || [];
+	const selectedList = selectAll[type];
+	const isGuest = type === "khach";
 
 	const handleSelectMultiple = (id: string) => {
-		const isExisting = selectAll[type].find((select) => select === id);
-		const isGuest = type === "khach";
-		let newValues: string[] = [];
-
-		if (isExisting) newValues = selectAll[type].filter((item) => item !== id);
-		else newValues = [...selectAll[type], id];
+		const isExisting = selectedList.includes(id);
+		const newValues = isExisting
+			? selectedList.filter((item) => item !== id)
+			: [...selectedList, id];
 
 		onSelectAll({
 			...selectAll,
@@ -42,12 +43,11 @@ export const CustomerTable = ({
 	};
 
 	const handleSelectAll = () => {
-		if (!data || list.length === 0) return;
-		let newValues: string[] = [];
-		const isGuest = type === "khach";
+		if (list.length === 0) return;
 
-		if (list.length > selectAll[type].length)
-			newValues = list.map((item) => item.id);
+		// Nếu đã chọn tất cả thì bỏ chọn, ngược lại thì chọn tất cả danh sách hiện tại
+		const isAllSelected = selectedList.length === list.length;
+		const newValues = isAllSelected ? [] : list.map((item) => item.id);
 
 		onSelectAll({
 			...selectAll,
@@ -56,18 +56,20 @@ export const CustomerTable = ({
 		});
 	};
 
+	const isAllSelected = list.length > 0 && selectedList.length === list.length;
+	const isIndeterminate =
+		selectedList.length > 0 && selectedList.length < list.length;
+
 	return (
 		<Table>
 			<TableHeader>
 				<TableRow>
-					<TableHead>
+					<TableHead className="w-12">
 						<Checkbox
-							aria-label="Select row"
-							onClick={handleSelectAll}
-							disabled={!data || list.length === 0}
-							checked={
-								selectAll[type].length === list.length && list.length > 0
-							}
+							aria-label="Select all rows"
+							checked={isAllSelected || isIndeterminate}
+							onCheckedChange={handleSelectAll}
+							disabled={list.length === 0}
 						/>
 					</TableHead>
 					<TableHead>Tên khách hàng</TableHead>
@@ -75,19 +77,25 @@ export const CustomerTable = ({
 				</TableRow>
 			</TableHeader>
 			<TableBody>
-				{list.length > 0
-					? list.map((customer) => {
-							const { id } = customer;
-							return (
-								<CustomerTableItem
-									key={id}
-									checked={selectAll[type].includes(id)}
-									item={customer}
-									onSelectMultiple={handleSelectMultiple}
-								/>
-							);
-						})
-					: ""}
+				{list.length > 0 ? (
+					list.map((customer) => (
+						<CustomerTableItem
+							key={customer.id}
+							checked={selectedList.includes(customer.id)}
+							item={customer}
+							onSelectMultiple={handleSelectMultiple}
+						/>
+					))
+				) : (
+					<TableRow>
+						<TableCell
+							colSpan={3}
+							className="h-24 text-center text-muted-foreground"
+						>
+							Không có dữ liệu khách hàng.
+						</TableCell>
+					</TableRow>
+				)}
 			</TableBody>
 		</Table>
 	);

@@ -1,3 +1,4 @@
+import { useAppStore } from "@lavaz/store";
 import { Button } from "#/components/ui/button";
 import {
 	DialogClose,
@@ -9,7 +10,6 @@ import {
 import { useCustomerQuery } from "#/hooks/query/use-customer-query";
 import { useOrderMutation } from "#/hooks/query/use-order-query";
 import { store } from "#/store/store";
-import { useAppStore } from "@lavaz/store";
 
 export function DialogSelectCustomer() {
 	const { data } = useCustomerQuery.getMany();

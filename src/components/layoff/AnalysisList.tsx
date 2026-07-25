@@ -4,6 +4,7 @@ import { useOrderQuery } from "#/hooks/query/use-order-query";
 import { useStandardSettingQuery } from "#/hooks/query/use-setting-query";
 import { formatDate } from "#/lib/date-format";
 import type { IOrderDetailFromDb } from "#/types/apis/message.type";
+import type { RegionType } from "#/types/region.type";
 import {
 	Table,
 	TableBody,
@@ -26,7 +27,7 @@ export interface IAnalysisSummaryItem {
 
 interface AnalysisListProps {
 	provinceCode: string;
-	region: string;
+	region: RegionType;
 	date: Date;
 }
 
@@ -35,7 +36,11 @@ export function AnalysisList({
 	region,
 	date,
 }: AnalysisListProps) {
-	const { data } = useOrderQuery.getAllByDate(formatDate(date));
+	const { data } = useOrderQuery.getAll({
+		region,
+		release: formatDate(date),
+		isSend: false,
+	});
 	const { data: settingsData } = useStandardSettingQuery(date.getDay());
 
 	// 1. Map tra cứu mức chuẩn (score) từ Setting

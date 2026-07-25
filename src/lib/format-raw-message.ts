@@ -16,6 +16,12 @@ export function formatRawMessage(
 	const initialSplit = cleanValue.split(/\s+/).filter(Boolean);
 
 	const splitValue = initialSplit.flatMap((currentValue) => {
+		// Tách các trường hợp dính liền kiểu d20d30 thành ['d20', 'd30']
+		const combinedMatch = currentValue.match(/[dD]\d+/g);
+		if (combinedMatch && combinedMatch.length > 1) {
+			return combinedMatch;
+		}
+
 		if (/^\d+[dD]$/.test(currentValue)) {
 			return currentValue;
 		}
@@ -41,8 +47,21 @@ export function formatRawMessage(
 		return sanitizedValue;
 	});
 
+	// Đếm số lượng chữ d đã gặp để tự động phân biệt dau / duoi nếu nhập d20 d30
+	let dCount = 0;
+
 	const parsedKeywords = splitValue.map((item) => {
 		const lowerItem = item.toLowerCase();
+
+		// Nếu gặp dạng d + số (ví dụ d20, d30)
+		if (/^[dD]\d+$/.test(lowerItem)) {
+			dCount++;
+			const num = lowerItem.replace(/^[dD]/, "");
+			// d đầu tiên -> dau, d thứ hai (hoặc từ chẵn) -> duoi
+			const mappedKey = dCount % 2 !== 0 ? `dau${num}` : `duoi${num}`;
+			return mappedKey;
+		}
+
 		for (const [key, words] of Object.entries(betPairSyntaxes)) {
 			if (words.includes(lowerItem)) {
 				return key;
@@ -64,7 +83,7 @@ export function formatRawMessage(
 			/^\d+$/.test(nextValue) &&
 			isPrevPureNumber &&
 			!/^\d+d$/i.test(currentValue) &&
-			!/^[dD]\d+$/i.test(currentValue)
+			!/^[dD]\d+$/.test(currentValue)
 		) {
 			finalResult.push(`${currentValue}${nextValue}`);
 			i++;

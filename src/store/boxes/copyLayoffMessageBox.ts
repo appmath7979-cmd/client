@@ -1,5 +1,5 @@
-import type { OrderItemApiType } from "#/types/apis/message.type";
 import { createBox } from "@lavaz/store";
+import type { OrderItemApiType } from "#/types/apis/message.type";
 
 interface LayoffState extends Omit<OrderItemApiType, "id"> {}
 

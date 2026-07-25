@@ -28,7 +28,7 @@ export function Calendar({
 		day: "size-(--cell-size) text-sm py-px",
 		day_button: cn(
 			buttonClassNames,
-			"in-data-disabled:pointer-events-none in-[.range-middle]:rounded-none in-[.range-end:not(.range-start)]:rounded-s-none in-[.range-start:not(.range-end)]:rounded-e-none in-[.range-middle]:in-data-selected:bg-accent in-data-selected:bg-primary in-[.range-middle]:in-data-selected:text-foreground in-data-disabled:text-muted-foreground/72 in-data-outside:text-muted-foreground/72 in-data-selected:in-data-outside:text-primary-foreground in-data-selected:text-primary-foreground in-data-disabled:line-through outline-none in-[[data-selected]:not(.range-middle)]:transition-[color,background-color,border-radius,box-shadow] focus-visible:z-1 focus-visible:ring-[3px] focus-visible:ring-ring/50",
+			"in-data-disabled:pointer-events-none in-[.range-middle]:rounded-none in-[.range-end:not(.range-start)]:rounded-s-none in-[.range-start:not(.range-end)]:rounded-e-none in-[.range-middle]:in-data-selected:bg-accent in-data-selected:bg-primary in-[.range-middle]:in-data-selected:text-foreground in-data-disabled:text-muted-foreground/72 in-data-outside:text-muted-foreground/72 in-data-selected:in-data-outside:text-primary-foreground in-data-selected:text-primary-foreground in-data-disabled:line-through outline-none in-[[data-selected]:not(.range-middle)]:transition-[color,background-color,border-radius,box-shadow] focus-visible:z-9999 focus-visible:ring-[3px] focus-visible:ring-ring/50",
 		),
 		dropdown: "absolute bg-popover inset-0 opacity-0",
 		dropdown_root:
@@ -38,16 +38,16 @@ export function Calendar({
 		hidden: "invisible",
 		month: "w-full",
 		month_caption:
-			"relative mx-(--cell-size) px-1 mb-1 flex h-(--cell-size) items-center justify-center z-2",
+			"relative mx-(--cell-size) px-1 mb-1 flex h-(--cell-size) items-center justify-center z-9999",
 		months: "relative flex flex-col sm:flex-row gap-2",
-		nav: "absolute top-0 flex w-full justify-between z-1",
+		nav: "absolute top-0 flex w-full justify-between z-9999",
 		outside:
 			"text-muted-foreground data-selected:bg-accent/50 data-selected:text-muted-foreground",
 		range_end: "range-end",
 		range_middle: "range-middle",
 		range_start: "range-start",
 		today:
-			"*:after:pointer-events-none *:after:absolute *:after:bottom-1 *:after:start-1/2 *:after:z-1 *:after:size-[3px] *:after:-translate-x-1/2 *:after:rounded-full *:after:bg-primary [&[data-selected]:not(.range-middle)>*]:after:bg-background [&[data-disabled]>*]:after:bg-foreground/30 *:after:transition-colors",
+			"*:after:pointer-events-none *:after:absolute *:after:bottom-1 *:after:start-1/2 *:after:z-9999 *:after:size-[3px] *:after:-translate-x-1/2 *:after:rounded-full *:after:bg-primary [&[data-selected]:not(.range-middle)>*]:after:bg-background [&[data-disabled]>*]:after:bg-foreground/30 *:after:transition-colors",
 		week_number:
 			"size-(--cell-size) p-0 text-xs font-medium text-muted-foreground/72",
 		weekday:

@@ -5,18 +5,24 @@ import type {
 	IPatchOrderMessageApi,
 	IPostOrderMessageApi,
 } from "#/types/apis/message.type";
+import type {
+	IGetAllOrderMessageQueryApi,
+	IGetOrderByCustomerIdQueryApi,
+} from "#/types/apis/query/message.type";
 import { apiRouteName, baseApi } from "./base.api";
 
 export const orderApi = {
-	getByDate: async (release: string) => {
+	getAll: async (data: IGetAllOrderMessageQueryApi) => {
+		const { isLayoff, isSend, region, release } = data;
 		const res: IGetOrderMessageApi = await baseApi.get(
-			`${apiRouteName.order}?release=${release}`,
+			`${apiRouteName.order}?release=${release}&isLayoff=${isLayoff}&isSend=${isSend}&region=${region}`,
 		);
 		return res;
 	},
-	getByDateWithCustomerId: async (customerId: string, dateRelease: string) => {
+	getByDateWithCustomerId: async (data: IGetOrderByCustomerIdQueryApi) => {
+		const { customerId, release, region } = data;
 		const res: IGetOrderMessageApi = await baseApi.get(
-			`${apiRouteName.order}/customer/${customerId}?release=${dateRelease}`,
+			`${apiRouteName.order}/customer/${customerId}?release=${release}&region=${region}`,
 		);
 
 		return res;

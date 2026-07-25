@@ -9,6 +9,7 @@ import { DialogTrigger } from "#/components/ui/dialog";
 import { useRewardSchedule } from "#/hooks/app/use-reward-schedule";
 import { useDatePicker } from "#/hooks/use-date-picker";
 import { formatDate } from "#/lib/date-format";
+import { useRewardQuery } from "#/hooks/query/use-reward-query";
 
 export const Route = createFileRoute("/home")({
 	staticData: { title: "Trang chủ" },
@@ -17,8 +18,9 @@ export const Route = createFileRoute("/home")({
 
 function RouteComponent() {
 	const { date, handleSelect, open, setOpen } = useDatePicker();
-	const rewardSchedule = useRewardSchedule(date);
-
+	const rewardSchedule = useRewardSchedule({ date });
+	const { data } = useRewardQuery(formatDate(date));
+	console.log(data);
 	const formattedDate = useMemo(() => formatDate(date), [date]);
 
 	return (
@@ -41,7 +43,11 @@ function RouteComponent() {
 				</h2>
 				<Lottery reward={rewardSchedule} />
 			</div>
-			<DialogReward day={formattedDate} provinces={rewardSchedule} />
+			<DialogReward
+				date={date}
+				day={formattedDate}
+				provinces={rewardSchedule}
+			/>
 		</div>
 	);
 }

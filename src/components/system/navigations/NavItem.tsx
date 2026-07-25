@@ -12,12 +12,12 @@ export function NavItem({ href, label, icon }: INavItem) {
 			variant={isActive ? "secondary" : "default"}
 			render={<Link to={href} />}
 			className={cn(
-				"flex flex-col justify-center h-auto! gap-0 text-base!",
+				"flex flex-col justify-center h-auto! gap-1 md:gap-0 text-base! max-md:py-2",
 				isActive && "text-primary inset-shadow-sm",
 			)}
 		>
-			<Icon size={30} className="size-[30px]!" />
-			<p className="font-semibold">{label}</p>
+			<Icon size={30} className="size-[24px] md:size-[30px]!" />
+			<p className="font-semibold max-md:hidden">{label}</p>
 		</Button>
 	);
 }

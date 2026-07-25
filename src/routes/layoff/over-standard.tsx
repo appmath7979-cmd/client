@@ -29,7 +29,10 @@ function RouteComponent() {
 	const dayIndex = date.getDay();
 
 	const { data: settingData } = useStandardSettingQuery(dayIndex);
-	const { data: orderData } = useOrderQuery.getAllByDate(formatDate(date));
+	const { data: orderData } = useOrderQuery.getAll({
+		region,
+		release: formatDate(date),
+	});
 	const { mutate } = useOrderMutation().postLayoff;
 
 	// 1. Map tra cứu mức chuẩn (score) từ Setting

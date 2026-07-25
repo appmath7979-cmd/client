@@ -6,23 +6,32 @@ import type {
 	IPatchOrderMessageApi,
 	IPostOrderMessageApi,
 } from "#/types/apis/message.type";
+import type {
+	IGetAllOrderMessageQueryApi,
+	IGetOrderByCustomerIdQueryApi,
+} from "#/types/apis/query/message.type";
 
 const useOrderQuery = {
-	getByDateWithCustomerId: (customerId: string, releaseDate: string) =>
-		useQuery({
-			queryKey: ["orders", releaseDate],
-			queryFn: () => orderApi.getByDateWithCustomerId(customerId, releaseDate),
-		}),
+	getByDateWithCustomerId: (payload: IGetOrderByCustomerIdQueryApi) => {
+		const { customerId, region, release } = payload;
+		return useQuery({
+			queryKey: ["orders", customerId, region, release],
+			queryFn: () =>
+				orderApi.getByDateWithCustomerId({ customerId, region, release }),
+		});
+	},
 	getById: (orderId: string) =>
 		useQuery({
 			queryKey: ["orders", orderId],
 			queryFn: () => orderApi.getById(orderId),
 		}),
-	getAllByDate: (release: string) =>
-		useQuery({
-			queryKey: ["orders", "all", release],
-			queryFn: () => orderApi.getByDate(release),
-		}),
+	getAll: (queries: IGetAllOrderMessageQueryApi) => {
+		const { release, region } = queries;
+		return useQuery({
+			queryKey: ["orders", "all", release, region],
+			queryFn: () => orderApi.getAll(queries),
+		});
+	},
 };
 
 function useOrderMutation() {

@@ -1,3 +1,5 @@
+import { useAppStore } from "@lavaz/store";
+import { CheckIcon } from "lucide-react";
 import { Button } from "#/components/ui/button";
 import {
 	Dialog,
@@ -10,10 +12,8 @@ import {
 	DialogTrigger,
 } from "#/components/ui/dialog";
 import { useCopyToClipboard } from "#/hooks/use-copy-to-clipboard";
-import { DialogSelectCustomer } from "./DialogSelectCustomer";
-import { CheckIcon } from "lucide-react";
-import { useAppStore } from "@lavaz/store";
 import { store } from "#/store/store";
+import { DialogSelectCustomer } from "./DialogSelectCustomer";
 
 export function DialogSelectCopyLayoff() {
 	const [value] = useAppStore(store.copyLayoff, (s) => s.message);

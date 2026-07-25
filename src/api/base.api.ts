@@ -33,6 +33,7 @@ const apiRouteName = {
 	order: "/order",
 	setting: "/setting",
 	layoff: "/layoff",
+	reward: "/reward",
 };
 
 export { baseApi, apiRouteName };

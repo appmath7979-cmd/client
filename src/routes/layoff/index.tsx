@@ -25,7 +25,10 @@ function RouteComponent() {
 	const rewardSchedule = useRewardSchedule({ date });
 
 	// 1. Fetch dữ liệu tất cả đơn hàng trong ngày
-	const { data: orderData } = useOrderQuery.getAllByDate(formatDate(date));
+	const { data: orderData } = useOrderQuery.getAll({
+		release: formatDate(date),
+		region,
+	});
 
 	// 2. Lọc loại bỏ những đơn có (isLayoff === false VÀ isSend === true)
 	const filteredOrders = useMemo(() => {
@@ -37,7 +40,7 @@ function RouteComponent() {
 
 	return (
 		<div className="py-4 space-y-5">
-			<div className="flex justify-end items-center gap-2">
+			<div className="flex flex-wrap justify-end items-center gap-2">
 				<DropdownRegion />
 				<DatePicker
 					date={date}
@@ -54,12 +57,12 @@ function RouteComponent() {
 							<Button
 								variant={"outline"}
 								size={"icon"}
-								className="border-primary text-primary"
+								className="border-primary text-primary shrink-0"
 								onClick={() => navigate({ to: "/layoff/settings" })}
 							/>
 						}
 					>
-						<SettingsIcon />
+						<SettingsIcon className="size-4" />
 					</TooltipTrigger>
 					<TooltipPopup>Thiết lập Tiêu chuẩn</TooltipPopup>
 				</Tooltip>

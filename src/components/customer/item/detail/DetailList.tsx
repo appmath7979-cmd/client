@@ -32,8 +32,6 @@ export function DetailList({ data, region, customerId }: DetailListProps) {
 
 					if (order.details && Array.isArray(order.details)) {
 						order.details.forEach((detail) => {
-							// Nếu có syntax thì ghép syntax lên trước type (Ví dụ: "2c_bao", "2c_dau", "3c_duoi",...)
-							// Nếu không có syntax hoặc type trùng syntax thì giữ nguyên
 							const hasSyntaxPrefix =
 								detail.syntax &&
 								detail.type &&
@@ -49,6 +47,11 @@ export function DetailList({ data, region, customerId }: DetailListProps) {
 							groupedByType[typeKey].push(detail);
 						});
 					}
+
+					// Biến lưu trữ tổng của từng cột cho toàn bộ tin nhắn này
+					let totalXacOrder = 0;
+					let totalCoOrder = 0;
+					let totalTrungOrder = 0;
 
 					return (
 						<div
@@ -67,10 +70,16 @@ export function DetailList({ data, region, customerId }: DetailListProps) {
 								/>
 							</div>
 
-							{/* Bảng hiển thị danh sách dòng cược sau khi gom nhóm */}
-							<div className="divide-y border rounded-md overflow-hidden">
+							<div className="border rounded-md overflow-hidden">
+								<div className="grid grid-cols-3 text-center bg-muted text-muted-foreground uppercase font-semibold text-xs [&>*:not(:first-child)]:border-l py-1.5">
+									<p>Xác</p>
+									<p>Cò</p>
+									<p>Trúng</p>
+								</div>
+
 								{Object.keys(groupedByType).map((typeKey, resIndex) => {
 									const detailsList = groupedByType[typeKey];
+									const labelPrefix = typeKey.toLowerCase();
 
 									let tongXac = 0;
 									let tongCo = 0;
@@ -86,48 +95,63 @@ export function DetailList({ data, region, customerId }: DetailListProps) {
 										tongCo += co;
 										tongTrung += trung;
 
-										// Cộng dồn vào tổng lớn của cả Tin nhắn
 										grandTotalCo += co;
 										grandTotalTrung += trung;
 									});
+
+									// Cộng dồn vào tổng của cả tin nhắn
+									totalXacOrder += tongXac;
+									totalCoOrder += tongCo;
+									totalTrungOrder += tongTrung;
 
 									return (
 										<div
 											key={`${order.id}-${typeKey}`}
 											className={cn(
-												"flex items-center text-center text-sm hover:bg-muted/30 transition-colors [&>div]:py-2 [&>*:not(:first-child)]:border-l",
+												"grid grid-cols-3 items-center text-sm hover:bg-muted/30 transition-colors [&>*:not(:first-child)]:border-l",
 												resIndex % 2 !== 0 && "bg-muted/50",
 											)}
 										>
-											{/* Cột hiển thị Loại cược (Vd: 2C_BAO, 2C_DAU, 2C_DUOI, DA,...) */}
-											<CustomerMessageItem
-												type="TYPE"
-												content={typeKey.toUpperCase()}
-											/>
-											{/* Cột tổng xác */}
+											{/* Cột tổng xác kèm cú pháp */}
 											<CustomerMessageItem
 												type="XAC"
+												prefix={labelPrefix}
 												content={tongXac.toLocaleString("vi-VN")}
 											/>
-											{/* Cột tổng cò */}
+											{/* Cột tổng cò kèm cú pháp */}
 											<CustomerMessageItem
 												type="CO"
+												prefix={labelPrefix}
 												content={tongCo.toLocaleString("vi-VN")}
 											/>
-											{/* Cột tổng trúng */}
+											{/* Cột tổng trúng kèm cú pháp */}
 											<CustomerMessageItem
 												type="TRUNG"
+												prefix={labelPrefix}
 												content={tongTrung.toLocaleString("vi-VN")}
 											/>
 										</div>
 									);
 								})}
+
+								{/* Dòng tổng hợp từng cột của tin nhắn hiện tại */}
+								<div className="grid grid-cols-3 items-center text-center font-bold bg-muted/70 [&>*:not(:first-child)]:border-l border-t-2">
+									<div className="py-2 px-2 text-amber-600">
+										{totalXacOrder.toLocaleString("vi-VN")}
+									</div>
+									<div className="py-2 px-2 text-emerald-600">
+										{totalCoOrder.toLocaleString("vi-VN")}
+									</div>
+									<div className="py-2 px-2 text-red-600">
+										{totalTrungOrder.toLocaleString("vi-VN")}
+									</div>
+								</div>
 							</div>
 
 							{/* Hộp tổng kết Thu / Chi cuối mỗi tin nhắn */}
 							<p
 								className={cn(
-									"bg-muted/40 p-2.5 rounded-md border font-semibold flex justify-between items-center text-sm",
+									"bg-muted/40 p-2.5 rounded-md border font-semibold flex justify-between items-center",
 									grandTotalCo - grandTotalTrung >= 0
 										? "text-emerald-600"
 										: "text-red-600",
